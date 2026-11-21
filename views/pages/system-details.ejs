@@ -136,26 +136,651 @@
         </div>
       </div>
 
-      <!-- 3. فيديو يوتيوب المدمج إن وجد -->
-      <% if (system.YoutubeUrl) { %>
-        <% 
-          let videoId = '';
-          const match = system.YoutubeUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
-          if (match && match[1]) { videoId = match[1]; }
-        %>
-        <% if (videoId) { %>
-          <div class="card" style="padding: 16px; margin-bottom: 30px; border-radius: 16px; overflow: hidden;">
-            <h3 style="font-size: 17px; font-weight: 700; margin-bottom: 14px; color: var(--text-main);">
-              <i class="fa-brands fa-youtube" style="color: #ef4444;"></i> <%= t('فيديو شرح المنظومة', 'Platform Overview Video') %>
+      <!-- 3. مشغل العرض المرئي والفيديو التفاعلي للمنظومة (Cinematic System Video Presentation) -->
+      <div class="card" style="padding: 24px; margin-bottom: 30px; border-radius: 18px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.06);" id="system-video-section">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <h3 style="font-size: 18px; font-weight: 800; margin: 0 0 4px; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
+              <span style="display: inline-flex; width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, #ef4444, #dc2626); color: #fff; align-items: center; justify-content: center; font-size: 14px; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.35);">
+                <i class="fa-solid fa-play"></i>
+              </span>
+              <%= t('فيديو العرض التقديمي للمنظومة (دقة فائقة 4K)', 'System Cinematic Overview Video (4K HD)') %>
             </h3>
-            <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px;">
-              <iframe style="position: absolute; top:0; left: 0; width: 100%; height: 100%; border: 0;" 
-                      src="https://www.youtube.com/embed/<%= videoId %>" 
-                      title="YouTube video player" allowfullscreen></iframe>
+            <p style="font-size: 13px; color: var(--text-muted); margin: 0;">
+              <%= t('استعراض مرئي متسلسل وسينمائي لخصائص ومميزات المنظومة مستمد من الواجهات الفعلية للنظام', 'A visual walkthrough of the platform features derived directly from live system interfaces') %>
+            </p>
+          </div>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <span style="font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 6px; background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; display: inline-flex; align-items: center; gap: 5px;">
+              <span style="width: 7px; height: 7px; border-radius: 50%; background: #dc2626; animation: sayPulse 1.5s infinite;"></span>
+              4K ULTRA HD
+            </span>
+          </div>
+        </div>
+
+        <!-- إطار مشغل الفيديو التفاعلي -->
+        <div class="saysoft-video-container" id="saysoftVideoContainer">
+          <!-- مسرح الفيديو والمشاهد -->
+          <div class="video-viewport" id="videoViewport">
+            <!-- طبقة الخلفية والصورة المتحركة -->
+            <div class="video-bg-layer" id="videoBgLayer"></div>
+            <div class="video-backdrop-fx"></div>
+
+            <!-- محتوى المشهد الحي (العناوين، الشعارات، والنصوص) -->
+            <div class="video-live-overlay" id="videoLiveOverlay">
+              <div class="video-scene-badge" id="videoSceneBadge">
+                <i class="fa-solid fa-film"></i> <span id="videoSceneBadgeText"><%= t('المشهد 1', 'Scene 1') %></span>
+              </div>
+              <h2 class="video-scene-title" id="videoSceneTitle">...</h2>
+            </div>
+
+            <!-- زر التشغيل الكبير في المنتصف -->
+            <div class="video-center-play" id="videoCenterPlay" onclick="togglePlayState()">
+              <div class="center-play-circle">
+                <i class="fa-solid fa-play" id="centerPlayIcon"></i>
+              </div>
+              <span class="center-play-hint" id="centerPlayHint"><%= t('انقر لبدء تشغيل العرض المرئي', 'Click to start video showcase') %></span>
+            </div>
+
+            <!-- شريط الترجمة والشروحات التوضيحية (Closed Captions) -->
+            <div class="video-cc-box" id="videoCcBox">
+              <div class="cc-header">
+                <span class="cc-pill"><i class="fa-solid fa-circle-info"></i> <%= t('شرح الشاشة والخاصية', 'Feature Overview') %></span>
+                <span class="cc-step" id="ccStepIndicator">1 / 6</span>
+              </div>
+              <p class="cc-body" id="videoCcBody">...</p>
             </div>
           </div>
+
+          <!-- شريط التحكم بالفيديو (Video Controls Bar) -->
+          <div class="video-control-bar">
+            <!-- شريط مسار الوقت (Progress Scrubber) -->
+            <div class="video-scrubber-track" id="videoScrubberTrack" onclick="handleScrub(event)">
+              <div class="video-scrubber-fill" id="videoScrubberFill">
+                <div class="video-scrubber-thumb"></div>
+              </div>
+            </div>
+
+            <div class="video-control-actions">
+              <div class="control-left-group">
+                <button type="button" class="video-ctl-btn" id="ctlPlayBtn" onclick="togglePlayState()" title="<%= t('تشغيل / إيقاف', 'Play / Pause') %>">
+                  <i class="fa-solid fa-play" id="ctlPlayIcon"></i>
+                </button>
+                <button type="button" class="video-ctl-btn" onclick="restartShowcase()" title="<%= t('إعادة من البداية', 'Restart') %>">
+                  <i class="fa-solid fa-rotate-right"></i>
+                </button>
+                <div class="video-time-display" id="videoTimeDisplay">00:00 / 00:42</div>
+              </div>
+
+              <!-- شارات التنقل السريع بين المشاهد -->
+              <div class="control-scenes-tabs" id="controlScenesTabs">
+                <!-- أزرار المشاهد -->
+              </div>
+
+              <div class="control-right-group">
+                <button type="button" class="video-ctl-btn" id="ctlVoiceBtn" onclick="toggleNarrationVoice()" title="<%= t('التعليق الصوتي الآلي', 'Voice Narration') %>">
+                  <i class="fa-solid fa-volume-high" id="ctlVoiceIcon"></i>
+                </button>
+                <button type="button" class="video-ctl-btn" onclick="togglePlayerFullscreen()" title="<%= t('ملء الشاشة', 'Fullscreen') %>">
+                  <i class="fa-solid fa-expand"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <% if (system.YoutubeUrl) { %>
+          <% 
+            let videoId = '';
+            const match = system.YoutubeUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+            if (match && match[1]) { videoId = match[1]; }
+          %>
+          <% if (videoId && videoId !== 'dQw4w9WgXcQ') { %>
+            <div style="margin-top: 16px; text-align: center;">
+              <a href="https://www.youtube.com/watch?v=<%= videoId %>" target="_blank" class="btn btn-outline" style="font-size: 13px; padding: 6px 14px;">
+                <i class="fa-brands fa-youtube" style="color: #ef4444;"></i> <%= t('مشاهدة الفيديو البديل عبر يوتيوب', 'Watch alternative video on YouTube') %>
+              </a>
+            </div>
+          <% } %>
         <% } %>
-      <% } %>
+      </div>
+
+      <style>
+        @keyframes sayPulse {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.4; transform: scale(0.85); }
+        }
+        @keyframes kenBurnsZoom {
+          0% { transform: scale(1) translate(0, 0); }
+          50% { transform: scale(1.08) translate(-1%, -1%); }
+          100% { transform: scale(1.03) translate(1%, 1%); }
+        }
+        @keyframes rippleRing {
+          0% { transform: scale(0.9); opacity: 0.8; }
+          100% { transform: scale(1.6); opacity: 0; }
+        }
+
+        .saysoft-video-container {
+          position: relative;
+          width: 100%;
+          aspect-ratio: 16 / 9;
+          background: #040914;
+          border-radius: 16px;
+          overflow: hidden;
+          box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+          user-select: none;
+          display: flex;
+          flex-direction: column;
+        }
+
+        .video-viewport {
+          position: relative;
+          flex: 1;
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
+          background: radial-gradient(circle at center, #0c1a32 0%, #030712 100%);
+        }
+
+        .video-bg-layer {
+          position: absolute;
+          inset: 0;
+          background-size: contain;
+          background-position: center;
+          background-repeat: no-repeat;
+          transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+          animation: kenBurnsZoom 18s infinite alternate ease-in-out;
+        }
+
+        .video-backdrop-fx {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(180deg, rgba(3, 7, 18, 0.4) 0%, transparent 35%, rgba(3, 7, 18, 0.2) 65%, rgba(3, 7, 18, 0.85) 100%);
+          pointer-events: none;
+        }
+
+        .video-live-overlay {
+          position: absolute;
+          top: 18px;
+          right: 20px;
+          left: 20px;
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          pointer-events: none;
+          z-index: 4;
+        }
+
+        .video-scene-badge {
+          background: rgba(15, 23, 42, 0.85);
+          color: #38bdf8;
+          font-size: 12px;
+          font-weight: 700;
+          padding: 6px 14px;
+          border-radius: 20px;
+          border: 1px solid rgba(56, 189, 248, 0.3);
+          backdrop-filter: blur(8px);
+          box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .video-scene-title {
+          margin: 0;
+          font-size: 16px;
+          font-weight: 800;
+          color: #ffffff;
+          text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+          background: rgba(15, 23, 42, 0.7);
+          padding: 6px 14px;
+          border-radius: 8px;
+          backdrop-filter: blur(8px);
+          max-width: 65%;
+          text-align: left;
+        }
+
+        [dir="rtl"] .video-scene-title {
+          text-align: right;
+        }
+
+        .video-center-play {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          cursor: pointer;
+          z-index: 10;
+          transition: transform 0.25s ease, opacity 0.3s ease;
+        }
+
+        .video-center-play:hover {
+          transform: translate(-50%, -50%) scale(1.06);
+        }
+
+        .center-play-circle {
+          position: relative;
+          width: 72px;
+          height: 72px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #2563eb, #0284c7);
+          color: #ffffff;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 26px;
+          box-shadow: 0 10px 25px rgba(37, 99, 235, 0.5);
+        }
+
+        .center-play-circle::before {
+          content: '';
+          position: absolute;
+          inset: -6px;
+          border-radius: 50%;
+          border: 2px solid rgba(56, 189, 248, 0.6);
+          animation: rippleRing 2s infinite ease-out;
+        }
+
+        .center-play-hint {
+          margin-top: 10px;
+          color: #ffffff;
+          font-size: 13px;
+          font-weight: 700;
+          text-shadow: 0 2px 6px rgba(0,0,0,0.9);
+          background: rgba(15, 23, 42, 0.8);
+          padding: 4px 12px;
+          border-radius: 20px;
+          border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .video-cc-box {
+          position: absolute;
+          bottom: 14px;
+          left: 18px;
+          right: 18px;
+          background: rgba(11, 19, 36, 0.92);
+          border: 1px solid rgba(56, 189, 248, 0.25);
+          backdrop-filter: blur(12px);
+          border-radius: 12px;
+          padding: 10px 16px;
+          color: #ffffff;
+          z-index: 6;
+          box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+          transition: all 0.3s ease;
+        }
+
+        .cc-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 4px;
+        }
+
+        .cc-pill {
+          font-size: 11px;
+          font-weight: 800;
+          color: #38bdf8;
+          text-transform: uppercase;
+        }
+
+        .cc-step {
+          font-size: 11px;
+          font-weight: 700;
+          color: #94a3b8;
+        }
+
+        .cc-body {
+          margin: 0;
+          font-size: 13px;
+          line-height: 1.5;
+          color: #f1f5f9;
+        }
+
+        .video-control-bar {
+          background: #090e1a;
+          padding: 8px 16px 12px;
+          border-top: 1px solid rgba(255,255,255,0.08);
+          z-index: 8;
+        }
+
+        .video-scrubber-track {
+          width: 100%;
+          height: 6px;
+          background: rgba(255, 255, 255, 0.2);
+          border-radius: 3px;
+          cursor: pointer;
+          position: relative;
+          margin-bottom: 8px;
+          transition: height 0.15s ease;
+        }
+
+        .video-scrubber-track:hover {
+          height: 9px;
+        }
+
+        .video-scrubber-fill {
+          height: 100%;
+          background: linear-gradient(90deg, #2563eb, #06b6d4, #10b981);
+          border-radius: 3px;
+          width: 0%;
+          position: relative;
+          transition: width 0.1s linear;
+        }
+
+        .video-scrubber-thumb {
+          position: absolute;
+          right: -5px;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          background: #ffffff;
+          box-shadow: 0 0 6px rgba(0,0,0,0.5);
+        }
+
+        [dir="rtl"] .video-scrubber-thumb {
+          right: auto;
+          left: -5px;
+        }
+
+        .video-control-actions {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 12px;
+        }
+
+        .control-left-group, .control-right-group {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .video-ctl-btn {
+          background: rgba(255, 255, 255, 0.08);
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          color: #ffffff;
+          width: 32px;
+          height: 32px;
+          border-radius: 8px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          font-size: 13px;
+          transition: all 0.2s ease;
+        }
+
+        .video-ctl-btn:hover {
+          background: rgba(255, 255, 255, 0.22);
+          color: #38bdf8;
+          transform: translateY(-1px);
+        }
+
+        .video-time-display {
+          font-size: 12px;
+          font-weight: 700;
+          color: #94a3b8;
+          font-family: monospace;
+          margin: 0 4px;
+        }
+
+        .control-scenes-tabs {
+          display: flex;
+          gap: 6px;
+          overflow-x: auto;
+          scrollbar-width: none;
+        }
+
+        .control-scenes-tabs::-webkit-scrollbar {
+          display: none;
+        }
+
+        .scene-pill-btn {
+          background: rgba(255, 255, 255, 0.06);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          color: #94a3b8;
+          padding: 4px 10px;
+          border-radius: 6px;
+          font-size: 11px;
+          font-weight: 700;
+          cursor: pointer;
+          white-space: nowrap;
+          transition: all 0.2s;
+        }
+
+        .scene-pill-btn:hover, .scene-pill-btn.active {
+          background: #2563eb;
+          color: #ffffff;
+          border-color: #38bdf8;
+        }
+
+        @media (max-width: 768px) {
+          .video-scene-title { font-size: 13px; max-width: 80%; }
+          .control-scenes-tabs { display: none; }
+          .video-cc-box { padding: 8px 12px; bottom: 8px; left: 8px; right: 8px; }
+          .cc-body { font-size: 11px; }
+        }
+      </style>
+
+      <script>
+        // إعداد مشاهد الفيديو المستمدة من موارد المنظومة في الموقع المحلي
+        const systemVideoScenes = [
+          {
+            title: "<%= lang === 'en' ? 'System Identity & Launch' : 'الهوية الرسمية لمنظومة ' + (system.BrandNameAr || system.NameAr) %>",
+            caption: "<%= lang === 'en' ? (system.SummaryEn || system.NameEn) : (system.SummaryAr || system.NameAr) %>",
+            image: "<%= system.CoverImage || system.Logo %>",
+            duration: 7
+          },
+          <% (system.Images || []).forEach(function(img, i) { %>
+          {
+            title: "<%= lang === 'en' ? (img.CaptionEn || 'Core Feature ' + (i+1)) : (img.CaptionAr || 'الواجهة الرئيسية ' + (i+1)) %>",
+            caption: "<%= lang === 'en' ? (img.CaptionEn || 'Live operating interface from ' + (system.BrandNameEn || system.NameEn)) : (img.CaptionAr || 'استعراض الواجهة الفعلية وأدوات التشغيل لمنظومة ' + (system.BrandNameAr || system.NameAr)) %>",
+            image: "<%= img.ImagePath %>",
+            duration: 7
+          },
+          <% }); %>
+          {
+            title: "<%= lang === 'en' ? 'Packages & Deployment' : 'باقات الاشتراك والتشغيل السحابي والمحلي' %>",
+            caption: "<%= lang === 'en' ? 'Flexible subscription plans with continuous 24/7 technical support and secure encrypted storage.' : 'باقات ترخيص مرنة تناسب المحامي الفردي والمكاتب والشركات القانونية مع دعم فني مستمر 24/7 وأعلى معايير التشفير.' %>",
+            image: "<%= system.CoverImage || system.Logo %>",
+            duration: 7
+          }
+        ];
+
+        let currentSceneIndex = 0;
+        let isVideoPlaying = false;
+        let videoPlaybackTimer = null;
+        let elapsedSeconds = 0;
+        const totalDuration = systemVideoScenes.reduce((sum, s) => sum + s.duration, 0);
+        let isVoiceEnabled = true;
+
+        function initVideoPlayer() {
+          const scenesContainer = document.getElementById('controlScenesTabs');
+          if (scenesContainer) {
+            scenesContainer.innerHTML = '';
+            systemVideoScenes.forEach((scene, idx) => {
+              const btn = document.createElement('button');
+              btn.type = 'button';
+              btn.className = 'scene-pill-btn' + (idx === 0 ? ' active' : '');
+              btn.textContent = '<%= lang %>' === 'en' ? ('Scene ' + (idx + 1)) : ('المشهد ' + (idx + 1));
+              btn.onclick = () => jumpToScene(idx);
+              scenesContainer.appendChild(btn);
+            });
+          }
+          renderScene(0);
+        }
+
+        function renderScene(index) {
+          if (index < 0 || index >= systemVideoScenes.length) return;
+          currentSceneIndex = index;
+          const scene = systemVideoScenes[index];
+
+          const bgLayer = document.getElementById('videoBgLayer');
+          if (bgLayer) {
+            bgLayer.style.opacity = '0.3';
+            setTimeout(() => {
+              bgLayer.style.backgroundImage = 'url(' + scene.image + ')';
+              bgLayer.style.opacity = '1';
+            }, 200);
+          }
+
+          const titleEl = document.getElementById('videoSceneTitle');
+          if (titleEl) titleEl.textContent = scene.title;
+
+          const badgeEl = document.getElementById('videoSceneBadgeText');
+          if (badgeEl) badgeEl.textContent = ('<%= lang %>' === 'en' ? 'Scene ' : 'المشهد ') + (index + 1) + ' / ' + systemVideoScenes.length;
+
+          const stepEl = document.getElementById('ccStepIndicator');
+          if (stepEl) stepEl.textContent = (index + 1) + ' / ' + systemVideoScenes.length;
+
+          const ccEl = document.getElementById('videoCcBody');
+          if (ccEl) ccEl.textContent = scene.caption;
+
+          // تحديث شارات المشاهد النشطة
+          const badges = document.querySelectorAll('.scene-pill-btn');
+          badges.forEach((b, i) => {
+            if (i === index) b.classList.add('active');
+            else b.classList.remove('active');
+          });
+
+          // نطق صوتي عربي فصيح إذا كان مفعل والمشغل يعمل
+          if (isVideoPlaying && isVoiceEnabled && 'speechSynthesis' in window) {
+            try {
+              window.speechSynthesis.cancel();
+              const utterance = new SpeechSynthesisUtterance(scene.title + '. ' + scene.caption);
+              utterance.lang = '<%= lang %>' === 'en' ? 'en-US' : 'ar-SA';
+              utterance.rate = 0.95;
+              window.speechSynthesis.speak(utterance);
+            } catch (e) {}
+          }
+        }
+
+        function togglePlayState() {
+          if (isVideoPlaying) {
+            pauseVideo();
+          } else {
+            playVideo();
+          }
+        }
+
+        function playVideo() {
+          isVideoPlaying = true;
+          document.getElementById('videoCenterPlay').style.opacity = '0';
+          document.getElementById('videoCenterPlay').style.pointerEvents = 'none';
+          document.getElementById('ctlPlayIcon').className = 'fa-solid fa-pause';
+
+          if (videoPlaybackTimer) clearInterval(videoPlaybackTimer);
+          videoPlaybackTimer = setInterval(() => {
+            elapsedSeconds += 0.5;
+            if (elapsedSeconds >= totalDuration) {
+              elapsedSeconds = totalDuration;
+              updateTimelineUI();
+              pauseVideo();
+              return;
+            }
+            updateTimelineUI();
+
+            // فحص الانتقال إلى المشهد المناسب
+            let acc = 0;
+            for (let i = 0; i < systemVideoScenes.length; i++) {
+              acc += systemVideoScenes[i].duration;
+              if (elapsedSeconds < acc) {
+                if (currentSceneIndex !== i) {
+                  renderScene(i);
+                }
+                break;
+              }
+            }
+          }, 500);
+
+          renderScene(currentSceneIndex);
+        }
+
+        function pauseVideo() {
+          isVideoPlaying = false;
+          if (videoPlaybackTimer) clearInterval(videoPlaybackTimer);
+          document.getElementById('videoCenterPlay').style.opacity = '1';
+          document.getElementById('videoCenterPlay').style.pointerEvents = 'auto';
+          document.getElementById('ctlPlayIcon').className = 'fa-solid fa-play';
+          if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+          }
+        }
+
+        function restartShowcase() {
+          elapsedSeconds = 0;
+          jumpToScene(0);
+          playVideo();
+        }
+
+        function jumpToScene(index) {
+          let targetSec = 0;
+          for (let i = 0; i < index; i++) {
+            targetSec += systemVideoScenes[i].duration;
+          }
+          elapsedSeconds = targetSec;
+          renderScene(index);
+          updateTimelineUI();
+        }
+
+        function handleScrub(e) {
+          const track = document.getElementById('videoScrubberTrack');
+          const rect = track.getBoundingClientRect();
+          const clickX = e.clientX - rect.left;
+          const ratio = Math.max(0, Math.min(1, clickX / rect.width));
+          elapsedSeconds = ratio * totalDuration;
+          updateTimelineUI();
+
+          let acc = 0;
+          for (let i = 0; i < systemVideoScenes.length; i++) {
+            acc += systemVideoScenes[i].duration;
+            if (elapsedSeconds <= acc) {
+              renderScene(i);
+              break;
+            }
+          }
+        }
+
+        function updateTimelineUI() {
+          const progressPercent = Math.min(100, (elapsedSeconds / totalDuration) * 100);
+          const fill = document.getElementById('videoScrubberFill');
+          if (fill) fill.style.width = progressPercent + '%';
+
+          const timerEl = document.getElementById('videoTimeDisplay');
+          if (timerEl) {
+            const curM = String(Math.floor(elapsedSeconds / 60)).padStart(2, '0');
+            const curS = String(Math.floor(elapsedSeconds % 60)).padStart(2, '0');
+            const totM = String(Math.floor(totalDuration / 60)).padStart(2, '0');
+            const totS = String(Math.floor(totalDuration % 60)).padStart(2, '0');
+            timerEl.textContent = curM + ':' + curS + ' / ' + totM + ':' + totS;
+          }
+        }
+
+        function toggleNarrationVoice() {
+          isVoiceEnabled = !isVoiceEnabled;
+          const icon = document.getElementById('ctlVoiceIcon');
+          if (icon) {
+            icon.className = isVoiceEnabled ? 'fa-solid fa-volume-high' : 'fa-solid fa-volume-xmark';
+          }
+          if (!isVoiceEnabled && 'speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+          }
+        }
+
+        function togglePlayerFullscreen() {
+          const container = document.getElementById('saysoftVideoContainer');
+          if (!document.fullscreenElement) {
+            if (container.requestFullscreen) container.requestFullscreen();
+            else if (container.webkitRequestFullscreen) container.webkitRequestFullscreen();
+          } else {
+            if (document.exitFullscreen) document.exitFullscreen();
+          }
+        }
+
+        document.addEventListener('DOMContentLoaded', initVideoPlayer);
+      </script>
 
       <!-- معرض صور وشاشات النظام التفاعلي (Interactive Screenshots Gallery) -->
       <% if (system.Images && system.Images.length > 0) { %>
