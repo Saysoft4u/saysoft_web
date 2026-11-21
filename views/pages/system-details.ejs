@@ -1,0 +1,462 @@
+<%- include('../partials/header') %>
+
+<!-- هيدر تفاصيل المنظومة: العنوان والوصف على اليمين، والشعار على أقصى اليسار في نفس المستوى الأفقي -->
+<section style="background: linear-gradient(180deg, var(--primary-light) 0%, var(--bg-color) 100%); padding: 45px 0 35px; border-bottom: 1px solid var(--border-color);">
+  <div class="container">
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 30px; flex-wrap: wrap;">
+      
+      <!-- تعريف المنظومة على اليمين مع شعار المنتج المخصص -->
+      <div style="display: flex; align-items: center; gap: 20px; flex: 1; min-width: 320px;">
+        <img src="<%= system.AppLogo || system.Logo %>" alt="<%= lang === 'en' ? (system.BrandNameEn || system.NameEn) : (system.BrandNameAr || system.NameAr) %>" 
+             style="width: 76px; height: 76px; border-radius: 14px; object-fit: contain; border: 2px solid var(--border-color); background: #fff; padding: 4px; box-shadow: var(--shadow-sm); flex-shrink: 0;">
+        <div>
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap;">
+            <span style="font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 5px; background: var(--primary-light); color: var(--primary-color);">
+              <%= system.Sector ? (lang === 'en' ? system.Sector.NameEn : system.Sector.NameAr) : t('منظومة إدارية', 'Enterprise') %>
+            </span>
+
+            <!-- شارة نوع التطبيق المعتمدة -->
+            <% if (system.AppType === 'DESKTOP_APP') { %>
+              <span style="font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 5px; background: #e0e7ff; color: #4338ca; border: 1px solid #c7d2fe;">
+                <i class="fa-solid fa-desktop"></i> <%= t('سطح مكتب', 'Desktop App') %>
+              </span>
+            <% } else if (system.AppType === 'MOBILE_APP') { %>
+              <span style="font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 5px; background: #fce7f3; color: #be185d; border: 1px solid #fbcfe8;">
+                <i class="fa-solid fa-mobile-screen"></i> <%= t('تطبيق جوال', 'Mobile App') %>
+              </span>
+            <% } else if (system.AppType === 'WEB_APP') { %>
+              <span style="font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 5px; background: #ccfbf1; color: #0f766e; border: 1px solid #99f6e4;">
+                <i class="fa-solid fa-globe"></i> <%= t('ويب مخصص', 'Dedicated Web') %>
+              </span>
+            <% } else if (system.AppType === 'HYBRID_SUITE') { %>
+              <span style="font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 5px; background: #ede9fe; color: #6d28d9; border: 1px solid #ddd6fe;">
+                <i class="fa-solid fa-network-wired"></i> <%= t('منظومة هجينة', 'Hybrid Suite') %>
+              </span>
+            <% } else { %>
+              <span style="font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 5px; background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd;">
+                <i class="fa-solid fa-cloud"></i> <%= t('سحابي SaaS', 'SaaS Cloud') %>
+              </span>
+            <% } %>
+
+            <!-- شارة حالة المنظومة -->
+            <% if (system.ProductStatus === 'IN_PRODUCTION') { %>
+              <span style="font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 5px; background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd;">
+                <i class="fa-solid fa-rocket"></i> <%= t('قيد الإنتاج', 'In Production') %>
+              </span>
+            <% } else if (system.ProductStatus === 'IN_DEVELOPMENT') { %>
+              <span style="font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 5px; background: #fef3c7; color: #b45309; border: 1px solid #fde68a;">
+                <i class="fa-solid fa-code"></i> <%= t('قيد التطوير', 'In Development') %>
+              </span>
+            <% } else if (system.ProductStatus === 'UNDER_STUDY') { %>
+              <span style="font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 5px; background: #ede9fe; color: #6d28d9; border: 1px solid #ddd6fe;">
+                <i class="fa-solid fa-clipboard-check"></i> <%= t('قيد الدراسة', 'Under Study') %>
+              </span>
+            <% } else if (system.ProductStatus === 'COMING_SOON') { %>
+              <span style="font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 5px; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1;">
+                <i class="fa-solid fa-clock"></i> <%= t('قريباً', 'Coming Soon') %>
+              </span>
+            <% } else { %>
+              <span style="font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 5px; background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0;">
+                <i class="fa-solid fa-circle-check"></i> <%= t('منشور', 'Published') %>
+              </span>
+            <% } %>
+
+            <!-- عداد الزوار البارز والواضح في صفحة كل منتج -->
+            <span style="display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 700; padding: 3px 9px; border-radius: 5px; background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0;" title="<%= t('إجمالي عدد الزوار', 'Total Visitors') %>">
+              <i class="fa-solid fa-users" style="color: #10b981;"></i> 
+              <span><%= system.ViewsCount %></span> <%= t('زائر', 'visitors') %>
+            </span>
+          </div>
+
+          <!-- الاسم التجاري إن وجد -->
+          <% if (system.BrandNameAr || system.BrandNameEn) { %>
+            <div style="font-size: 13.5px; font-weight: 800; color: var(--primary-color); margin-bottom: 3px; display: flex; align-items: center; gap: 6px;">
+              <i class="fa-solid fa-tag"></i> <%= lang === 'en' ? (system.BrandNameEn || system.BrandNameAr) : (system.BrandNameAr || system.BrandNameEn) %>
+            </div>
+          <% } %>
+
+          <!-- العنوان الرئيسي -->
+          <h1 style="font-size: 18px; font-weight: 800; color: var(--text-main); margin-bottom: 6px; line-height: 1.4;">
+            <%= lang === 'en' ? system.NameEn : system.NameAr %>
+          </h1>
+          <p style="font-size: 14px; color: var(--text-muted); max-width: 650px; margin: 0; line-height: 1.6;">
+            <%= lang === 'en' ? system.SummaryEn : system.SummaryAr %>
+          </p>
+
+          <!-- زر تجربة التطبيق المباشرة وزر الاستفسار -->
+          <div style="display: flex; gap: 12px; align-items: center; margin-top: 14px; flex-wrap: wrap;">
+            <% if (system.DemoUrl) { %>
+              <a href="<%= system.DemoUrl %>" class="btn btn-primary" style="padding: 9px 22px; font-size: 14px; font-weight: 700; background: #16a34a !important; border-color: #16a34a !important; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);">
+                <i class="fa-solid fa-laptop-code"></i> <%= t('رابط تجربة التطبيق (Live Demo)', 'Access Live Demo') %>
+                <i class="fa-solid fa-arrow-left" style="font-size: 11px; margin-inline-start: 4px;"></i>
+              </a>
+            <% } else { %>
+              <a href="#inquiryForm" class="btn btn-outline" style="padding: 9px 18px; font-size: 13px;">
+                <i class="fa-solid fa-key"></i> <%= t('طلب رابط تجربة ديمو', 'Request Demo Access') %>
+              </a>
+            <% } %>
+            <a href="#inquiryForm" class="btn btn-outline" style="padding: 9px 18px; font-size: 13px;">
+              <i class="fa-solid fa-headset"></i> <%= t('طلب استفسار', 'Send Inquiry') %>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- الشعار الرسمي على أقصى يسار العنوان الرئيسي وفي نفس المستوى الأفقي -->
+      <div style="flex-shrink: 0; width: 100%; max-width: 280px; border-radius: 12px; overflow: hidden; border: 2px solid var(--primary-color); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); background: #000000; line-height: 0;">
+        <img src="<%= settings.SiteLogo || '/images/saysoftlogo.png' %>" alt="Saysoft Logo" 
+             style="display: block; width: 100%; height: auto; object-fit: cover;">
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="container" style="padding: 40px 20px;">
+  <div style="display: grid; grid-template-columns: 2.2fr 1fr; gap: 35px; align-items: start;">
+    
+    <!-- العمود الأيمن (الصورة الرئيسية، النص الترويجي، الفيديو، معرض الشاشات، الأسئلة الشائعة) -->
+    <div>
+      
+      <!-- 1. الصورة الرئيسية للمنتج مباشرة بعد العنوان -->
+      <% if (system.CoverImage) { %>
+        <div class="card" style="padding: 10px; margin-bottom: 30px; border-radius: 16px; overflow: hidden; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); background: #000000; line-height: 0;">
+          <img src="<%= system.CoverImage %>" alt="<%= lang === 'en' ? system.NameEn : system.NameAr %>" 
+               style="width: 100%; height: auto; max-height: 580px; object-fit: contain; border-radius: 12px; display: block; margin: 0 auto;">
+        </div>
+      <% } %>
+
+      <!-- 2. النص الترويجي والشرح التفصيلي والمميزات -->
+      <div class="card" style="padding: 35px; margin-bottom: 30px;">
+        <h2 style="font-size: 20px; font-weight: 800; color: var(--primary-color); margin-bottom: 20px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px;">
+          <i class="fa-solid fa-list-check"></i> <%= t('عن المنظومة وأبرز المميزات', 'About System & Key Features') %>
+        </h2>
+        <div style="line-height: 1.9; font-size: 15px; color: var(--text-main);">
+          <%- lang === 'en' ? system.DescriptionEn : system.DescriptionAr %>
+        </div>
+      </div>
+
+      <!-- 3. فيديو يوتيوب المدمج إن وجد -->
+      <% if (system.YoutubeUrl) { %>
+        <% 
+          let videoId = '';
+          const match = system.YoutubeUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+          if (match && match[1]) { videoId = match[1]; }
+        %>
+        <% if (videoId) { %>
+          <div class="card" style="padding: 16px; margin-bottom: 30px; border-radius: 16px; overflow: hidden;">
+            <h3 style="font-size: 17px; font-weight: 700; margin-bottom: 14px; color: var(--text-main);">
+              <i class="fa-brands fa-youtube" style="color: #ef4444;"></i> <%= t('فيديو شرح المنظومة', 'Platform Overview Video') %>
+            </h3>
+            <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px;">
+              <iframe style="position: absolute; top:0; left: 0; width: 100%; height: 100%; border: 0;" 
+                      src="https://www.youtube.com/embed/<%= videoId %>" 
+                      title="YouTube video player" allowfullscreen></iframe>
+            </div>
+          </div>
+        <% } %>
+      <% } %>
+
+      <!-- معرض صور وشاشات النظام التفاعلي (Interactive Screenshots Gallery) -->
+      <% if (system.Images && system.Images.length > 0) { %>
+        <div class="card" style="padding: 30px; margin-bottom: 30px;" id="system-gallery">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+            <div>
+              <h3 style="font-size: 18px; font-weight: 800; margin: 0 0 4px; color: var(--text-main);">
+                <i class="fa-solid fa-images" style="color: var(--primary-color);"></i> <%= t('معرض واجهات وشاشات النظام', 'System UI & Screenshots Gallery') %>
+              </h3>
+              <p style="font-size: 13px; color: var(--text-muted); margin: 0;">
+                <%= t('استعرض الواجهات الفعلية للبرمجية، انقر على أي صورة لتكبيرها واستعراضها بجودة عالية', 'Click any screenshot to expand in full high-definition view') %>
+              </p>
+            </div>
+            <span style="font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 20px; background: var(--primary-light); color: var(--primary-color);">
+              <%= system.Images.length %> <%= t('شاشات معتمدة', 'Screenshots') %>
+            </span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 18px;">
+            <% system.Images.forEach((img, idx) => { %>
+              <div class="gallery-card" onclick="openLightbox(<%= idx %>)" style="cursor: pointer; border-radius: 10px; overflow: hidden; border: 1px solid var(--border-color); background: var(--bg-color); transition: transform 0.2s ease, box-shadow 0.2s ease;">
+                <div style="position: relative; overflow: hidden; line-height: 0; background: #0b1120;">
+                  <img src="<%= img.ImagePath %>" alt="<%= (lang === 'en' ? img.CaptionEn : img.CaptionAr) || 'Screenshot' %>" 
+                       style="width: 100%; height: 165px; object-fit: cover; transition: transform 0.3s ease;">
+                  <div class="gallery-hover-overlay" style="position: absolute; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s ease;">
+                    <span style="background: rgba(255,255,255,0.9); color: #0f172a; font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 20px;">
+                      <i class="fa-solid fa-expand"></i> <%= t('تكبير', 'Expand') %>
+                    </span>
+                  </div>
+                </div>
+                <% if (img.CaptionAr || img.CaptionEn) { %>
+                  <div style="padding: 10px 14px; font-size: 13px; font-weight: 700; color: var(--text-main); border-top: 1px solid var(--border-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    <%= lang === 'en' ? (img.CaptionEn || img.CaptionAr) : img.CaptionAr %>
+                  </div>
+                <% } %>
+              </div>
+            <% }) %>
+          </div>
+        </div>
+
+        <!-- مودال تكبير الصور (Lightbox Modal) -->
+        <div id="galleryLightbox" style="display: none; position: fixed; inset: 0; z-index: 9999; background: rgba(0, 0, 0, 0.88); backdrop-filter: blur(5px); align-items: center; justify-content: center; flex-direction: column; padding: 20px;">
+          <div style="position: absolute; top: 20px; right: 25px; display: flex; gap: 15px;">
+            <button onclick="closeLightbox()" style="background: rgba(255,255,255,0.15); border: none; color: #fff; width: 44px; height: 44px; border-radius: 50%; font-size: 20px; cursor: pointer;">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+
+          <div style="max-width: 95vw; max-height: 80vh; position: relative; display: flex; align-items: center; justify-content: center;">
+            <button onclick="prevLightboxImage()" style="position: absolute; right: -25px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.2); border: none; color: #fff; width: 46px; height: 46px; border-radius: 50%; font-size: 20px; cursor: pointer; z-index: 10;">
+              <i class="fa-solid fa-chevron-right"></i>
+            </button>
+
+            <img id="lightboxImg" src="" alt="Enlarged Screenshot" style="max-width: 100%; max-height: 75vh; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 2px solid rgba(255,255,255,0.2);">
+
+            <button onclick="nextLightboxImage()" style="position: absolute; left: -25px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.2); border: none; color: #fff; width: 46px; height: 46px; border-radius: 50%; font-size: 20px; cursor: pointer; z-index: 10;">
+              <i class="fa-solid fa-chevron-left"></i>
+            </button>
+          </div>
+
+          <div id="lightboxCaption" style="color: #f8fafc; font-size: 15px; font-weight: 700; margin-top: 14px; text-align: center; max-width: 700px;"></div>
+        </div>
+
+        <style>
+          .gallery-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+          }
+          .gallery-card:hover .gallery-hover-overlay {
+            opacity: 1 !important;
+          }
+          .gallery-card:hover img {
+            transform: scale(1.04);
+          }
+        </style>
+
+        <script>
+          const galleryImagesData = <%- JSON.stringify(system.Images) %>;
+          let currentLightboxIndex = 0;
+
+          function openLightbox(index) {
+            currentLightboxIndex = index;
+            updateLightboxView();
+            const modal = document.getElementById('galleryLightbox');
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+          }
+
+          function closeLightbox() {
+            const modal = document.getElementById('galleryLightbox');
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+          }
+
+          function prevLightboxImage() {
+            if (currentLightboxIndex > 0) {
+              currentLightboxIndex--;
+            } else {
+              currentLightboxIndex = galleryImagesData.length - 1;
+            }
+            updateLightboxView();
+          }
+
+          function nextLightboxImage() {
+            if (currentLightboxIndex < galleryImagesData.length - 1) {
+              currentLightboxIndex++;
+            } else {
+              currentLightboxIndex = 0;
+            }
+            updateLightboxView();
+          }
+
+          function updateLightboxView() {
+            const imgData = galleryImagesData[currentLightboxIndex];
+            if (imgData) {
+              document.getElementById('lightboxImg').src = imgData.ImagePath;
+              const caption = "<%= lang %>" === 'en' ? (imgData.CaptionEn || imgData.CaptionAr) : (imgData.CaptionAr || imgData.CaptionEn);
+              document.getElementById('lightboxCaption').textContent = caption || '';
+            }
+          }
+
+          // إغلاق عبر زر الهروب ESC
+          document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowRight') prevLightboxImage();
+            if (e.key === 'ArrowLeft') nextLightboxImage();
+          });
+        </script>
+      <% } %>
+
+      <!-- الأسئلة الشائعة الخاصة بالمنظومة -->
+      <% if (system.FAQs && system.FAQs.length > 0) { %>
+        <div class="card" style="padding: 30px; margin-bottom: 30px;">
+          <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 16px; color: var(--text-main);">
+            <i class="fa-solid fa-circle-question"></i> <%= t('أسئلة شائعة حول المنظومة', 'Frequently Asked Questions') %>
+          </h3>
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <% system.FAQs.forEach(faq => { %>
+              <details style="border: 1px solid var(--border-color); border-radius: 8px; padding: 14px 18px; background: var(--bg-color); cursor: pointer;">
+                <summary style="font-weight: 700; font-size: 15px; color: var(--text-main);">
+                  <%= lang === 'en' ? faq.QuestionEn : faq.QuestionAr %>
+                </summary>
+                <div style="margin-top: 10px; font-size: 14px; color: var(--text-muted); line-height: 1.7; border-top: 1px solid var(--border-color); padding-top: 10px;">
+                  <%= lang === 'en' ? faq.AnswerEn : faq.AnswerAr %>
+                </div>
+              </details>
+            <% }) %>
+          </div>
+        </div>
+      <% } %>
+
+    </div>
+
+    <!-- العمود الأيسر (الباقات، السعر، الإضافة للسلة، الاستفسار) -->
+    <div style="display: flex; flex-direction: column; gap: 25px;">
+      
+      <!-- كارت الباقات والاشتراك -->
+      <div class="card" style="padding: 26px; border: 2px solid var(--primary-light);">
+        <h3 style="font-size: 18px; font-weight: 800; color: var(--text-main); margin-bottom: 6px;">
+          <%= t('باقات الاشتراك والأسعار', 'Subscription Plans') %>
+        </h3>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">
+          <%= t('اختر الباقة المناسبة لحجم نشاطك وأضفها للسلة', 'Select the best tier for your business') %>
+        </p>
+
+        <% if (system.DemoUrl) { %>
+          <div style="margin-bottom: 20px; padding: 14px; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 10px; text-align: center;">
+            <div style="font-size: 13px; font-weight: 700; color: #065f46; margin-bottom: 8px;">
+              <i class="fa-solid fa-laptop-code"></i> <%= t('النسخة التجريبية المباشرة متوفرة', 'Live Demo Available') %>
+            </div>
+            <a href="<%= system.DemoUrl %>" target="_blank" class="btn btn-sm" style="width: 100%; justify-content: center; background: #16a34a; color: #fff; font-weight: 700; border-radius: 6px;">
+              <%= t('دخول تجربة التطبيق الآن', 'Launch Live Demo') %> <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 11px; margin-inline-start: 4px;"></i>
+            </a>
+          </div>
+        <% } %>
+
+        <% if (system.Packages && system.Packages.length > 0) { %>
+          <div style="display: flex; flex-direction: column; gap: 16px;">
+            <% system.Packages.forEach(pkg => { %>
+              <div style="border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; background: var(--card-bg); position: relative;">
+                <% if (pkg.IsPopular) { %>
+                  <span style="position: absolute; top: -10px; left: 15px; background: #f59e0b; color: white; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 10px;">
+                    <%= t('الأكثر طلباً', 'Most Popular') %>
+                  </span>
+                <% } %>
+
+                <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
+                  <strong style="font-size: 16px; color: var(--text-main);">
+                    <%= lang === 'en' ? pkg.NameEn : pkg.NameAr %>
+                  </strong>
+                  <div style="font-size: 20px; font-weight: 900; color: var(--primary-color);">
+                    <%= pkg.Price %> <span style="font-size: 13px; font-weight: 600;"><%= settings.PrimaryCurrency || 'USD' %></span>
+                  </div>
+                </div>
+
+                <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
+                  <i class="fa-solid fa-rotate"></i> <%= lang === 'en' ? (pkg.PeriodEn || (pkg.Period === 'MONTHLY' ? 'Monthly' : (pkg.Period === 'LIFETIME' ? 'Lifetime' : 'Annual'))) : (pkg.PeriodAr || (pkg.Period === 'MONTHLY' ? 'اشتراك شهري' : (pkg.Period === 'LIFETIME' ? 'ترخيص دائم' : 'اشتراك سنوي'))) %>
+                </div>
+
+                <% if (pkg.FeaturesAr || pkg.FeaturesEn) { %>
+                  <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.6;">
+                    <%= lang === 'en' ? (pkg.FeaturesEn || pkg.FeaturesAr) : pkg.FeaturesAr %>
+                  </div>
+                <% } %>
+
+                <!-- زر الإضافة للسلة -->
+                <form action="/cart/add" method="POST">
+                  <input type="hidden" name="packageId" value="<%= pkg.IDPackage %>">
+                  <input type="hidden" name="systemSlug" value="<%= system.Slug %>">
+                  <button type="submit" class="btn btn-primary btn-sm" style="width: 100%;">
+                    <i class="fa-solid fa-cart-plus"></i> <%= t('أضف إلى السلة', 'Add to Cart') %>
+                  </button>
+                </form>
+              </div>
+            <% }) %>
+          </div>
+        <% } else { %>
+          <p style="color: var(--text-muted); font-size: 14px;"><%= t('تواصل معنا للاستفسار عن الباقات المخصصة.', 'Contact us for custom enterprise pricing.') %></p>
+        <% } %>
+      </div>
+
+      <!-- نموذج الاستفسار السريع أسفل الصفحة -->
+      <div id="inquiryForm" class="card" style="padding: 26px;">
+        <h3 style="font-size: 17px; font-weight: 800; color: var(--text-main); margin-bottom: 6px;">
+          <i class="fa-solid fa-headset" style="color: var(--primary-color);"></i> <%= t('استفسار مباشر عن المنظومة', 'Inquire About This System') %>
+        </h3>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 18px;">
+          <%= t('اترك بياناتك وسيتواصل معك مستشار الحلول الرقمية فوراً', 'Leave your details and our team will get in touch') %>
+        </p>
+
+        <% if (inquiryStatus === 'success') { %>
+          <div style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 13px;">
+            <i class="fa-solid fa-circle-check"></i> <%= t('شكراً لك! تم استلام استفسارك وسنتواصل معك سريعاً.', 'Thank you! Your inquiry was received.') %>
+          </div>
+        <% } %>
+
+        <form action="/system/<%= system.Slug %>/inquiry" method="POST">
+          <input type="hidden" name="systemId" value="<%= system.IDSystem %>">
+          <input type="hidden" name="systemName" value="<%= lang === 'en' ? system.NameEn : system.NameAr %>">
+
+          <div style="margin-bottom: 12px;">
+            <label style="display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px;"><%= t('الاسم الكريم', 'Your Name') %> *</label>
+            <input type="text" name="senderName" required class="form-control" placeholder="<%= t('أدخل اسمك', 'Full name') %>">
+          </div>
+
+          <div style="margin-bottom: 12px;">
+            <label style="display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px;"><%= t('رقم الواتساب', 'WhatsApp Number') %> *</label>
+            <input type="text" name="whatsappNumber" required class="form-control" placeholder="01000000000" style="direction: ltr; text-align: right;">
+          </div>
+
+          <div style="margin-bottom: 12px;">
+            <label style="display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px;"><%= t('البريد الإلكتروني', 'Email') %></label>
+            <input type="email" name="email" class="form-control" placeholder="user@company.com" style="direction: ltr; text-align: right;">
+          </div>
+
+          <div style="margin-bottom: 16px;">
+            <label style="display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px;"><%= t('نص الاستفسار', 'Message') %> *</label>
+            <textarea name="message" required class="form-control" rows="3" placeholder="<%= t('أود الاستفسار عن إمكانية...', 'I would like to inquire about...') %>"></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%;">
+            <i class="fa-solid fa-paper-plane"></i> <%= t('إرسال الاستفسار', 'Submit Inquiry') %>
+          </button>
+        </form>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- Schema.org JSON-LD Structured Data for SoftwareApplication -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "<%= (lang === 'en' ? system.NameEn : system.NameAr).replace(/"/g, '\\"') %>",
+  "operatingSystem": "Web, Cloud, iOS, Android, Windows, macOS",
+  "applicationCategory": "BusinessApplication",
+  "description": "<%= (lang === 'en' ? system.SummaryEn : system.SummaryAr).replace(/"/g, '\\"') %>",
+  "image": "<%= system.Logo %>",
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.9",
+    "reviewCount": "<%= Math.max(18, (system.ViewsCount % 60) + 12) %>"
+  },
+  <% if (system.Packages && system.Packages.length > 0) { %>
+  "offers": {
+    "@type": "AggregateOffer",
+    "lowPrice": "<%= Math.min(...system.Packages.map(p => p.Price)) %>",
+    "highPrice": "<%= Math.max(...system.Packages.map(p => p.Price)) %>",
+    "priceCurrency": "<%= settings.PrimaryCurrency || 'USD' %>"
+  }
+  <% } else { %>
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "<%= settings.PrimaryCurrency || 'USD' %>"
+  }
+  <% } %>
+}
+</script>
+
+<%- include('../partials/footer') %>

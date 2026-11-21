@@ -1,0 +1,544 @@
+<%- include('../partials/header') %>
+
+<style>
+  /* تنسيقات التصميم أحادي العمود لصفحة الخدمات (Single Column Layout) */
+  .services-single-col-container {
+    max-width: 920px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .service-card-single {
+    padding: 26px;
+    border-radius: 14px;
+    background: var(--card-bg, #ffffff);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .service-card-single:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px -3px rgba(0, 0, 0, 0.08);
+  }
+
+  .service-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 14px;
+  }
+  .service-title-group {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .service-icon-box {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .service-title-text {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text-main);
+    margin: 0;
+    line-height: 1.35;
+  }
+
+  .service-features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 10px;
+    padding-top: 10px;
+    font-size: 13px;
+    color: var(--text-main);
+  }
+  .service-feature-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+  }
+
+  /* مكون الاتصال والتواصل أسفل الصفحة */
+  .bottom-contact-section {
+    margin-top: 55px;
+    padding-top: 45px;
+    border-top: 2px dashed var(--border-color);
+  }
+  .contact-channels-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .contact-channel-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: var(--card-bg, #ffffff);
+    border: 1px solid var(--border-color);
+    text-decoration: none;
+    color: var(--text-main);
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .contact-channel-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  }
+
+  /* قواعد شاشات المحمول */
+  #pageViewportWrapper.mode-mobile .service-card-top,
+  @media (max-width: 640px) {
+    .service-card-top {
+      flex-direction: column !important;
+      align-items: stretch !important;
+      gap: 12px !important;
+    }
+    .service-order-btn-action {
+      width: 100% !important;
+      justify-content: center !important;
+      text-align: center !important;
+      padding: 10px !important;
+    }
+    .service-features-grid {
+      grid-template-columns: 1fr !important;
+      gap: 8px !important;
+    }
+    .contact-channels-grid {
+      grid-template-columns: 1fr !important;
+      gap: 10px !important;
+    }
+  }
+</style>
+
+<!-- 1. هيدر صفحة خدماتنا: العنوان والوصف والشعار في توازن انسيابي -->
+<section style="background: linear-gradient(180deg, var(--primary-light) 0%, var(--bg-color) 100%); padding: 45px 0 35px; border-bottom: 1px solid var(--border-color);">
+  <div class="container">
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 30px; flex-wrap: wrap;">
+      
+      <!-- العنوان والوصف -->
+      <div style="flex: 1; min-width: 290px;">
+        <h1 style="font-size: 24px; font-weight: 800; margin-bottom: 12px; color: var(--text-main); line-height: 1.3;">
+          <%= t('خدماتنا الرقمية والبرمجية المتطورة', 'Our Advanced Digital & Software Services') %>
+        </h1>
+        <p style="color: var(--text-muted); font-size: 15px; line-height: 1.7; max-width: 680px; margin: 0;">
+          <%= t(
+            'نقدم باقة شاملة من الخدمات التقنية المتخصصة لتنمية أعمالك وتمكين تحولك الرقمي: من حجز النطاقات وتصميم المواقع وتطبيقات الويب، إلى هندسة قواعد البيانات وتطوير البرمجيات المخصصة وتقديم الاستشارات الفنية.',
+            'We provide a comprehensive suite of specialized technical services to grow your business: from domain registration and web design to cloud web apps, database engineering, custom software development, and technical consulting.'
+          ) %>
+        </p>
+      </div>
+
+      <!-- الشعار على اليسار -->
+      <div style="flex-shrink: 0; width: 100%; max-width: 280px; border-radius: 12px; overflow: hidden; border: 2px solid var(--primary-color); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); background: #000000; line-height: 0;">
+        <img src="<%= settings.SiteLogo || '/images/saysoftlogo.png' %>" alt="Saysoft Logo" 
+             style="display: block; width: 100%; height: auto; object-fit: cover;">
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- 2. محتوى الصفحة الرئيسي: عمود واحد مركزي متسلسل لبطاقات الخدمات -->
+<section style="padding: 45px 0 65px;">
+  <div class="container">
+    <div class="services-single-col-container">
+      
+      <!-- ترويسة قائمة الخدمات -->
+      <div style="text-align: center; margin-bottom: 35px;">
+        <h2 style="font-size: 21px; font-weight: 800; color: var(--text-main); margin-bottom: 8px;">
+          <%= t('مجالات التميز البرمجي والخدمات المتكاملة', 'Our Core Areas of Technical Excellence') %>
+        </h2>
+        <p style="color: var(--text-muted); font-size: 14.5px; margin: 0; max-width: 650px; margin: 0 auto;">
+          <%= t('حلول رقمية مصممة وفق أحدث المعايير البرمجية العالمية لتلبي طموحات رواد الأعمال والشركات والمؤسسات', 'Engineered to highest international software standards to fulfill enterprise and startup ambitions') %>
+        </p>
+      </div>
+
+      <!-- قائمة بطاقات الخدمات السبع (عمود واحد متسلسل) -->
+      <div style="display: flex; flex-direction: column; gap: 24px;">
+        
+        <!-- 1. حجز وإدارة الدومين -->
+        <div class="service-card-single" style="border-top: 4px solid #0284c7;">
+          <div class="service-card-top">
+            <div class="service-title-group">
+              <div class="service-icon-box" style="background: #e0f2fe; color: #0284c7;">
+                <i class="fa-solid fa-globe"></i>
+              </div>
+              <h3 class="service-title-text">
+                <%= t('1. حجز وإدارة النطاقات (الدومين)', '1. Domain Registration & Management') %>
+              </h3>
+            </div>
+            <button type="button" onclick="selectService('حجز وإدارة النطاقات')" class="btn btn-outline btn-sm service-order-btn-action" style="color: #0284c7; border-color: #7dd3fc; font-weight: 700;">
+              <i class="fa-solid fa-arrow-down"></i> <%= t('طلب حجز دومين', 'Order Domain') %>
+            </button>
+          </div>
+          <p style="color: var(--text-muted); font-size: 14.5px; line-height: 1.7; margin: 0;">
+            <%= t('تسجيل وإدارة أسماء النطاقات العالمية والمحلية بهوية رقمية فريدة ومحمية، مع ربط آمن وسريع بكافة الخوادم والخدمات السحابية.', 'Register and manage international and local domain names with full protection and fast DNS routing.') %>
+          </p>
+          <div class="service-features-grid">
+            <span class="service-feature-pill"><i class="fa-solid fa-circle-check" style="color: #0284c7;"></i> <%= t('جميع الامتدادات (.com, .net, .tech, .org)', 'All TLDs') %></span>
+            <span class="service-feature-pill"><i class="fa-solid fa-circle-check" style="color: #0284c7;"></i> <%= t('إدارة DNS وحماية WHOIS', 'DNS & WHOIS Privacy') %></span>
+            <span class="service-feature-pill"><i class="fa-solid fa-circle-check" style="color: #0284c7;"></i> <%= t('تجديد تلقائي وحماية النقل', 'Auto-renewal & Transfer Lock') %></span>
+          </div>
+        </div>
+
+        <!-- 2. تصميم وبرمجة المواقع الإلكترونية -->
+        <div class="service-card-single" style="border-top: 4px solid #10b981;">
+          <div class="service-card-top">
+            <div class="service-title-group">
+              <div class="service-icon-box" style="background: #d1fae5; color: #059669;">
+                <i class="fa-solid fa-laptop-code"></i>
+              </div>
+              <h3 class="service-title-text">
+                <%= t('2. تصميم وبرمجة المواقع الإلكترونية (Website Design & Development)', '2. Website Design & Development') %>
+              </h3>
+            </div>
+            <button type="button" onclick="selectService('تصميم وبرمجة المواقع الإلكترونية')" class="btn btn-outline btn-sm service-order-btn-action" style="color: #059669; border-color: #6ee7b7; font-weight: 700;">
+              <i class="fa-solid fa-arrow-down"></i> <%= t('طلب تصميم موقع إلكتروني', 'Order Website Design') %>
+            </button>
+          </div>
+          <p style="color: var(--text-muted); font-size: 14.5px; line-height: 1.7; margin: 0;">
+            <%= t('تصميم وبرمجة مواقع إلكترونية عصرية متكاملة (مواقع شركات تعريفية، منصات رقمية، ومتاجر إلكترونية تفاعلية) تجمع بين الجاذبية البصرية الفائقة وسرعة الاستجابة وأعلى معايير تجربة المستخدم (UI/UX) والتوافق الكامل مع محركات البحث (SEO).', 'Professional website design & engineering for corporate portfolios, dynamic portals, and interactive e-commerce stores, combining supreme visual aesthetics, high performance, mobile responsiveness, and SEO best practices.') %>
+          </p>
+          <div class="service-features-grid">
+            <span class="service-feature-pill"><i class="fa-solid fa-circle-check" style="color: #059669;"></i> <%= t('مواقع شركات ومتاجر إلكترونية متكاملة', 'Corporate Websites & E-Commerce') %></span>
+            <span class="service-feature-pill"><i class="fa-solid fa-circle-check" style="color: #059669;"></i> <%= t('متجاوب 100% مع الهواتف والأجهزة الذكية', '100% Mobile Responsive') %></span>
+            <span class="service-feature-pill"><i class="fa-solid fa-circle-check" style="color: #059669;"></i> <%= t('تهيئة معيارية لمحركات البحث (SEO) وسرعة فائقة', 'SEO Optimized & High Speed') %></span>
+            <span class="service-feature-pill"><i class="fa-solid fa-circle-check" style="color: #059669;"></i> <%= t('لوحة تحكم ديناميكية سهلة لإدارة المحتوى', 'Dynamic Content Management') %></span>
+          </div>
+        </div>
+
+        <!-- 3. إنشاء تطبيقات الويب السحابية -->
+        <div class="service-card-single" style="border-top: 4px solid #6366f1;">
+          <div class="service-card-top">
+            <div class="service-title-group">
+              <div class="service-icon-box" style="background: #e0e7ff; color: #4f46e5;">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+              </div>
+              <h3 class="service-title-text">
+                <%= t('3. إنشاء تطبيقات الويب السحابية (Web Apps)', '3. Cloud Web Applications') %>
+              </h3>
+            </div>
+            <button type="button" onclick="selectService('تطوير تطبيقات الويب السحابية')" class="btn btn-outline btn-sm service-order-btn-action" style="color: #4f46e5; border-color: #a5b4fc; font-weight: 700;">
+              <i class="fa-solid fa-arrow-down"></i> <%= t('طلب تطبيق ويب', 'Order Web App') %>
+            </button>
+          </div>
+          <p style="color: var(--text-muted); font-size: 14.5px; line-height: 1.7; margin: 0;">
+            <%= t('بناء منصات وتطبيقات SaaS سحابية متقدمة ذات بنية قوية قادرة على خدمة آلاف المستخدمين بكفاءة وأمان وسرعة فائقة.', 'Developing robust enterprise SaaS cloud web apps engineered to handle heavy traffic with supreme security.') %>
+          </p>
+          <div class="service-features-grid">
+            <span class="service-feature-pill"><i class="fa-solid fa-circle-check" style="color: #4f46e5;"></i> <%= t('صلاحيات دقيقة متعددة المستويات (RBAC)', 'RBAC Security') %></span>
+            <span class="service-feature-pill"><i class="fa-solid fa-circle-check" style="color: #4f46e5;"></i> <%= t('ربط بوابات الدفع والواتساب', 'Payments & WhatsApp API') %></span>
+            <span class="service-feature-pill"><i class="fa-solid fa-circle-check" style="color: #4f46e5;"></i> <%= t('أداء فائق وقابلية للتوسع', 'High Performance') %></span>
+          </div>
+        </div>
+
+        <!-- 4. تخصيص التطبيقات والأنظمة -->
+        <div class="service-card-single" style="border-top: 4px solid #f59e0b;">
+          <div class="service-card-top">
+            <div class="service-title-group">
+              <div class="service-icon-box" style="background: #fef3c7; color: #d97706;">
+                <i class="fa-solid fa-sliders"></i>
+              </div>
+              <h3 class="service-title-text">
+                <%= t('4. تخصيص التطبيقات والأنظمة البرمجية', '4. System & App Customization') %>
+              </h3>
+            </div>
+            <button type="button" onclick="selectService('تخصيص التطبيقات والأنظمة')" class="btn btn-outline btn-sm service-order-btn-action" style="color: #d97706; border-color: #fde68a; font-weight: 700;">
+              <i class="fa-solid fa-arrow-down"></i> <%= t('طلب تخصيص نظام', 'Order Customization') %>
+            </button>
+          </div>
+          <p style="color: var(--text-muted); font-size: 14.5px; line-height: 1.7; margin: 0;">
+            <%= t('تكييف وتعديل أي من منظومات سايسوفت أو أنظمتكم الحالية لتلائم بيئة عملك بدقة، مع بناء وحدات وميزات خاصة حسب احتياجك.', 'Tailoring Saysoft platforms or your existing systems to align 100% with your workflows and custom modules.') %>
+          </p>
+          <div class="service-features-grid">
+            <span class="service-feature-pill"><i class="fa-solid fa-circle-check" style="color: #d97706;"></i> <%= t('تخصيص دورات الموافقات والعمل', 'Custom Workflows') %></span>
+            <span class="service-feature-pill"><i class="fa-solid fa-circle-check" style="color: #d97706;"></i> <%= t('لوحات معلومات وتقارير خاصة', 'Custom Dashboards') %></span>
+            <span class="service-feature-pill"><i class="fa-solid fa-circle-check" style="color: #d97706;"></i> <%= t('التكامل مع البرامج المحاسبية', 'ERP Integrations') %></span>
+          </div>
+        </div>
+
+        <!-- 5. تصميم وهندسة قواعد البيانات -->
+        <div class="service-card-single" style="border-top: 4px solid #8b5cf6;">
+          <div class="service-card-top">
+            <div class="service-title-group">
+              <div class="service-icon-box" style="background: #ede9fe; color: #7c3aed;">
+                <i class="fa-solid fa-database"></i>
+              </div>
+              <h3 class="service-title-text">
+                <%= t('5. تصميم وهندسة قواعد البيانات', '5. Database Design & Optimization') %>
+              </h3>
+            </div>
+            <button type="button" onclick="selectService('تصميم وهندسة قواعد البيانات')" class="btn btn-outline btn-sm service-order-btn-action" style="color: #7c3aed; border-color: #c4b5fd; font-weight: 700;">
+              <i class="fa-solid fa-arrow-down"></i> <%= t('طلب استشارة قواعد بيانات', 'Order DB Service') %>
+            </button>
+          </div>
+          <p style="color: var(--text-muted); font-size: 14.5px; line-height: 1.7; margin: 0;">
+            <%= t('هندسة وبناء قواعد بيانات متينة عالية الأداء والأمان (SQL & NoSQL)، مع تحسين الاستعلامات والنسخ الاحتياطي التلقائي.', 'Engineering secure, high-performance database architectures with query indexing and automated disaster recovery.') %>
+          </p>
+          <div class="service-features-grid">
+            <span class="service-feature-pill"><i class="fa-solid fa-circle-check" style="color: #7c3aed;"></i> <%= t('هيكلة معيارية متطورة (Normalization)', 'Normalized Schema') %></span>
+            <span class="service-feature-pill"><i class="fa-solid fa-circle-check" style="color: #7c3aed;"></i> <%= t('فهرسة وتسريع الاستعلامات الضخمة', 'Query Optimization') %></span>
+            <span class="service-feature-pill"><i class="fa-solid fa-circle-check" style="color: #7c3aed;"></i> <%= t('خطط النسخ والتعافي من الكوارث', 'Backup & Disaster Recovery') %></span>
+          </div>
+        </div>
+
+        <!-- 6. تصميم التطبيقات حسب طلب الزبون -->
+        <div class="service-card-single" style="border-top: 4px solid #ec4899;">
+          <div class="service-card-top">
+            <div class="service-title-group">
+              <div class="service-icon-box" style="background: #fce7f3; color: #db2777;">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+              </div>
+              <h3 class="service-title-text">
+                <%= t('6. تصميم البرمجيات حسب طلب الزبون', '6. Custom On-Demand Software') %>
+              </h3>
+            </div>
+            <button type="button" onclick="selectService('تطوير برمجيات مخصصة حسب الطلب')" class="btn btn-outline btn-sm service-order-btn-action" style="color: #db2777; border-color: #f9a8d4; font-weight: 700;">
+              <i class="fa-solid fa-arrow-down"></i> <%= t('طلب برمجية خاصة', 'Order Bespoke Software') %>
+            </button>
+          </div>
+          <p style="color: var(--text-muted); font-size: 14.5px; line-height: 1.7; margin: 0;">
+            <%= t('تحويل أفكارك ونماذج عملك الفريدة إلى برمجية متكاملة مصممة ومبنية خصيصاً من الصفر مع ملكية كاملة للكود وحرية التوسع.', 'Translating your unique business workflows into bespoke software built from scratch with 100% full code ownership.') %>
+          </p>
+          <div class="service-features-grid">
+            <span class="service-feature-pill"><i class="fa-solid fa-circle-check" style="color: #db2777;"></i> <%= t('دراسة وتحليل فني للمشروع', 'Requirements Scoping') %></span>
+            <span class="service-feature-pill"><i class="fa-solid fa-circle-check" style="color: #db2777;"></i> <%= t('ملكية كاملة للكود وقاعدة البيانات', 'Full Code Ownership') %></span>
+            <span class="service-feature-pill"><i class="fa-solid fa-circle-check" style="color: #db2777;"></i> <%= t('ضمان تشغيلي ودعم فني مستمر', 'Warranty & SLA') %></span>
+          </div>
+        </div>
+
+        <!-- 7. تقديم الاستشارات التقنية -->
+        <div class="service-card-single" style="border-top: 4px solid #14b8a6;">
+          <div class="service-card-top">
+            <div class="service-title-group">
+              <div class="service-icon-box" style="background: #ccfbf1; color: #0d9488;">
+                <i class="fa-solid fa-comments"></i>
+              </div>
+              <h3 class="service-title-text">
+                <%= t('7. الاستشارات التقنية والتحول الرقمي', '7. Technical Consulting & Transformation') %>
+              </h3>
+            </div>
+            <button type="button" onclick="selectService('الاستشارات التقنية والتحول الرقمي')" class="btn btn-outline btn-sm service-order-btn-action" style="color: #0d9488; border-color: #5eead4; font-weight: 700;">
+              <i class="fa-solid fa-arrow-down"></i> <%= t('طلب استشارة فنية', 'Request Consultation') %>
+            </button>
+          </div>
+          <p style="color: var(--text-muted); font-size: 14.5px; line-height: 1.7; margin: 0;">
+            <%= t('استشارات هندسية واستراتيجية لمساعدة مؤسستك في اتخاذ القرارات البرمجية الصحيحة، واختيار البنى السحابية الأكثر جدوى وتوفيراً.', 'Strategic software and architectural advisory to help your organization make smart tech decisions with optimized ROI.') %>
+          </p>
+          <div class="service-features-grid">
+            <span class="service-feature-pill"><i class="fa-solid fa-circle-check" style="color: #0d9488;"></i> <%= t('تدقيق وتأمين البنية القائمة', 'Security & Code Audits') %></span>
+            <span class="service-feature-pill"><i class="fa-solid fa-circle-check" style="color: #0d9488;"></i> <%= t('خارطة طريق التحول الرقمي', 'Digital Transformation Roadmap') %></span>
+            <span class="service-feature-pill"><i class="fa-solid fa-circle-check" style="color: #0d9488;"></i> <%= t('جلسات مباشرة مع مهندسينا', 'Expert Advisory Sessions') %></span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- =========================================================================
+           3. مكون الاتصال ونموذج طلب الخدمة المتكامل في أسفل الصفحة
+           ========================================================================= -->
+      <div class="bottom-contact-section" id="service-contact-section">
+        
+        <div style="text-align: center; margin-bottom: 28px;">
+          <h2 style="font-size: 21px; font-weight: 800; color: var(--text-main); margin-bottom: 6px; display: flex; align-items: center; justify-content: center; gap: 10px;">
+            <i class="fa-solid fa-headset" style="color: var(--primary-color);"></i>
+            <%= t('تواصل معنا واطلب خدمتك الرقمية', 'Contact Us & Request Your Service') %>
+          </h2>
+          <p style="color: var(--text-muted); font-size: 14.5px; margin: 0;">
+            <%= t('فريقنا الهندسي المتخصص مستعد لمناقشة متطلبات مشروعك وتقديم العرض الفني والمالي الأنسب', 'Our specialized engineering team is ready to analyze your requirements and provide tailored technical proposals') %>
+          </p>
+        </div>
+
+        <!-- قنوات التواصل المباشر السريعة -->
+        <div class="contact-channels-grid">
+          <!-- واتساب -->
+          <a href="https://wa.me/<%= (settings.WhatsappNumber || '').replace(/\+/g, '') %>?text=<%= encodeURIComponent(t('مرحباً سايسوفت، أود الاستفسار عن خدماتكم الرقمية والبرمجية.', 'Hello Saysoft, I would like to inquire about your software and web services.')) %>" 
+             target="_blank" class="contact-channel-card">
+            <div style="width: 42px; height: 42px; border-radius: 10px; background: #dcfce7; color: #16a34a; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">
+              <i class="fa-brands fa-whatsapp"></i>
+            </div>
+            <div style="flex: 1; min-width: 0;">
+              <span style="font-size: 11.5px; color: var(--text-muted); display: block;"><%= t('محادثة فورية عبر واتساب', 'Direct WhatsApp') %></span>
+              <strong style="font-size: 13.5px; color: #16a34a; direction: ltr; display: inline-block;"><%= settings.WhatsappNumber || '+20 100 000 0000' %></strong>
+            </div>
+          </a>
+
+          <!-- اتصال هاتفي -->
+          <a href="tel:<%= settings.ContactPhone || '+20 100 000 0000' %>" class="contact-channel-card">
+            <div style="width: 42px; height: 42px; border-radius: 10px; background: #fef3c7; color: #d97706; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;">
+              <i class="fa-solid fa-phone"></i>
+            </div>
+            <div style="flex: 1; min-width: 0;">
+              <span style="font-size: 11.5px; color: var(--text-muted); display: block;"><%= t('الاتصال الهاتفي المباشر', 'Phone Call') %></span>
+              <strong style="font-size: 13.5px; color: var(--text-main); direction: ltr; display: inline-block;"><%= settings.ContactPhone || '+20 100 000 0000' %></strong>
+            </div>
+          </a>
+
+          <!-- البريد الإلكتروني -->
+          <a href="mailto:<%= settings.ContactEmail || 'info@saysoft.tech' %>" class="contact-channel-card">
+            <div style="width: 42px; height: 42px; border-radius: 10px; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;">
+              <i class="fa-solid fa-envelope"></i>
+            </div>
+            <div style="flex: 1; min-width: 0;">
+              <span style="font-size: 11.5px; color: var(--text-muted); display: block;"><%= t('البريد الإلكتروني الرسمي', 'Official Email') %></span>
+              <strong style="font-size: 13px; color: var(--text-main); word-break: break-all;"><%= settings.ContactEmail || 'info@saysoft.tech' %></strong>
+            </div>
+          </a>
+        </div>
+
+        <!-- بطاقة نموذج طلب الخدمة والاستفسار الممتد -->
+        <div class="card" id="service-form" style="padding: 32px 28px; box-shadow: var(--shadow-md); border-top: 4px solid var(--primary-color); border-radius: 14px;">
+          
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 18px; border-bottom: 1px solid var(--border-color); padding-bottom: 14px;">
+            <div style="width: 42px; height: 42px; border-radius: 10px; background: var(--primary-light); color: var(--primary-color); display: flex; align-items: center; justify-content: center; font-size: 20px;">
+              <i class="fa-solid fa-paper-plane"></i>
+            </div>
+            <div>
+              <h3 style="font-size: 18px; font-weight: 800; color: var(--text-main); margin: 0 0 2px 0;">
+                <%= t('نموذج طلب الخدمة أو الاستشارة الهندسية', 'Service & Technical Advisory Request Form') %>
+              </h3>
+              <span style="font-size: 12.5px; color: var(--text-muted);"><%= t('يرجى ملء النموذج أدناه وسيقوم مهندسونا بالتواصل معك مباشرة', 'Fill the form below and our engineers will get in touch directly') %></span>
+            </div>
+          </div>
+
+          <!-- رسائل التنبيه -->
+          <% if (status === 'success') { %>
+            <div style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; padding: 14px 16px; border-radius: 8px; margin-bottom: 18px; font-size: 13.5px; font-weight: 600;">
+              <i class="fa-solid fa-circle-check"></i> <%= t('تم استلام طلبك بنجاح! سيتواصل معك فريق سايسوفت قريباً جداً.', 'Your request was received successfully! The Saysoft team will contact you shortly.') %>
+            </div>
+          <% } else if (status === 'missing') { %>
+            <div style="background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 14px 16px; border-radius: 8px; margin-bottom: 18px; font-size: 13.5px; font-weight: 600;">
+              <i class="fa-solid fa-circle-exclamation"></i> <%= t('يرجى ملء الاسم، رقم الواتساب، وتفاصيل الطلب لاستكمال الإرسال.', 'Please fill your name, WhatsApp number, and project details.') %>
+            </div>
+          <% } %>
+
+          <form action="/services" method="POST">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 16px;">
+              
+              <!-- الاسم -->
+              <div>
+                <label style="display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px; color: var(--text-main);">
+                  <%= t('الاسم الكريم / اسم المؤسسة', 'Full Name / Company Name') %> <span style="color: #ef4444;">*</span>
+                </label>
+                <input type="text" name="senderName" required class="form-control" placeholder="<%= t('أدخل اسمك أو اسم شركتك', 'Your name or organization') %>" style="height: 42px; font-size: 13.5px;">
+              </div>
+
+              <!-- الواتساب -->
+              <div>
+                <label style="display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px; color: var(--text-main);">
+                  <%= t('رقم الواتساب / الهاتف للتواصل', 'WhatsApp / Phone Number') %> <span style="color: #ef4444;">*</span>
+                </label>
+                <input type="text" name="whatsappNumber" required class="form-control" placeholder="01000000000 / +966..." style="direction: ltr; text-align: right; height: 42px; font-size: 13.5px;">
+              </div>
+
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 16px;">
+              
+              <!-- نوع الخدمة -->
+              <div>
+                <label style="display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px; color: var(--text-main);">
+                  <%= t('نوع الخدمة المطلوبة', 'Desired Service') %> <span style="color: #ef4444;">*</span>
+                </label>
+                <select name="serviceType" id="serviceTypeSelect" class="form-control" required style="font-weight: 600; height: 42px; font-size: 13.5px;">
+                  <option value=""><%= t('-- اختر نوع الخدمة --', '-- Select Service --') %></option>
+                  <option value="حجز وإدارة النطاقات"><%= t('1. حجز وإدارة النطاقات (الدومين)', '1. Domain Registration') %></option>
+                  <option value="تصميم وبرمجة المواقع الإلكترونية"><%= t('2. تصميم وبرمجة المواقع الإلكترونية', '2. Website Design & Development') %></option>
+                  <option value="تطوير تطبيقات الويب السحابية"><%= t('3. تطبيقات الويب السحابية', '3. Web Apps') %></option>
+                  <option value="تخصيص التطبيقات والأنظمة"><%= t('4. تخصيص الأنظمة والبرمجيات', '4. Customization') %></option>
+                  <option value="تصميم وهندسة قواعد البيانات"><%= t('5. تصميم قواعد البيانات', '5. Database Design') %></option>
+                  <option value="تطوير برمجيات مخصصة حسب الطلب"><%= t('6. برمجيات خاصة حسب الطلب', '6. Custom Software') %></option>
+                  <option value="الاستشارات التقنية والتحول الرقمي"><%= t('7. الاستشارات التقنية والتحول الرقمي', '7. Consulting') %></option>
+                  <option value="مشروع متكامل / خدمات متعددة"><%= t('مشروع متكامل / خدمات متعددة', 'Integrated Project') %></option>
+                </select>
+              </div>
+
+              <!-- البريد الإلكتروني -->
+              <div>
+                <label style="display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px; color: var(--text-main);">
+                  <%= t('البريد الإلكتروني (اختياري)', 'Email (Optional)') %>
+                </label>
+                <input type="email" name="email" class="form-control" placeholder="user@company.com" style="direction: ltr; text-align: right; height: 42px; font-size: 13.5px;">
+              </div>
+
+            </div>
+
+            <!-- تفاصيل الطلب -->
+            <div style="margin-bottom: 18px;">
+              <label style="display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px; color: var(--text-main);">
+                <%= t('تفاصيل الطلب أو المشروع', 'Project Details & Scope') %> <span style="color: #ef4444;">*</span>
+              </label>
+              <textarea name="message" id="serviceMessageArea" required class="form-control" rows="4" placeholder="<%= t('اكتب نبذة عن فكرة مشروعك، متطلباتك التقنية، أو استفسارك...', 'Describe your project or inquiry...') %>" style="font-size: 13.5px;"></textarea>
+            </div>
+
+            <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+              <button type="submit" class="btn btn-primary" style="flex: 1; min-width: 200px; justify-content: center; padding: 12px; font-size: 15px; font-weight: 700;">
+                <i class="fa-solid fa-paper-plane"></i> <%= t('إرسال طلب الخدمة الآن', 'Submit Request Now') %>
+              </button>
+
+              <% if (settings.WhatsappNumber) { %>
+                <a href="https://wa.me/<%= settings.WhatsappNumber.replace(/\+/g, '') %>?text=<%= encodeURIComponent(t('مرحباً سايسوفت، أود الاستفسار عن خدماتكم الرقمية والبرمجية.', 'Hello Saysoft, I would like to inquire about your software and web services.')) %>" 
+                   target="_blank" class="btn btn-outline" style="color: #16a34a; border-color: #86efac; font-weight: 700; padding: 12px 20px;">
+                  <i class="fa-brands fa-whatsapp"></i> <%= t('واتساب فوري', 'Direct WhatsApp') %>
+                </a>
+              <% } %>
+            </div>
+
+          </form>
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+  function selectService(serviceName) {
+    const select = document.getElementById('serviceTypeSelect');
+    const contactSection = document.getElementById('service-contact-section');
+    const formBox = document.getElementById('service-form');
+    const messageArea = document.getElementById('serviceMessageArea');
+
+    if (select) {
+      for (let i = 0; i < select.options.length; i++) {
+        if (select.options[i].value === serviceName) {
+          select.selectedIndex = i;
+          break;
+        }
+      }
+    }
+    if (contactSection) {
+      contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    if (formBox) {
+      formBox.style.transition = 'box-shadow 0.3s ease, border-color 0.3s ease';
+      formBox.style.boxShadow = '0 0 0 4px var(--primary-color)';
+      setTimeout(() => {
+        formBox.style.boxShadow = 'var(--shadow-md)';
+      }, 1500);
+    }
+    if (messageArea) {
+      setTimeout(() => { messageArea.focus(); }, 400);
+    }
+  }
+</script>
+
+<%- include('../partials/footer') %>

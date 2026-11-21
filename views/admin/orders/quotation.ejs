@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>عرض سعر رسمي - <%= order.OrderNumber %> - سايسوفت</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: #f1f5f9;
+      color: #0f172a;
+      line-height: 1.6;
+      padding: 30px;
+    }
+    .quotation-card {
+      background: #ffffff;
+      max-width: 850px;
+      margin: 0 auto;
+      padding: 45px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    .quotation-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #0284c7;
+      padding-bottom: 25px;
+      margin-bottom: 30px;
+    }
+    .header-logo img {
+      height: 55px;
+      object-fit: contain;
+    }
+    .quotation-title-box {
+      text-align: left;
+    }
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin-bottom: 35px;
+      background: #f8fafc;
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+    }
+    .quotation-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 35px;
+    }
+    .quotation-table th {
+      background: #0f172a;
+      color: #ffffff;
+      padding: 12px 14px;
+      font-size: 14px;
+      text-align: right;
+    }
+    .quotation-table td {
+      padding: 14px;
+      border-bottom: 1px solid #e2e8f0;
+      font-size: 14px;
+    }
+    .quotation-table tfoot td {
+      font-size: 16px;
+      font-weight: 800;
+      padding: 16px 14px;
+      background: #f8fafc;
+    }
+    .terms-box {
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 18px;
+      margin-bottom: 35px;
+      background: #fafafa;
+      font-size: 13px;
+      color: #475569;
+    }
+    .quotation-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding-top: 25px;
+      border-top: 1px solid #e2e8f0;
+    }
+    .actions-bar {
+      max-width: 850px;
+      margin: 0 auto 20px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+    .btn-print {
+      background: #0284c7;
+      color: #fff;
+      padding: 10px 22px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-family: inherit;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    @media print {
+      body {
+        background: #fff;
+        padding: 0;
+      }
+      .actions-bar {
+        display: none !important;
+      }
+      .quotation-card {
+        box-shadow: none;
+        padding: 20px;
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- شريط الإجراءات (لا يظهر في الطباعة) -->
+  <div class="actions-bar">
+    <button class="btn-print" onclick="window.print()">
+      <i class="fa-solid fa-print"></i> طباعة / حفظ كـ PDF
+    </button>
+  </div>
+
+  <div class="quotation-card">
+    
+    <!-- الترويسة الرسمية -->
+    <div class="quotation-header">
+      <div class="header-logo">
+        <% if (settings.SiteLogo) { %>
+          <img src="<%= settings.SiteLogo %>" alt="Saysoft Logo">
+        <% } %>
+        <div style="font-weight: 900; font-size: 20px; color: #0284c7; margin-top: 6px;">
+          <%= settings.SiteNameAr || 'سايسوفت للحلول الرقمية وتطبيقات السحابية' %>
+        </div>
+        <div style="font-size: 12px; color: #64748b;">
+          <%= settings.QuotationHeader || 'حلول الأعمال السحابية وتطبيقات إدارة المنشآت SaaS' %>
+        </div>
+      </div>
+
+      <div class="quotation-title-box">
+        <h1 style="font-size: 24px; font-weight: 900; color: #0f172a; margin-bottom: 6px;">عـرض سـعـر</h1>
+        <div style="font-size: 13px; color: #64748b;">رقم العرض: <strong style="color: #0284c7;"><%= order.OrderNumber %></strong></div>
+        <div style="font-size: 13px; color: #64748b;">تاريخ الإصدار: <strong><%= order.CreatedAt.toISOString().split('T')[0] %></strong></div>
+        <div style="font-size: 13px; color: #64748b;">صلاحية العرض: <strong>15 يوماً من تاريخه</strong></div>
+      </div>
+    </div>
+
+    <!-- بيانات العميل والجهة المصدرة -->
+    <div class="info-grid">
+      <div>
+        <h3 style="font-size: 14px; font-weight: 800; color: #0284c7; margin-bottom: 8px;">موجّه إلى السادة:</h3>
+        <div style="font-size: 15px; font-weight: 700; margin-bottom: 4px;"><%= order.ClientName %></div>
+        <div style="font-size: 13px; color: #475569; margin-bottom: 4px;"><%= order.CompanyName || 'جهة غير محددة' %></div>
+        <div style="font-size: 13px; color: #475569; direction: ltr; text-align: right;"><i class="fa-brands fa-whatsapp"></i> <%= order.WhatsappNumber %></div>
+        <% if (order.Email) { %>
+          <div style="font-size: 13px; color: #475569;"><i class="fa-solid fa-envelope"></i> <%= order.Email %></div>
+        <% } %>
+      </div>
+
+      <div>
+        <h3 style="font-size: 14px; font-weight: 800; color: #0284c7; margin-bottom: 8px;">الجهة المورّدة:</h3>
+        <div style="font-size: 15px; font-weight: 700; margin-bottom: 4px;"><%= settings.SiteNameAr || 'سايسوفت للحلول البرمجية' %></div>
+        <div style="font-size: 13px; color: #475569; margin-bottom: 4px;"><i class="fa-solid fa-envelope"></i> <%= settings.ContactEmail || 'info@saysoft.tech' %></div>
+        <div style="font-size: 13px; color: #475569;"><i class="fa-solid fa-phone"></i> <%= settings.ContactPhone || '+20 100 000 0000' %></div>
+        <div style="font-size: 13px; color: #475569;"><i class="fa-solid fa-globe"></i> saysoft.tech</div>
+      </div>
+    </div>
+
+    <!-- جدول الباقات والأسعار -->
+    <table class="quotation-table">
+      <thead>
+        <tr>
+          <th style="width: 40px; text-align: center;">#</th>
+          <th>المنظومة والحل البرمجي</th>
+          <th>نوع الباقة والتراخيص</th>
+          <th>الدورية</th>
+          <th style="text-align: left;">القيمة</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (items && items.length > 0) { %>
+          <% items.forEach((it, idx) => { %>
+            <tr>
+              <td style="text-align: center; color: #64748b;"><%= idx + 1 %></td>
+              <td style="font-weight: 700; color: #0f172a;"><%= it.systemNameAr || it.systemName %></td>
+              <td style="color: #475569;"><%= it.packageNameAr || it.packageName %></td>
+              <td><span style="background: #e0f2fe; color: #0284c7; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;"><%= it.period || 'سنوي' %></span></td>
+              <td style="text-align: left; font-weight: 700; color: #0f172a;"><%= it.price %> <%= order.Currency %></td>
+            </tr>
+          <% }) %>
+        <% } %>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="4" style="text-align: left; color: #0f172a;">الإجمالي النهائي المستحق:</td>
+          <td style="text-align: left; color: #0284c7; font-size: 18px;"><%= order.TotalAmount %> <%= order.Currency %></td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <!-- الشروط والأحكام ومزايا الاشتراك -->
+    <div class="terms-box">
+      <h4 style="font-size: 13px; font-weight: 800; color: #0f172a; margin-bottom: 6px;">شروط ومميزات التعاقد:</h4>
+      <ul style="padding-right: 20px; line-height: 1.8;">
+        <li>يشمل العرض استضافة سحابية عالية الأمان وسرعة فائقة بدون الحاجة لشراء سيرفرات محلية.</li>
+        <li>الدعم الفني والنسخ الاحتياطي التلقائي اليومي مجاناً طوال فترة الاشتراك المحددة.</li>
+        <li>يتم تفعيل المنظومة وتسليم بيانات المدير الفني خلال 24 ساعة من تاريخ تأكيد السداد.</li>
+        <li>الأسعار المعروضة أعلاه بالـ (<strong><%= order.Currency %></strong>) وفقاً للعملة الرسمية للمنصة.</li>
+      </ul>
+    </div>
+
+    <!-- التوقيع والختم -->
+    <div class="quotation-footer">
+      <div>
+        <div style="font-size: 13px; color: #64748b; margin-bottom: 40px;">المسؤول عن إعداد العرض:</div>
+        <div style="font-weight: 700; font-size: 14px;">إدارة المبيعات والحلول الرقمية - سايسوفت</div>
+      </div>
+
+      <div style="text-align: center;">
+        <div style="font-size: 13px; color: #64748b; margin-bottom: 40px;">الختم والاعتماد الرسمي:</div>
+        <div style="display: inline-block; border: 2px dashed #0284c7; border-radius: 50%; width: 90px; height: 90px; display: flex; align-items: center; justify-content: center; color: #0284c7; font-weight: 800; font-size: 12px; transform: rotate(-10deg);">
+          معتمد<br>SAYSOFT
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

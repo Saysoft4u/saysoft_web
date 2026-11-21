@@ -1,0 +1,177 @@
+<%- include('../partials/admin_header') %>
+
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+  <div>
+    <h1 style="font-size: 24px; font-weight: 800; color: #0f172a; margin-bottom: 4px;">
+      <i class="fa-solid fa-users-gear" style="color: #0284c7;"></i> إدارة مسؤولي ومديري الموقع
+    </h1>
+    <p style="color: #64748b; font-size: 14px;">إدارة حسابات المسؤولين وصلاحياتهم وتعيين كلمات المرور وتأمين المنصة</p>
+  </div>
+
+  <a href="/admin/users/new" class="btn btn-primary" style="display: flex; align-items: center; gap: 8px;">
+    <i class="fa-solid fa-user-plus"></i> إضافة مسؤول جديد
+  </a>
+</div>
+
+<!-- رسائل التنبيه والنجاح -->
+<% if (query.msg === 'created') { %>
+  <div style="background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; padding: 12px 18px; border-radius: 8px; margin-bottom: 20px; font-size: 14px;">
+    <i class="fa-solid fa-circle-check"></i> تم إنشاء حساب المسؤول بنجاح!
+  </div>
+<% } else if (query.msg === 'updated') { %>
+  <div style="background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; padding: 12px 18px; border-radius: 8px; margin-bottom: 20px; font-size: 14px;">
+    <i class="fa-solid fa-circle-check"></i> تم تحديث بيانات المسؤول وكلمة المرور بنجاح!
+  </div>
+<% } else if (query.msg === 'deleted') { %>
+  <div style="background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 12px 18px; border-radius: 8px; margin-bottom: 20px; font-size: 14px;">
+    <i class="fa-solid fa-trash-can"></i> تم حذف حساب المسؤول بنجاح.
+  </div>
+<% } else if (query.msg === 'status_changed') { %>
+  <div style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1d4ed8; padding: 12px 18px; border-radius: 8px; margin-bottom: 20px; font-size: 14px;">
+    <i class="fa-solid fa-circle-info"></i> تم تغيير حالة تفعيل حساب المسؤول بنجاح.
+  </div>
+<% } else if (query.err === 'self_delete') { %>
+  <div style="background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 12px 18px; border-radius: 8px; margin-bottom: 20px; font-size: 14px;">
+    <i class="fa-solid fa-triangle-exclamation"></i> لا يمكنك حذف حسابك الشخصي المسجل به الدخول حالياً!
+  </div>
+<% } else if (query.err === 'self_deactivate') { %>
+  <div style="background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 12px 18px; border-radius: 8px; margin-bottom: 20px; font-size: 14px;">
+    <i class="fa-solid fa-triangle-exclamation"></i> لا يمكنك تجميد أو تعطيل حسابك الشخصي النشط!
+  </div>
+<% } else if (query.err === 'last_admin') { %>
+  <div style="background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 12px 18px; border-radius: 8px; margin-bottom: 20px; font-size: 14px;">
+    <i class="fa-solid fa-triangle-exclamation"></i> لا يمكن حذف هذا الحساب لأنه المدير الوحيد المتبقي للنظام!
+  </div>
+<% } %>
+
+<div class="table-container">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th style="width: 60px;">#</th>
+        <th>المسؤول / المدير</th>
+        <th>اسم المستخدم</th>
+        <th>البريد الإلكتروني</th>
+        <th>الدور والصلاحية</th>
+        <th>الحالة</th>
+        <th>تاريخ الإنشاء</th>
+        <th style="width: 170px; text-align: center;">الإجراءات</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% users.forEach(u => { %>
+        <tr>
+          <td><span style="font-weight: 700; color: #64748b;"><%= u.IDUser %></span></td>
+          <td>
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <div style="width: 38px; height: 38px; border-radius: 50%; background: <%= u.Role === 'ADMIN' ? '#0284c7' : '#8b5cf6' %>; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">
+                <%= (u.FullName || u.Username).substring(0, 1).toUpperCase() %>
+              </div>
+              <div>
+                <div style="font-weight: 700; color: #0f172a;">
+                  <%= u.FullName || 'بدون اسم محدد' %>
+                  <% if (u.IDUser === currentUserId) { %>
+                    <span style="font-size: 11px; padding: 1px 6px; border-radius: 4px; background: #e0f2fe; color: #0369a1; margin-inline-start: 4px;">حسابك الحالي</span>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <code style="background: #f1f5f9; padding: 3px 8px; border-radius: 4px; font-size: 13px; color: #0284c7; font-weight: 700;">
+              <%= u.Username %>
+            </code>
+          </td>
+          <td style="color: #64748b; font-size: 13px;"><%= u.Email %></td>
+          <td>
+            <% if (u.Role === 'ADMIN') { %>
+              <span class="badge" style="background: #e0f2fe; color: #0284c7; font-weight: 700;">
+                <i class="fa-solid fa-shield-halved"></i> مدير عام (ADMIN)
+              </span>
+            <% } else { %>
+              <span class="badge" style="background: #ede9fe; color: #6d28d9; font-weight: 700;">
+                <i class="fa-solid fa-pen-nib"></i> محرر محتوى (EDITOR)
+              </span>
+            <% } %>
+          </td>
+          <td>
+            <% if (u.IsActive) { %>
+              <span class="badge badge-success">
+                <i class="fa-solid fa-circle-check"></i> نشط
+              </span>
+            <% } else { %>
+              <span class="badge" style="background: #f1f5f9; color: #64748b;">
+                <i class="fa-solid fa-circle-xmark"></i> معطل
+              </span>
+            <% } %>
+          </td>
+          <td style="font-size: 12px; color: #94a3b8;">
+            <%= new Date(u.CreatedAt).toLocaleDateString('ar-EG', { year: 'numeric', month: 'short', day: 'numeric' }) %>
+          </td>
+          <td>
+            <div style="display: flex; gap: 6px; justify-content: center; align-items: center;">
+              <!-- تعديل -->
+              <a href="/admin/users/edit/<%= u.IDUser %>" class="btn btn-outline btn-sm" style="padding: 6px 10px;" title="تعديل الاسم أو كلمة المرور والصلاحية">
+                <i class="fa-solid fa-pen-to-square"></i>
+              </a>
+
+              <!-- تفعيل / تجميد -->
+              <% if (u.IDUser !== currentUserId) { %>
+                <form action="/admin/users/toggle-active/<%= u.IDUser %>" method="POST" style="display: inline;">
+                  <button type="submit" class="btn btn-outline btn-sm" style="padding: 6px 10px;" title="<%= u.IsActive ? 'تجميد الحساب' : 'تفعيل الحساب' %>">
+                    <i class="fa-solid <%= u.IsActive ? 'fa-ban' : 'fa-check' %>" style="color: <%= u.IsActive ? '#eab308' : '#22c55e' %>;"></i>
+                  </button>
+                </form>
+              <% } %>
+
+              <!-- حذف -->
+              <% if (u.IDUser !== currentUserId) { %>
+                <button type="button" class="btn btn-outline btn-sm" style="padding: 6px 10px; color: #ef4444; border-color: #fca5a5;" title="حذف المسؤول" onclick="openDeleteUserModal(<%= u.IDUser %>, '<%= u.FullName || u.Username %>')">
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              <% } %>
+            </div>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<!-- نافذة تأكيد حذف مسؤول -->
+<div id="deleteUserModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+  <div style="background: #ffffff; padding: 30px; border-radius: 14px; max-width: 440px; width: 90%; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2);">
+    <h3 style="font-size: 18px; font-weight: 800; color: #ef4444; margin-bottom: 12px;">
+      <i class="fa-solid fa-triangle-exclamation"></i> تأكيد حذف حساب المسؤول
+    </h3>
+    <p style="font-size: 14px; color: #475569; margin-bottom: 18px; line-height: 1.6;">
+      أنت على وشك حذف حساب المسؤول <strong id="deleteTargetName"></strong> بشكل نهائي. للمتابعة، يرجى إدخال كلمة المرور الرئيسية للمنصة:
+    </p>
+
+    <form id="deleteUserForm" method="POST" action="">
+      <div class="form-group">
+        <label>كلمة المرور الرئيسية (Master Password) *</label>
+        <input type="password" name="masterPassword" class="form-control" required placeholder="SaysoftMaster2026#">
+      </div>
+
+      <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+        <button type="button" class="btn btn-outline" onclick="closeDeleteUserModal()">إلغاء</button>
+        <button type="submit" class="btn btn-primary" style="background: #ef4444; border-color: #ef4444;">تأكيد الحذف</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function openDeleteUserModal(id, name) {
+    document.getElementById('deleteTargetName').innerText = name;
+    document.getElementById('deleteUserForm').action = '/admin/users/delete/' + id;
+    document.getElementById('deleteUserModal').style.display = 'flex';
+  }
+
+  function closeDeleteUserModal() {
+    document.getElementById('deleteUserModal').style.display = 'none';
+  }
+</script>
+
+<%- include('../partials/admin_footer') %>

@@ -1,0 +1,342 @@
+<%- include('../partials/admin_header') %>
+
+<div style="margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid #e2e8f0;">
+  <% if (settings.SiteLogo) { %>
+    <div style="margin-bottom: 14px;">
+      <img src="<%= settings.SiteLogo %>" alt="Saysoft Logo" style="height: 55px; max-width: 240px; object-fit: contain; border-radius: 8px; border: 1px solid #cbd5e1; padding: 4px; background: #ffffff; box-shadow: 0 2px 6px rgba(0,0,0,0.06);">
+    </div>
+  <% } %>
+  <div>
+    <h1 style="font-size: 24px; font-weight: 800; color: #0f172a; margin-bottom: 4px;">
+      <i class="fa-solid fa-gear" style="color: #0284c7;"></i> إعدادات المنصة والنسخ الاحتياطي
+    </h1>
+    <p style="color: #64748b; font-size: 14px;">تخصيص الهوية، العملة، وضع قريباً، وتأمين النظام بكلمة المرور الرئيسية</p>
+  </div>
+</div>
+
+<% if (status === 'saved') { %>
+  <div style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; padding: 12px 18px; border-radius: 8px; margin-bottom: 20px; font-weight: 600;">
+    <i class="fa-solid fa-circle-check"></i> تم حفظ وتحديث الإعدادات بنجاح.
+  </div>
+<% } else if (status === 'pwd_success') { %>
+  <div style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; padding: 12px 18px; border-radius: 8px; margin-bottom: 20px; font-weight: 600;">
+    <i class="fa-solid fa-circle-check"></i> تم تغيير كلمة المرور الرئيسية بنجاح.
+  </div>
+<% } else if (status === 'pwd_invalid') { %>
+  <div style="background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 12px 18px; border-radius: 8px; margin-bottom: 20px; font-weight: 600;">
+    <i class="fa-solid fa-circle-xmark"></i> كلمة المرور الحالية غير صحيحة، لم يتم التغيير.
+  </div>
+<% } else if (status === 'backup_created') { %>
+  <div style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; padding: 12px 18px; border-radius: 8px; margin-bottom: 20px; font-weight: 600;">
+    <i class="fa-solid fa-circle-check"></i> تم إنشاء نسخة احتياطية مضغوطة بنجاح، يمكنك تحميلها الآن.
+  </div>
+<% } %>
+
+<div class="tabs-header">
+  <button type="button" class="tab-btn active" onclick="switchTab('tab-identity', this)">
+    <i class="fa-solid fa-id-card"></i> الهوية والتواصل
+  </button>
+  <button type="button" class="tab-btn" onclick="switchTab('tab-brands', this)">
+    <i class="fa-solid fa-tags" style="color: #0284c7;"></i> الأسماء التجارية للمنظومات
+  </button>
+  <button type="button" class="tab-btn" onclick="switchTab('tab-comingsoon', this)">
+    <i class="fa-solid fa-clock"></i> وضع قيد الإنشاء (Coming Soon)
+  </button>
+  <button type="button" class="tab-btn" onclick="switchTab('tab-security', this)">
+    <i class="fa-solid fa-shield-halved"></i> كلمة المرور الرئيسية
+  </button>
+  <button type="button" class="tab-btn" onclick="switchTab('tab-backup', this)">
+    <i class="fa-solid fa-download"></i> النسخ الاحتياطي (Backup)
+  </button>
+</div>
+
+<!-- تبويب 1: الهوية والتواصل -->
+<div id="tab-identity" class="tab-content table-container">
+  <form action="/admin/settings/update" method="POST" enctype="multipart/form-data">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+      
+      <div class="form-group">
+        <label>اسم الموقع (بالعربية)</label>
+        <input type="text" name="SiteNameAr" class="form-control" value="<%= settings.SiteNameAr || '' %>">
+      </div>
+
+      <div class="form-group">
+        <label>اسم الموقع (بالإنجليزية)</label>
+        <input type="text" name="SiteNameEn" class="form-control" value="<%= settings.SiteNameEn || '' %>" style="direction: ltr;">
+      </div>
+
+      <div class="form-group">
+        <label>العملة الأساسية للموقع</label>
+        <select name="PrimaryCurrency" class="form-control">
+          <option value="USD" <%= settings.PrimaryCurrency === 'USD' ? 'selected' : '' %>>دولار أمريكي (USD $)</option>
+          <option value="EGP" <%= settings.PrimaryCurrency === 'EGP' ? 'selected' : '' %>>جنيه مصري (EGP ج.م)</option>
+          <option value="SAR" <%= settings.PrimaryCurrency === 'SAR' ? 'selected' : '' %>>ريال سعودي (SAR ر.س)</option>
+          <option value="AED" <%= settings.PrimaryCurrency === 'AED' ? 'selected' : '' %>>درهم إماراتي (AED د.إ)</option>
+          <option value="EUR" <%= settings.PrimaryCurrency === 'EUR' ? 'selected' : '' %>>يورو (EUR €)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>رقم الواتساب الرسمي (بدون + أو أصفار دولية)</label>
+        <input type="text" name="WhatsappNumber" class="form-control" value="<%= settings.WhatsappNumber || '' %>" placeholder="201000000000" style="direction: ltr;">
+      </div>
+
+      <div class="form-group">
+        <label>البريد الإلكتروني الرسمي</label>
+        <input type="email" name="ContactEmail" class="form-control" value="<%= settings.ContactEmail || '' %>" style="direction: ltr;">
+      </div>
+
+      <div class="form-group">
+        <label>رقم الهاتف الرسمي</label>
+        <input type="text" name="ContactPhone" class="form-control" value="<%= settings.ContactPhone || '' %>" style="direction: ltr;">
+      </div>
+
+      <div class="form-group" style="grid-column: 1 / -1;">
+        <label>ترويسة عروض الأسعار الرسمية (Quotation Header)</label>
+        <input type="text" name="QuotationHeader" class="form-control" value="<%= settings.QuotationHeader || '' %>">
+      </div>
+
+      <div class="form-group" style="grid-column: 1 / -1; padding-top: 15px; border-top: 1px solid #e2e8f0;">
+        <label>تحديث شعار الموقع (Logo)</label>
+        <div style="display: flex; align-items: center; gap: 20px;">
+          <% if (settings.SiteLogo) { %>
+            <img src="<%= settings.SiteLogo %>" alt="Current Logo" style="height: 50px; border: 1px solid #cbd5e1; border-radius: 8px; padding: 4px;">
+          <% } %>
+          <input type="file" name="logo" class="form-control" accept="image/*">
+        </div>
+      </div>
+
+      <!-- إظهار أو إخفاء زر الوصول للوحة التحكم في الموقع العام -->
+      <div class="form-group" style="grid-column: 1 / -1; background: #f8fafc; padding: 18px 22px; border-radius: 10px; border: 1px solid #e2e8f0; margin-top: 10px;">
+        <label style="display: flex; align-items: center; gap: 14px; cursor: pointer; margin: 0;">
+          <input type="checkbox" name="ShowAdminAccessLink" value="true" <%= settings.ShowAdminAccessLink !== 'false' ? 'checked' : '' %> style="width: 20px; height: 20px;">
+          <div>
+            <strong style="font-size: 15px; color: #0284c7; display: block; margin-bottom: 2px;">
+              <i class="fa-solid fa-eye"></i> إظهار زر لوحة التحكم ودخول المسؤول في الموقع العام
+            </strong>
+            <span style="font-size: 13px; color: #64748b; line-height: 1.5; display: block;">
+              عند تفعيله، يظهر زر "الإدارة / لوحة التحكم" في هيدر الموقع العام وزر "بوابة دخول المسؤولين" في الفوتر. وعند إلغاء التحديد، يختفي الزر تماماً عن أعين الزوار العاديين ويمكنك الدخول دائماً عبر الرابط المباشر (<code style="color: #0284c7;">/admin/login</code>) أو بالضغط على الاختصار السري (<kbd style="background: #e2e8f0; padding: 2px 6px; border-radius: 4px;">Ctrl + Shift + A</kbd>).
+            </span>
+          </div>
+        </label>
+      </div>
+
+    </div>
+
+    <!-- شبكات التواصل الاجتماعي -->
+    <h3 style="font-size: 16px; font-weight: 700; margin: 25px 0 15px; color: #0f172a; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+      روابط التواصل الاجتماعي
+    </h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 15px;">
+      <div class="form-group">
+        <label><i class="fa-brands fa-facebook"></i> فيسبوك</label>
+        <input type="url" name="SocialFacebook" class="form-control" value="<%= settings.SocialFacebook || '' %>" style="direction: ltr;">
+      </div>
+      <div class="form-group">
+        <label><i class="fa-brands fa-x-twitter"></i> تويتر / X</label>
+        <input type="url" name="SocialTwitter" class="form-control" value="<%= settings.SocialTwitter || '' %>" style="direction: ltr;">
+      </div>
+      <div class="form-group">
+        <label><i class="fa-brands fa-linkedin"></i> لينكد إن</label>
+        <input type="url" name="SocialLinkedin" class="form-control" value="<%= settings.SocialLinkedin || '' %>" style="direction: ltr;">
+      </div>
+      <div class="form-group">
+        <label><i class="fa-brands fa-youtube"></i> يوتيوب</label>
+        <input type="url" name="SocialYoutube" class="form-control" value="<%= settings.SocialYoutube || '' %>" style="direction: ltr;">
+      </div>
+    </div>
+
+    <div style="margin-top: 25px; text-align: left;">
+      <button type="submit" class="btn btn-primary" style="padding: 12px 35px;">
+        <i class="fa-solid fa-floppy-disk"></i> حفظ الإعدادات
+      </button>
+    </div>
+  </form>
+</div>
+
+<!-- تبويب الأسماء التجارية وأكواد البورتات للمنظومات -->
+<div id="tab-brands" class="tab-content table-container" style="display: none;">
+  <form action="/admin/settings/brands" method="POST">
+    <div style="margin-bottom: 20px;">
+      <h3 style="font-size: 16px; font-weight: 800; color: #0f172a; margin-bottom: 6px;">
+        <i class="fa-solid fa-tags" style="color: #0284c7;"></i> الأسماء التجارية وأكواد المنظومات (البورت المحلي)
+      </h3>
+      <p style="font-size: 13px; color: #64748b; margin: 0;">
+        يمكنك هنا ضبط الاسم التجاري بالعربية والإنجليزية والكود المحلي (5 أرقام يمثل رقم المنفذ/البورت) ونوع التطبيق لكل منظومة مباشرة.
+      </p>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+      <% if (typeof systems !== 'undefined' && systems && systems.length > 0) { %>
+        <% systems.forEach(sys => { %>
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px 20px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="<%= sys.AppLogo || sys.Logo || '/uploads/logos/saylogo.png' %>" alt="" style="width: 42px; height: 42px; border-radius: 8px; object-fit: cover; background: #fff; padding: 2px; border: 1px solid #cbd5e1;">
+                <div>
+                  <strong style="color: #0f172a; font-size: 14.5px;"><%= sys.NameAr %></strong>
+                  <div style="font-size: 11.5px; color: #64748b;"><%= sys.NameEn %> (/<%= sys.Slug %>)</div>
+                </div>
+              </div>
+              <a href="/admin/systems/edit/<%= sys.IDSystem %>" class="btn btn-outline btn-sm" style="font-size: 11.5px;">
+                <i class="fa-solid fa-pen-to-square"></i> تعديل المنظومة الكامل
+              </a>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px;">
+              <div class="form-group" style="margin: 0;">
+                <label style="font-size: 12px; font-weight: 700;">الاسم التجاري (بالعربية)</label>
+                <input type="text" name="brands[<%= sys.IDSystem %>][BrandNameAr]" class="form-control" value="<%= sys.BrandNameAr || '' %>" placeholder="مثال: ساي جارد">
+              </div>
+
+              <div class="form-group" style="margin: 0;">
+                <label style="font-size: 12px; font-weight: 700;">الاسم التجاري (بالإنجليزية)</label>
+                <input type="text" name="brands[<%= sys.IDSystem %>][BrandNameEn]" class="form-control" value="<%= sys.BrandNameEn || '' %>" placeholder="Example: SayGuard" style="direction: ltr;">
+              </div>
+
+              <div class="form-group" style="margin: 0;">
+                <label style="font-size: 12px; font-weight: 700;">كود التطبيق (5 أرقام - البورت)</label>
+                <input type="text" name="brands[<%= sys.IDSystem %>][AppCode]" maxlength="5" pattern="[0-9]{5}" class="form-control" value="<%= sys.AppCode || '' %>" placeholder="50010" style="direction: ltr; font-family: monospace; font-weight: 700;">
+              </div>
+
+              <div class="form-group" style="margin: 0;">
+                <label style="font-size: 12px; font-weight: 700;">نوع التطبيق</label>
+                <select name="brands[<%= sys.IDSystem %>][AppType]" class="form-control" style="font-weight: 600;">
+                  <option value="SAAS_CLOUD" <%= sys.AppType === 'SAAS_CLOUD' ? 'selected' : '' %>>☁️ سحابي SaaS</option>
+                  <option value="DESKTOP_APP" <%= sys.AppType === 'DESKTOP_APP' ? 'selected' : '' %>>💻 سطح مكتب</option>
+                  <option value="MOBILE_APP" <%= sys.AppType === 'MOBILE_APP' ? 'selected' : '' %>>📱 جوال محمول</option>
+                  <option value="WEB_APP" <%= sys.AppType === 'WEB_APP' ? 'selected' : '' %>>🌐 ويب مخصص</option>
+                  <option value="HYBRID_SUITE" <%= sys.AppType === 'HYBRID_SUITE' ? 'selected' : '' %>>🔄 هجين متكامل</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <p style="color: #64748b; text-align: center; padding: 20px;">لا توجد منظومات مسجلة حالياً</p>
+      <% } %>
+    </div>
+
+    <div style="margin-top: 25px; text-align: left;">
+      <button type="submit" class="btn btn-primary" style="padding: 12px 35px;">
+        <i class="fa-solid fa-floppy-disk"></i> حفظ وتحديث الأسماء التجارية وأكواد البورتات
+      </button>
+    </div>
+  </form>
+</div>
+
+<!-- تبويب 2: وضع قريباً -->
+<div id="tab-comingsoon" class="tab-content table-container" style="display: none;">
+  <form action="/admin/settings/update" method="POST">
+    <div class="form-group" style="background: #f8fafc; padding: 20px; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 25px;">
+      <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; margin: 0;">
+        <input type="checkbox" name="ComingSoonMode" value="true" <%= settings.ComingSoonMode === 'true' ? 'checked' : '' %> style="width: 22px; height: 22px;">
+        <div>
+          <strong style="font-size: 16px; color: #0284c7; display: block;">تفعيل وضع "الموقع قيد الإنشاء / قريباً"</strong>
+          <span style="font-size: 13px; color: #64748b;">عند تفعيله، سيتم تحويل الزوار تلقائياً لصفحة قريباً لجمع المهتمين، مع بقاء لوحة التحكم متاحة للمسؤولين.</span>
+        </div>
+      </label>
+    </div>
+
+    <div class="form-group">
+      <label>رسالة صفحة قريباً (بالعربية)</label>
+      <textarea name="ComingSoonMessageAr" class="form-control" rows="3"><%= settings.ComingSoonMessageAr || '' %></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>رسالة صفحة قريباً (بالإنجليزية)</label>
+      <textarea name="ComingSoonMessageEn" class="form-control" rows="3" style="direction: ltr;"><%= settings.ComingSoonMessageEn || '' %></textarea>
+    </div>
+
+    <div style="margin-top: 25px; text-align: left;">
+      <button type="submit" class="btn btn-primary" style="padding: 12px 35px;">
+        <i class="fa-solid fa-floppy-disk"></i> حفظ إعدادات وضع الإطلاق
+      </button>
+    </div>
+  </form>
+</div>
+
+<!-- تبويب 3: كلمة المرور الرئيسية -->
+<div id="tab-security" class="tab-content table-container" style="display: none; max-width: 600px;">
+  <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 14px; margin-bottom: 24px; font-size: 13px; color: #92400e;">
+    <i class="fa-solid fa-triangle-exclamation"></i>
+    <strong>تنبيه أمان:</strong> كلمة المرور الرئيسية (Master Password) مطلوبة لتأكيد حذف أي منظومة أو صفحة أو طلب في النظام لحماية البيانات من الحذف الخاطئ.
+  </div>
+
+  <form action="/admin/settings/master-password" method="POST">
+    <div class="form-group">
+      <label>كلمة المرور الرئيسية الحالية *</label>
+      <input type="password" name="currentMasterPassword" required class="form-control" placeholder="••••••••••••">
+    </div>
+
+    <div class="form-group">
+      <label>كلمة المرور الرئيسية الجديدة *</label>
+      <input type="password" name="newMasterPassword" required class="form-control" placeholder="••••••••••••">
+    </div>
+
+    <div class="form-group">
+      <label>تأكيد كلمة المرور الجديدة *</label>
+      <input type="password" name="confirmMasterPassword" required class="form-control" placeholder="••••••••••••">
+    </div>
+
+    <button type="submit" class="btn btn-primary" style="padding: 12px 25px; margin-top: 10px;">
+      <i class="fa-solid fa-key"></i> تحديث كلمة المرور الرئيسية
+    </button>
+  </form>
+</div>
+
+<!-- تبويب 4: النسخ الاحتياطي -->
+<div id="tab-backup" class="tab-content table-container" style="display: none;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 15px;">
+    <div>
+      <h3 style="font-size: 16px; font-weight: 700; color: #0f172a; margin-bottom: 4px;">النسخ الاحتياطي الكامل للمنصة</h3>
+      <p style="font-size: 13px; color: #64748b;">توليد ملف ZIP مضغوط يشتمل على قاعدة بيانات SQLite dev.db وكافة مجلدات الوسائط والمرفقات uploads</p>
+    </div>
+
+    <form action="/admin/settings/backup/create" method="POST">
+      <button type="submit" class="btn btn-primary" style="background: #16a34a; border-color: #16a34a;">
+        <i class="fa-solid fa-box-archive"></i> إنشاء نسخة احتياطية الآن
+      </button>
+    </form>
+  </div>
+
+  <h4 style="font-size: 14px; font-weight: 700; color: #475569; margin-bottom: 12px;">النسخ الاحتياطية المتوفرة:</h4>
+  <% if (backups && backups.length > 0) { %>
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>اسم الملف</th>
+          <th>تاريخ الإنشاء</th>
+          <th>الحجم</th>
+          <th style="text-align: left;">تحميل</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% backups.forEach(b => { %>
+          <tr>
+            <td style="font-weight: 700; color: #0f172a;">
+              <i class="fa-solid fa-file-zipper" style="color: #0284c7;"></i> <%= b.filename %>
+            </td>
+            <td style="color: #64748b; font-size: 13px;">
+              <%= b.createdAt.toLocaleString('ar-EG') %>
+            </td>
+            <td style="font-weight: 600;">
+              <%= (b.sizeBytes / (1024 * 1024)).toFixed(2) %> MB
+            </td>
+            <td>
+              <div style="display: flex; justify-content: flex-end;">
+                <a href="/admin/settings/backup/download/<%= b.filename %>" class="btn btn-outline btn-sm" style="color: #16a34a; border-color: #86efac;">
+                  <i class="fa-solid fa-download"></i> تحميل ZIP
+                </a>
+              </div>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } else { %>
+    <p style="color: #64748b; text-align: center; padding: 25px;">لا توجد نسخ احتياطية مسجلة بعد. اضغط على "إنشاء نسخة احتياطية الآن".</p>
+  <% } %>
+</div>
+
+<%- include('../partials/admin_footer') %>

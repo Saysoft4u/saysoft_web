@@ -1,0 +1,153 @@
+<%- include('../partials/header') %>
+
+<!-- عنوان قسم الكتالوج: العنوان والوصف على اليمين والشعار على أقصى اليسار في نفس المستوى الأفقي -->
+<section style="background: linear-gradient(180deg, var(--primary-light) 0%, var(--bg-color) 100%); padding: 45px 0 35px; border-bottom: 1px solid var(--border-color);">
+  <div class="container">
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 30px; flex-wrap: wrap;">
+      
+      <!-- العنوان والوصف على اليمين -->
+      <div style="flex: 1; min-width: 320px;">
+        <h1 style="font-size: 24px; font-weight: 800; margin-bottom: 12px; color: var(--text-main); line-height: 1.3;">
+          <%= t('كتالوج المنظومات والحلول السحابية', 'Cloud Systems & Enterprise Solutions') %>
+        </h1>
+        <p style="color: var(--text-muted); font-size: 15px; margin: 0; max-width: 680px; line-height: 1.7;">
+          <%= t('اختر المنظومة المناسبة لقطاع عملك واكتشف باقات الاشتراك والمميزات الفنية وروابط الديمو المباشر', 'Discover tailored enterprise platforms for your industry with transparent pricing and live demos') %>
+        </p>
+      </div>
+
+      <!-- الشعار على أقصى يسار العنوان الرئيسي وفي نفس المستوى الأفقي -->
+      <div style="flex-shrink: 0; width: 100%; max-width: 290px; border-radius: 12px; overflow: hidden; border: 2px solid var(--primary-color); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); background: #000000; line-height: 0;">
+        <img src="<%= settings.SiteLogo || '/images/saysoftlogo.png' %>" alt="Saysoft Logo" 
+             style="display: block; width: 100%; height: auto; object-fit: cover;">
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- شريط البحث والفلترة حسب القطاع -->
+<section style="padding: 30px 0 10px;">
+  <div class="container">
+    <div class="card" style="padding: 16px 20px; margin-bottom: 30px;">
+      <form action="/systems" method="GET" style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 260px; position: relative;">
+          <input type="text" name="search" class="form-control" placeholder="<%= t('ابحث باسم المنظومة أو المميزات...', 'Search by system name or feature...') %>" value="<%= searchQuery %>">
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+          <i class="fa-solid fa-magnifying-glass"></i> <%= t('بحث', 'Search') %>
+        </button>
+
+        <% if (searchQuery || activeSectorSlug) { %>
+          <a href="/systems" class="btn btn-outline" style="color: var(--text-muted); border-color: var(--border-color);">
+            <%= t('إعادة ضبط', 'Reset') %>
+          </a>
+        <% } %>
+      </form>
+
+      <!-- أزرار فلترة القطاعات -->
+      <div style="display: flex; gap: 8px; margin-top: 15px; flex-wrap: wrap; border-top: 1px solid var(--border-color); padding-top: 14px;">
+        <a href="/systems<%= searchQuery ? `?search=${searchQuery}` : '' %>" 
+           class="btn <%= !activeSectorSlug ? 'btn-primary' : 'btn-outline' %> btn-sm">
+          <%= t('جميع القطاعات', 'All Sectors') %>
+        </a>
+        <% sectors.forEach(sec => { %>
+          <a href="/systems?sector=<%= sec.Slug %><%= searchQuery ? `&search=${searchQuery}` : '' %>" 
+             class="btn <%= activeSectorSlug === sec.Slug ? 'btn-primary' : 'btn-outline' %> btn-sm">
+            <%= lang === 'en' ? sec.NameEn : sec.NameAr %>
+          </a>
+        <% }) %>
+      </div>
+    </div>
+
+    <!-- شبكة بطاقات المنظومات -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; margin-bottom: 50px;">
+      <% if (systems && systems.length > 0) { %>
+        <% systems.forEach(sys => { %>
+          <div class="card system-featured-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 14px;">
+                <!-- شعار التطبيق المخصص للبطاقة -->
+                <img src="<%= sys.AppLogo || sys.Logo %>" alt="<%= lang === 'en' ? (sys.BrandNameEn || sys.NameEn) : (sys.BrandNameAr || sys.NameAr) %>" 
+                     style="width: 60px; height: 60px; border-radius: 12px; object-fit: cover; border: 1px solid var(--border-color); background: #fff; padding: 2px; flex-shrink: 0;">
+                <div style="flex: 1; min-width: 0;">
+                  <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 4px;">
+                    <span style="display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 4px; background: var(--primary-light); color: var(--primary-color);">
+                      <%= sys.Sector ? (lang === 'en' ? sys.Sector.NameEn : sys.Sector.NameAr) : t('منظومة إدارية', 'Enterprise') %>
+                    </span>
+
+                    <!-- شارة نوع التطبيق المعتمدة -->
+                    <% if (sys.AppType === 'DESKTOP_APP') { %>
+                      <span style="font-size: 10.5px; font-weight: 700; padding: 2px 6px; border-radius: 4px; background: #e0e7ff; color: #4338ca;">
+                        <i class="fa-solid fa-desktop"></i> <%= t('سطح مكتب', 'Desktop') %>
+                      </span>
+                    <% } else if (sys.AppType === 'MOBILE_APP') { %>
+                      <span style="font-size: 10.5px; font-weight: 700; padding: 2px 6px; border-radius: 4px; background: #fce7f3; color: #be185d;">
+                        <i class="fa-solid fa-mobile-screen"></i> <%= t('موبايل', 'Mobile') %>
+                      </span>
+                    <% } else if (sys.AppType === 'WEB_APP') { %>
+                      <span style="font-size: 10.5px; font-weight: 700; padding: 2px 6px; border-radius: 4px; background: #ccfbf1; color: #0f766e;">
+                        <i class="fa-solid fa-globe"></i> <%= t('ويب مخصص', 'Web App') %>
+                      </span>
+                    <% } else if (sys.AppType === 'HYBRID_SUITE') { %>
+                      <span style="font-size: 10.5px; font-weight: 700; padding: 2px 6px; border-radius: 4px; background: #ede9fe; color: #6d28d9;">
+                        <i class="fa-solid fa-network-wired"></i> <%= t('هجين', 'Hybrid') %>
+                      </span>
+                    <% } else { %>
+                      <span style="font-size: 10.5px; font-weight: 700; padding: 2px 6px; border-radius: 4px; background: #e0f2fe; color: #0369a1;">
+                        <i class="fa-solid fa-cloud"></i> <%= t('سحابي SaaS', 'SaaS') %>
+                      </span>
+                    <% } %>
+                  </div>
+
+                  <h3 style="font-size: 15px; font-weight: 800; line-height: 1.35; color: var(--text-main); margin-bottom: 2px;">
+                    <a href="/system/<%= sys.Slug %>" style="color: inherit;"><%= lang === 'en' ? sys.NameEn : sys.NameAr %></a>
+                  </h3>
+                  <% if (sys.BrandNameAr || sys.BrandNameEn) { %>
+                    <div style="font-size: 12px; font-weight: 700; color: var(--primary-color);">
+                      <%= lang === 'en' ? (sys.BrandNameEn || sys.BrandNameAr) : (sys.BrandNameAr || sys.BrandNameEn) %>
+                    </div>
+                  <% } %>
+                </div>
+              </div>
+
+              <p style="color: var(--text-muted); font-size: 13.5px; line-height: 1.6; margin-bottom: 16px;">
+                <%= lang === 'en' ? sys.SummaryEn : sys.SummaryAr %>
+              </p>
+            </div>
+
+            <div style="border-top: 1px solid var(--border-color); padding-top: 14px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+              <div style="font-size: 12.5px; color: var(--text-muted); display: flex; align-items: center; gap: 8px;">
+                <span title="<%= t('عدد الزوار', 'Visitors Count') %>">
+                  <i class="fa-solid fa-users" style="color: var(--primary-color);"></i> 
+                  <strong><%= sys.ViewsCount %></strong> <%= t('زائر', 'visitors') %>
+                </span>
+                <span>•</span>
+                <span><i class="fa-solid fa-tags"></i> <%= sys.Packages.length %> <%= t('باقات', 'plans') %></span>
+              </div>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <% if (sys.DemoUrl) { %>
+                  <a href="<%= sys.DemoUrl %>" class="btn btn-outline btn-sm" style="color: #16a34a; border-color: #86efac; font-weight: 700; padding: 4px 10px;" title="<%= t('تجربة ديمو مباشر', 'Live Demo') %>">
+                    <i class="fa-solid fa-laptop-code"></i> <%= t('ديمو حي', 'Live Demo') %>
+                  </a>
+                <% } %>
+                <a href="/system/<%= sys.Slug %>" class="btn btn-primary btn-sm">
+                  <%= t('التفاصيل', 'Details') %> <i class="fa-solid <%= isRtl ? 'fa-arrow-left' : 'fa-arrow-right' %>"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <div style="grid-column: 1 / -1; text-align: center; padding: 50px 20px; color: var(--text-muted);">
+          <i class="fa-solid fa-shapes" style="font-size: 40px; margin-bottom: 12px; color: var(--border-color);"></i>
+          <p style="font-size: 16px;"><%= t('لم يتم العثور على أي منظومات مطابقة لبحثك.', 'No systems matched your search query.') %></p>
+          <a href="/systems" class="btn btn-primary" style="margin-top: 14px;"><%= t('عرض جميع المنظومات', 'Browse All Systems') %></a>
+        </div>
+      <% } %>
+    </div>
+
+  </div>
+</section>
+
+<%- include('../partials/footer') %>

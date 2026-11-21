@@ -1,0 +1,102 @@
+<%- include('../partials/header') %>
+
+<section style="background: linear-gradient(180deg, var(--primary-light) 0%, var(--bg-color) 100%); padding: 45px 0 35px; border-bottom: 1px solid var(--border-color);">
+  <div class="container">
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 30px; flex-wrap: wrap;">
+      
+      <!-- ملخص التأكيد على اليمين -->
+      <div style="flex: 1; min-width: 320px; display: flex; align-items: center; gap: 18px;">
+        <div style="width: 60px; height: 60px; border-radius: 50%; background: #dcfce7; color: #16a34a; display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0; box-shadow: var(--shadow-sm);">
+          <i class="fa-solid fa-check"></i>
+        </div>
+        <div>
+          <h1 style="font-size: 22px; font-weight: 800; color: var(--text-main); margin-bottom: 4px; line-height: 1.3;">
+            <%= t('تم استلام وتأكيد طلبك بنجاح!', 'Your Order Was Confirmed Successfully!') %>
+          </h1>
+          <p style="color: var(--text-muted); font-size: 14px; margin: 0;">
+            <%= t('الرقم المرجعي لطلبك:', 'Order reference:') %> 
+            <strong style="color: var(--primary-color); font-size: 16px;"><%= order.OrderNumber %></strong>
+          </p>
+        </div>
+      </div>
+
+      <!-- الشعار على أقصى يسار العنوان الرئيسي وفي نفس المستوى الأفقي -->
+      <div style="flex-shrink: 0; width: 100%; max-width: 290px; border-radius: 12px; overflow: hidden; border: 2px solid var(--primary-color); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); background: #000000; line-height: 0;">
+        <img src="<%= settings.SiteLogo || '/images/saysoftlogo.png' %>" alt="Saysoft Logo" 
+             style="display: block; width: 100%; height: auto; object-fit: cover;">
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="container" style="padding: 40px 20px; max-width: 750px;">
+  <div class="card" style="padding: 35px; margin-bottom: 30px;">
+    
+    <h3 style="font-size: 17px; font-weight: 800; color: var(--text-main); margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+      <%= t('ملخص بيانات الطلب', 'Order Summary') %>
+    </h3>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 25px; font-size: 14px;">
+      <div>
+        <span style="color: var(--text-muted); display: block;"><%= t('العميل:', 'Client:') %></span>
+        <strong style="color: var(--text-main); font-size: 15px;"><%= order.ClientName %></strong>
+      </div>
+      <div>
+        <span style="color: var(--text-muted); display: block;"><%= t('النشاط / الشركة:', 'Company:') %></span>
+        <strong style="color: var(--text-main);"><%= order.CompanyName || '-' %></strong>
+      </div>
+      <div>
+        <span style="color: var(--text-muted); display: block;"><%= t('رقم الواتساب:', 'WhatsApp:') %></span>
+        <strong style="direction: ltr; display: inline-block;"><%= order.WhatsappNumber %></strong>
+      </div>
+      <div>
+        <span style="color: var(--text-muted); display: block;"><%= t('الإجمالي:', 'Total:') %></span>
+        <strong style="color: var(--primary-color); font-size: 16px;"><%= order.TotalAmount %> <%= order.Currency %></strong>
+      </div>
+    </div>
+
+    <h4 style="font-size: 15px; font-weight: 700; color: var(--text-main); margin-bottom: 12px;">
+      <%= t('المنظومات والباقات المختارة:', 'Ordered Systems & Plans:') %>
+    </h4>
+
+    <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 30px;">
+      <% if (items && items.length > 0) { %>
+        <% items.forEach(it => { %>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px;">
+            <div>
+              <strong style="font-size: 14px; color: var(--text-main);"><%= lang === 'en' ? (it.systemNameEn || it.systemName) : (it.systemNameAr || it.systemName) %></strong>
+              <div style="font-size: 12px; color: var(--text-muted);"><%= lang === 'en' ? (it.packageNameEn || it.packageName) : (it.packageNameAr || it.packageName) %> (<%= it.period || 'سنوي' %>)</div>
+            </div>
+            <div style="font-weight: 800; color: var(--primary-color);">
+              <%= it.price %> <%= order.Currency %>
+            </div>
+          </div>
+        <% }) %>
+      <% } %>
+    </div>
+
+    <!-- زر التحويل إلى واتساب الشركة برسالة منسقة -->
+    <% 
+      let waItems = items.map(i => `- ${i.systemNameAr || i.systemName} (${i.packageNameAr || i.packageName}: ${i.price} ${order.Currency})`).join('\n');
+      let waMessage = `مرحباً سايسوفت، قمت بطلب جديد عبر الموقع الإلكتروني:\n*رقم الطلب:* ${order.OrderNumber}\n*الاسم:* ${order.ClientName}\n*الشركة:* ${order.CompanyName || 'غير محدد'}\n*المنظومات:*\n${waItems}\n*الإجمالي:* ${order.TotalAmount} ${order.Currency}\nأود إتمام التعاقد وتفعيل المنظومة.`;
+      let waUrl = `https://wa.me/${(settings.WhatsappNumber || '').replace(/\+/g, '')}?text=${encodeURIComponent(waMessage)}`;
+    %>
+
+    <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 22px; text-align: center;">
+      <h4 style="font-size: 16px; font-weight: 800; color: #166534; margin-bottom: 8px;">
+        <i class="fa-brands fa-whatsapp"></i> <%= t('الخطوة الأخيرة: تفعيل الطلب عبر واتساب', 'Final Step: Activate Order On WhatsApp') %>
+      </h4>
+      <p style="font-size: 13px; color: #15803d; margin-bottom: 18px; line-height: 1.6;">
+        <%= t('اضغط على الزر أدناه لإرسال تفاصيل طلبك مباشرة لفريق مبيعات سايسوفت لإتمام الاتفاق وتسليم حساب الإدارة فوراً.', 'Click the button below to send your order details directly to Saysoft team on WhatsApp.') %>
+      </p>
+
+      <a href="<%= waUrl %>" target="_blank" class="btn btn-primary" style="background: #25d366; border-color: #25d366; padding: 14px 28px; font-size: 16px; font-weight: 800; display: inline-flex; align-items: center; gap: 10px;">
+        <i class="fa-brands fa-whatsapp" style="font-size: 22px;"></i> <%= t('محادثة واتساب لتأكيد الطلب الآن', 'Chat On WhatsApp to Finalize Now') %>
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

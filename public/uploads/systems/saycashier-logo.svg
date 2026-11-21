@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- تدرجات لونية لتطبيق المبيعات والمخازن -->
+    <linearGradient id="bgCashier" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="40%" stop-color="#1e1b4b" />
+      <stop offset="100%" stop-color="#312e81" />
+    </linearGradient>
+
+    <linearGradient id="boxTop" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+
+    <linearGradient id="boxLeft" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7" />
+      <stop offset="100%" stop-color="#0369a1" />
+    </linearGradient>
+
+    <linearGradient id="boxRight" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0369a1" />
+      <stop offset="100%" stop-color="#075985" />
+    </linearGradient>
+
+    <linearGradient id="growthArrow" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10b981" />
+      <stop offset="50%" stop-color="#34d399" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+
+    <linearGradient id="goldAccent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+
+    <!-- تأثير الظل والوهج -->
+    <filter id="shadowBox" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="16" stdDeviation="20" flood-color="#000000" flood-opacity="0.45" />
+    </filter>
+
+    <filter id="neonGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- خلفية مربعة بزوايا انسيابية فخمة (Squircle) -->
+  <rect width="512" height="512" rx="108" fill="url(#bgCashier)" />
+  <rect x="6" y="6" width="500" height="500" rx="104" fill="none" stroke="rgba(255, 255, 255, 0.18)" stroke-width="3" />
+
+  <!-- حلقة شبكية رقمية في الخلفية للتعبير عن إدارة المخازن والتوريد -->
+  <circle cx="256" cy="256" r="195" fill="none" stroke="rgba(56, 189, 248, 0.12)" stroke-width="2" stroke-dasharray="10 6" />
+
+  <!-- صندوق المخازن والأصول ثلاثي الأبعاد الآيزومتري -->
+  <g filter="url(#shadowBox)">
+    <!-- الوجه العلوي للصندوق -->
+    <polygon points="256,120 375,188 256,256 137,188" fill="url(#boxTop)" />
+    
+    <!-- الوجه الأيسر للصندوق -->
+    <polygon points="137,188 256,256 256,380 137,312" fill="url(#boxLeft)" />
+    
+    <!-- الوجه الأيمن للصندوق -->
+    <polygon points="256,256 375,188 375,312 256,380" fill="url(#boxRight)" />
+
+    <!-- شريط الإغلاق والتغليف على الصندوق -->
+    <polygon points="256,120 286,137 286,238 256,256" fill="rgba(255,255,255,0.25)" />
+    <polygon points="256,256 286,238 286,362 256,380" fill="rgba(255,255,255,0.15)" />
+  </g>
+
+  <!-- شريط الباركود الرقمي (Barcode) معبّر عن نقاط البيع والترميز -->
+  <g fill="#ffffff" opacity="0.9" transform="translate(165, 240)">
+    <rect x="0" y="0" width="6" height="42" rx="3" />
+    <rect x="12" y="0" width="10" height="42" rx="3" />
+    <rect x="28" y="0" width="5" height="42" rx="2.5" />
+    <rect x="39" y="0" width="12" height="42" rx="3" />
+    <rect x="57" y="0" width="7" height="42" rx="3" />
+  </g>
+
+  <!-- سهم النمو التجاري الصاعد الملتف حول المنظومة (المبيعات والأرباح) -->
+  <g filter="url(#neonGlow)">
+    <path d="M 120 340 
+             C 170 395 330 395 385 300 
+             C 415 245 405 180 370 145" 
+          fill="none" 
+          stroke="url(#growthArrow)" 
+          stroke-width="12" 
+          stroke-linecap="round" />
+    <!-- رأس السهم -->
+    <polygon points="360,130 395,145 375,180" fill="#f59e0b" />
+  </g>
+
+  <!-- أيقونة عملة ذهبية رقمية تدل على المبيعات والكاشير -->
+  <g filter="url(#shadowBox)" transform="translate(340, 310)">
+    <circle cx="28" cy="28" r="28" fill="url(#goldAccent)" stroke="#fef08a" stroke-width="2.5" />
+    <!-- رمز العملة / الدولار -->
+    <text x="28" y="38" font-family="Arial, sans-serif" font-size="28" font-weight="900" fill="#ffffff" text-anchor="middle">$</text>
+  </g>
+
+  <!-- عربة تسوق صغيرة ذكية (Smart Cart) معبرة عن المشتريات -->
+  <g transform="translate(145, 150) scale(0.65)" stroke="#ffffff" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="9" cy="21" r="2" fill="#ffffff" />
+    <circle cx="20" cy="21" r="2" fill="#ffffff" />
+    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+  </g>
+</svg>

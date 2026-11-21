@@ -1,0 +1,131 @@
+<%- include('../partials/admin_header') %>
+
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+  <div>
+    <h1 style="font-size: 24px; font-weight: 800; color: #0f172a; margin-bottom: 4px;">
+      <i class="fa-solid <%= isEdit ? 'fa-user-pen' : 'fa-user-plus' %>" style="color: #0284c7;"></i>
+      <%= isEdit ? `تعديل بيانات المسؤول: ${user.FullName || user.Username}` : 'إضافة مسؤول جديد للموقع' %>
+    </h1>
+    <p style="color: #64748b; font-size: 14px;">
+      <%= isEdit ? 'تعديل الاسم والبريد الإلكتروني والصلاحية وتغيير كلمة المرور' : 'أدخل بيانات المسؤول وحدد صلاحيته الإدارية وكلمة مروره' %>
+    </p>
+  </div>
+
+  <a href="/admin/users" class="btn btn-outline" style="display: flex; align-items: center; gap: 8px;">
+    <i class="fa-solid fa-arrow-right"></i> العودة لقائمة المسؤولين
+  </a>
+</div>
+
+<% if (error) { %>
+  <div style="background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 12px 18px; border-radius: 8px; margin-bottom: 20px; font-size: 14px;">
+    <i class="fa-solid fa-circle-exclamation"></i> <%= error %>
+  </div>
+<% } %>
+
+<div class="table-container" style="max-width: 800px; margin: 0 auto;">
+  <form action="<%= isEdit ? `/admin/users/edit/${user.IDUser}` : '/admin/users/new' %>" method="POST">
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px;">
+      
+      <!-- الاسم الكامل -->
+      <div class="form-group">
+        <label>الاسم الكامل للمسؤول / المدير *</label>
+        <input type="text" name="fullName" class="form-control" required
+               value="<%= user ? (user.FullName || '') : '' %>"
+               placeholder="مثال: م. أحمد السيد">
+      </div>
+
+      <!-- اسم المستخدم (لتسجيل الدخول) -->
+      <div class="form-group">
+        <label>اسم المستخدم (Username) *</label>
+        <input type="text" name="username" class="form-control" required
+               value="<%= user ? user.Username : '' %>"
+               placeholder="مثال: ahmed_admin" style="direction: ltr; text-align: left;">
+        <small style="color: #64748b; font-size: 12px; display: block; margin-top: 4px;">يُستخدم للدخول إلى لوحة التحكم (حروف إنجليزية وأرقام)</small>
+      </div>
+
+      <!-- البريد الإلكتروني -->
+      <div class="form-group">
+        <label>البريد الإلكتروني *</label>
+        <input type="email" name="email" class="form-control" required
+               value="<%= user ? user.Email : '' %>"
+               placeholder="admin@saysoft.tech" style="direction: ltr; text-align: left;">
+      </div>
+
+      <!-- الصلاحية والدور -->
+      <div class="form-group">
+        <label>الدور والصلاحية *</label>
+        <select name="role" class="form-control" required style="font-weight: 700;">
+          <option value="ADMIN" <%= (user && user.Role === 'ADMIN') ? 'selected' : '' %>>
+            🛡️ مدير عام للنظام (ADMIN) - صلاحيات كاملة
+          </option>
+          <option value="EDITOR" <%= (user && user.Role === 'EDITOR') ? 'selected' : '' %>>
+            ✍️ محرر ومسؤول محتوى (EDITOR) - إدارة المنظومات والصفحات
+          </option>
+        </select>
+      </div>
+
+    </div>
+
+    <!-- كلمة المرور مع زر الإظهار والإخفاء -->
+    <div style="margin-top: 15px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+      <div class="form-group">
+        <label style="color: #0284c7; font-weight: 700;">
+          <i class="fa-solid fa-key"></i> <%= isEdit ? 'تغيير كلمة المرور (اتركها فارغة إذا كنت لا ترغب بالتغيير)' : 'كلمة المرور *' %>
+        </label>
+        <div style="position: relative;">
+          <input type="password" id="adminPasswordField" name="password" class="form-control" 
+                 <%= isEdit ? '' : 'required' %> 
+                 placeholder="<%= isEdit ? 'أدخل كلمة مرور جديدة للتعديل...' : 'أدخل كلمة مرور قوية...' %>"
+                 style="padding-inline-end: 45px; direction: ltr; text-align: left;">
+          <button type="button" onclick="togglePasswordVisibility('adminPasswordField', 'pwdToggleIcon')"
+                  style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: #64748b; cursor: pointer; padding: 4px; font-size: 16px;">
+            <i id="pwdToggleIcon" class="fa-solid fa-eye"></i>
+          </button>
+        </div>
+        <small style="color: #64748b; font-size: 12px; display: block; margin-top: 4px;">
+          <%= isEdit ? '💡 في حال عدم إدخال كلمة مرور جديدة، ستبقى كلمة المرور الحالية كما هي دون أي تعديل.' : '💡 استخدم حروفاً وأرقاماً ورموزاً لتأمين الحساب بشكل كامل.' %>
+        </small>
+      </div>
+    </div>
+
+    <!-- حالة الحساب -->
+    <div class="form-group" style="margin-top: 15px;">
+      <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+        <input type="checkbox" name="isActive" value="true" 
+               <%= (!user || user.IsActive) ? 'checked' : '' %> 
+               style="width: 18px; height: 18px;">
+        <span style="font-weight: 700; color: #15803d;">حساب نشط ومفعل (يمكنه تسجيل الدخول فوراً)</span>
+      </label>
+    </div>
+
+    <!-- أزرار الحفظ -->
+    <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+      <a href="/admin/users" class="btn btn-outline" style="padding: 10px 24px;">إلغاء</a>
+      <button type="submit" class="btn btn-primary" style="padding: 10px 30px; font-weight: 700;">
+        <i class="fa-solid fa-floppy-disk"></i> <%= isEdit ? 'حفظ تعديلات المسؤول' : 'إضافة وتأكيد المسؤول' %>
+      </button>
+    </div>
+
+  </form>
+</div>
+
+<script>
+  function togglePasswordVisibility(fieldId, iconId) {
+    const field = document.getElementById(fieldId);
+    const icon = document.getElementById(iconId);
+    if (field.type === 'password') {
+      field.type = 'text';
+      icon.classList.remove('fa-eye');
+      icon.classList.add('fa-eye-slash');
+      icon.style.color = '#0284c7';
+    } else {
+      field.type = 'password';
+      icon.classList.remove('fa-eye-slash');
+      icon.classList.add('fa-eye');
+      icon.style.color = '#64748b';
+    }
+  }
+</script>
+
+<%- include('../partials/admin_footer') %>

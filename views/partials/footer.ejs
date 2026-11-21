@@ -1,0 +1,131 @@
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-inner">
+        <!-- عمود الهوية ونبذة -->
+        <div style="flex: 2; min-width: 250px;">
+          <h3 style="color: #fff; margin-bottom: 12px; font-size: 18px;">
+            <%= lang === 'en' ? (settings.SiteNameEn || 'Saysoft') : (settings.SiteNameAr || 'سايسوفت للحلول الرقمية') %>
+          </h3>
+          <p style="font-size: 14px; line-height: 1.8; max-width: 460px;">
+            <%= t(
+              'منصة تكنولوجية رائدة ومتكاملة تقدم أكثر من 30 منظومة برمجية سحابية متخصصة وحلول إدارة أعمال ذكية للمؤسسات الكبرى، والشركات الناشئة، والمراكز الطبية، والمؤسسات التعليمية والتجارية. نقود مسيرة التحول الرقمي الشامل لعملائنا بأعلى معايير الأمان المتقدم، والاعتمادية العالية، والكفاءة التشغيلية الفائقة لتحقيق النمو والريادة.',
+              'A leading, fully integrated technology platform delivering 30+ specialized cloud software systems and intelligent business management solutions for enterprises, startups, healthcare facilities, educational institutions, and commercial organizations. We empower seamless digital transformation with top-tier security, high reliability, and superior operational performance to achieve sustainable growth and leadership.'
+            ) %>
+          </p>
+        </div>
+
+        <!-- روابط سريعة -->
+        <div style="flex: 1; min-width: 150px;">
+          <h4 style="color: #fff; margin-bottom: 12px; font-size: 16px;"><%= t('روابط سريعة', 'Quick Links') %></h4>
+          <ul style="list-style: none; font-size: 14px; line-height: 2;">
+            <li><a href="/" style="color: inherit;"><%= t('الرئيسية', 'Home') %></a></li>
+            <li><a href="/systems" style="color: inherit;"><%= t('المنظومات', 'Systems') %></a></li>
+            <li><a href="/services" style="color: inherit;"><%= t('خدماتنا', 'Services') %></a></li>
+            <li><a href="/page/about-us" style="color: inherit;"><%= t('عنّا', 'About') %></a></li>
+            <li><a href="/page/licensing" style="color: inherit;"><%= t('الترخيص', 'License') %></a></li>
+            <li><a href="/#faqs" style="color: inherit;"><%= t('الأسئلة', 'FAQs') %></a></li>
+            <li><a href="/contact" style="color: inherit;"><%= t('تواصل', 'Contact') %></a></li>
+          </ul>
+        </div>
+
+        <!-- بيانات التواصل والشبكات الاجتماعية -->
+        <div style="flex: 1.5; min-width: 200px;">
+          <h4 style="color: #fff; margin-bottom: 12px; font-size: 16px;"><%= t('تواصل معنا', 'Contact Us') %></h4>
+          <p style="font-size: 14px; margin-bottom: 8px;">
+            <i class="fa-solid fa-envelope"></i> <%= settings.ContactEmail || 'info@saysoft.tech' %>
+          </p>
+          <p style="font-size: 14px; margin-bottom: 16px;">
+            <i class="fa-solid fa-phone"></i> <%= settings.ContactPhone || '+20 100 000 0000' %>
+          </p>
+
+          <div style="display: flex; gap: 12px; font-size: 18px;">
+            <% if (settings.SocialFacebook) { %>
+              <a href="<%= settings.SocialFacebook %>" target="_blank" style="color: inherit;"><i class="fa-brands fa-facebook"></i></a>
+            <% } %>
+            <% if (settings.SocialTwitter) { %>
+              <a href="<%= settings.SocialTwitter %>" target="_blank" style="color: inherit;"><i class="fa-brands fa-x-twitter"></i></a>
+            <% } %>
+            <% if (settings.SocialLinkedin) { %>
+              <a href="<%= settings.SocialLinkedin %>" target="_blank" style="color: inherit;"><i class="fa-brands fa-linkedin"></i></a>
+            <% } %>
+            <% if (settings.SocialYoutube) { %>
+              <a href="<%= settings.SocialYoutube %>" target="_blank" style="color: inherit;"><i class="fa-brands fa-youtube"></i></a>
+            <% } %>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom" style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+        <p>© <%= currentYear %> <%= lang === 'en' ? settings.SiteNameEn : settings.SiteNameAr %>. <%= t('جميع الحقوق محفوظة.', 'All rights reserved.') %></p>
+        
+        <% if (settings.ShowAdminAccessLink !== 'false' || currentUser) { %>
+          <div style="font-size: 12px; margin-top: 2px;">
+            <a href="/admin/login" style="color: rgba(255,255,255,0.45); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#38bdf8'" onmouseout="this.style.color='rgba(255,255,255,0.45)'" title="<%= t('بوابة دخول مديري ومسؤولي النظام (اختصار: Ctrl+Shift+A)', 'Admin Login Portal (Shortcut: Ctrl+Shift+A)') %>">
+              <i class="fa-solid fa-lock" style="font-size: 11px;"></i> <%= t('بوابة دخول المسؤولين', 'Admin Portal') %>
+            </a>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // اختصار لوحة المفاتيح السري لمديري النظام (Ctrl + Shift + A)
+    document.addEventListener('keydown', function(e) {
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'A' || e.key === 'a' || e.key === 'ش')) {
+        window.location.href = '/admin/login';
+      }
+    });
+  </script>
+
+  <!-- زر واتساب العائم للتواصل الفوري -->
+  <% if (settings.WhatsappNumber) { %>
+    <a href="https://wa.me/<%= settings.WhatsappNumber.replace(/\+/g, '') %>?text=<%= encodeURIComponent(t('مرحباً سايسوفت، أود الاستفسار عن منظوماتكم الرقمية.', 'Hello Saysoft, I would like to inquire about your software systems.')) %>" 
+       target="_blank" 
+       class="whatsapp-float" 
+       title="<%= t('تواصل معنا عبر واتساب', 'Chat on WhatsApp') %>">
+      <i class="fa-brands fa-whatsapp"></i>
+    </a>
+  <% } %>
+
+  </div> <!-- نهاية pageViewportWrapper -->
+
+  <script>
+    function setDeviceMode(mode) {
+      const wrapper = document.getElementById('pageViewportWrapper');
+      const select = document.getElementById('deviceModeSelect');
+
+      // إزالة أنماط المحاكاة السابقة
+      wrapper.classList.remove('mode-tablet', 'mode-mobile');
+
+      if (mode === 'tablet') {
+        wrapper.classList.add('mode-tablet');
+        localStorage.setItem('saysoft_device_mode', 'tablet');
+      } else if (mode === 'mobile') {
+        wrapper.classList.add('mode-mobile');
+        localStorage.setItem('saysoft_device_mode', 'mobile');
+      } else {
+        localStorage.setItem('saysoft_device_mode', 'desktop');
+      }
+
+      const selects = document.querySelectorAll('.device-mode-select, #deviceModeSelect');
+      selects.forEach(s => {
+        if (s && s.value !== mode) {
+          s.value = mode;
+        }
+      });
+    }
+
+    // استعادة وضع العرض المفضل عند التحميل
+    document.addEventListener('DOMContentLoaded', () => {
+      const savedMode = localStorage.getItem('saysoft_device_mode') || 'desktop';
+      if (['tablet', 'mobile', 'desktop'].includes(savedMode)) {
+        setDeviceMode(savedMode);
+      }
+    });
+  </script>
+
+</body>
+</html>

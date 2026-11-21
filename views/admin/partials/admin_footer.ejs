@@ -1,0 +1,110 @@
+  </main>
+</div>
+
+<!-- Modal التحقق من كلمة المرور الرئيسية قبل الحذف -->
+<div id="masterPasswordModal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.7); z-index: 9999; align-items: center; justify-content: center; padding: 20px;">
+  <div style="background: #ffffff; border-radius: 14px; max-width: 440px; width: 100%; padding: 28px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);">
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+      <div style="width: 42px; height: 42px; border-radius: 10px; background: #fee2e2; color: #dc2626; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+        <i class="fa-solid fa-shield-halved"></i>
+      </div>
+      <div>
+        <h3 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0;">تأكيد كلمة المرور الرئيسية</h3>
+        <p style="font-size: 13px; color: #64748b; margin: 0;">هذا الإجراء حساس ويتطلب تصريح المشرف</p>
+      </div>
+    </div>
+
+    <p style="font-size: 14px; color: #334155; margin-bottom: 18px; line-height: 1.6;" id="masterModalDesc">
+      يرجى إدخال كلمة المرور الرئيسية (Master Password) لتأكيد عملية الحذف.
+    </p>
+
+    <div style="margin-bottom: 20px;">
+      <input type="password" id="masterPasswordInput" class="form-control" placeholder="••••••••••••" autofocus>
+      <div id="masterPasswordError" style="display: none; color: #dc2626; font-size: 13px; margin-top: 6px;">
+        كلمة المرور الرئيسية غير صحيحة!
+      </div>
+    </div>
+
+    <div style="display: flex; justify-content: flex-end; gap: 10px;">
+      <button type="button" class="btn btn-outline" onclick="closeMasterModal()">إلغاء</button>
+      <button type="button" class="btn btn-primary" style="background: #dc2626; border-color: #dc2626;" id="confirmMasterBtn">تأكيد الحذف</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let pendingDeleteForm = null;
+
+  function confirmDeleteWithMasterPassword(form, itemDescription = '') {
+    pendingDeleteForm = form;
+    const modal = document.getElementById('masterPasswordModal');
+    const desc = document.getElementById('masterModalDesc');
+    const input = document.getElementById('masterPasswordInput');
+    const err = document.getElementById('masterPasswordError');
+    
+    desc.innerText = itemDescription ? `هل أنت متأكد من حذف (${itemDescription})؟ يتطلب هذا الإجراء كلمة المرور الرئيسية.` : 'يرجى إدخال كلمة المرور الرئيسية لتأكيد الحذف.';
+    input.value = '';
+    err.style.display = 'none';
+    modal.style.display = 'flex';
+    input.focus();
+    return false;
+  }
+
+  function closeMasterModal() {
+    document.getElementById('masterPasswordModal').style.display = 'none';
+    pendingDeleteForm = null;
+  }
+
+  document.getElementById('confirmMasterBtn').addEventListener('click', async () => {
+    const password = document.getElementById('masterPasswordInput').value;
+    const err = document.getElementById('masterPasswordError');
+
+    if (!password) {
+      err.innerText = 'يرجى إدخال كلمة المرور الرئيسية';
+      err.style.display = 'block';
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/verify-master-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ masterPassword: password })
+      });
+      const data = await res.json();
+
+      if (data.success && pendingDeleteForm) {
+        // إضافة كلمة المرور في حقل مخفي قبل الإرسال
+        let hiddenInput = pendingDeleteForm.querySelector('input[name="masterPassword"]');
+        if (!hiddenInput) {
+          hiddenInput = document.createElement('input');
+          hiddenInput.type = 'hidden';
+          hiddenInput.name = 'masterPassword';
+          pendingDeleteForm.appendChild(hiddenInput);
+        }
+        hiddenInput.value = password;
+        closeMasterModal();
+        pendingDeleteForm.submit();
+      } else {
+        err.innerText = data.message || 'كلمة المرور الرئيسية غير صحيحة!';
+        err.style.display = 'block';
+      }
+    } catch (e) {
+      err.innerText = 'حدث خطأ في التحقق، يرجى المحاولة ثانية';
+      err.style.display = 'block';
+    }
+  });
+
+  // دوال التبديل بين التبويبات (Tabs Switcher)
+  function switchTab(tabId, btn) {
+    document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    
+    const target = document.getElementById(tabId);
+    if (target) target.style.display = 'block';
+    if (btn) btn.classList.add('active');
+  }
+</script>
+
+</body>
+</html>

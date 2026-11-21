@@ -1,0 +1,73 @@
+<%- include('../partials/header') %>
+
+<!-- هيدر الصفحة المخصصة: العنوان والتفاصيل على اليمين والشعار على أقصى اليسار في نفس المستوى الأفقي -->
+<section style="background: linear-gradient(180deg, var(--primary-light) 0%, var(--bg-color) 100%); padding: 45px 0 35px; border-bottom: 1px solid var(--border-color);">
+  <div class="container">
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 30px; flex-wrap: wrap;">
+      
+      <!-- العنوان والتفاصيل على اليمين -->
+      <div style="flex: 1; min-width: 320px;">
+        <h1 style="font-size: 24px; font-weight: 800; color: var(--text-main); margin-bottom: 8px; line-height: 1.3;">
+          <%= lang === 'en' ? page.TitleEn : page.TitleAr %>
+        </h1>
+        <p style="color: var(--text-muted); font-size: 14px; margin: 0;">
+          <%= t('آخر تحديث:', 'Last updated:') %> <%= page.UpdatedAt.toISOString().split('T')[0] %>
+        </p>
+      </div>
+
+      <!-- الشعار على أقصى يسار العنوان الرئيسي وفي نفس المستوى الأفقي -->
+      <div style="flex-shrink: 0; width: 100%; max-width: 290px; border-radius: 12px; overflow: hidden; border: 2px solid var(--primary-color); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); background: #000000; line-height: 0;">
+        <img src="<%= settings.SiteLogo || '/images/saysoftlogo.png' %>" alt="Saysoft Logo" 
+             style="display: block; width: 100%; height: auto; object-fit: cover;">
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- محتوى الصفحة -->
+<section style="padding: 50px 0;">
+  <div class="container" style="max-width: 900px;">
+    <div class="card" style="padding: 40px 35px; line-height: 1.9; font-size: 16px; color: var(--text-main);">
+      <div class="page-body">
+        <%- lang === 'en' ? page.ContentEn : page.ContentAr %>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .page-body h2 {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--primary-color);
+    margin-top: 25px;
+    margin-bottom: 14px;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 8px;
+  }
+  .page-body h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+  .page-body p {
+    margin-bottom: 16px;
+    color: var(--text-main);
+  }
+  .page-body ul, .page-body ol {
+    margin-bottom: 18px;
+    padding-right: 25px;
+  }
+  [dir="ltr"] .page-body ul, [dir="ltr"] .page-body ol {
+    padding-right: 0;
+    padding-left: 25px;
+  }
+  .page-body li {
+    margin-bottom: 8px;
+  }
+</style>
+
+<%- include('../partials/footer') %>

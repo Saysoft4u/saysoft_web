@@ -1,0 +1,231 @@
+<%- include('../partials/header') %>
+
+<!-- 1. قسم الترحيب: العنوان والوصف على اليمين والشعار على أقصى اليسار في نفس المستوى الأفقي -->
+<section style="padding: 45px 0 35px; background: linear-gradient(180deg, var(--primary-light) 0%, var(--bg-color) 100%); border-bottom: 1px solid var(--border-color);">
+  <div class="container">
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 35px; flex-wrap: wrap;">
+      
+      <!-- النصوص التسويقية والأزرار على اليمين -->
+      <div style="flex: 1; min-width: 320px;">
+        <h1 style="font-size: 22px; line-height: 1.4; font-weight: 800; margin-bottom: 14px; color: var(--text-main);">
+          <%= t('انطلق بأعمالك إلى السحاب مع منظومات سايسوفت الذكية', 'Elevate Your Business With Saysoft Smart Cloud Systems') %>
+        </h1>
+
+        <p style="font-size: 15px; color: var(--text-muted); line-height: 1.7; margin-bottom: 22px; max-width: 680px;">
+          <%= t(
+            'حلول برمجية متكاملة لإدارة الشركات، المنشآت الطبية، التعليمية، العقارية، والمصانع بكل كفاءة وسهولة وبأعلى معايير الأمان.',
+            'Comprehensive enterprise software for managing commercial companies, healthcare, education, real estate, and industrial plants with highest security standards.'
+          ) %>
+        </p>
+
+        <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+          <a href="/systems" class="btn btn-primary" style="padding: 11px 26px; font-size: 14px; font-weight: 700;">
+            <i class="fa-solid fa-shapes"></i> <%= t('استكشف كتالوج المنظومات', 'Explore Systems Catalog') %>
+          </a>
+          <a href="/services" class="btn btn-outline" style="padding: 11px 20px; font-size: 14px; font-weight: 600;">
+            <i class="fa-solid fa-laptop-code"></i> <%= t('خدماتنا البرمجية', 'Our Services') %>
+          </a>
+          <a href="/contact" class="btn btn-outline" style="padding: 11px 20px; font-size: 14px; font-weight: 600;">
+            <i class="fa-solid fa-headset"></i> <%= t('طلب استشارة مجانية', 'Free Consultation') %>
+          </a>
+        </div>
+      </div>
+
+      <!-- الشعار على أقصى يسار العنوان الرئيسي وفي نفس المستوى الأفقي -->
+      <div style="flex-shrink: 0; width: 100%; max-width: 330px; border-radius: 12px; overflow: hidden; border: 2px solid var(--primary-color); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); background: #000000; line-height: 0;">
+        <img src="<%= settings.SiteLogo || '/images/saysoftlogo.png' %>" alt="Saysoft Logo Banner" 
+             style="display: block; width: 100%; height: auto; object-fit: cover;">
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- 2. قسم المنظومات المميزة (Featured Systems) -->
+<section style="padding: 60px 0;">
+  <div class="container">
+    <div style="text-align: center; margin-bottom: 35px;">
+      <h2 style="font-size: 22px; font-weight: 800; color: var(--text-main); margin-bottom: 8px;">
+        <%= t('المنظومات المميزة', 'Featured Cloud Systems') %>
+      </h2>
+      <p style="color: var(--text-muted); font-size: 16px;">
+        <%= t('اختر المنظومة المناسبة لطبيعة نشاطك وابدأ التحول الرقمي اليوم', 'Choose the right platform for your business sector and digitize today') %>
+      </p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px;">
+      <% if (featuredSystems && featuredSystems.length > 0) { %>
+        <% featuredSystems.forEach(sys => { %>
+          <div class="card system-featured-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 14px;">
+                <!-- شعار التطبيق المخصص للبطاقة -->
+                <img src="<%= sys.AppLogo || sys.Logo %>" alt="<%= lang === 'en' ? (sys.BrandNameEn || sys.NameEn) : (sys.BrandNameAr || sys.NameAr) %>" 
+                     style="width: 64px; height: 64px; border-radius: 12px; object-fit: cover; border: 1px solid var(--border-color); background: #fff; padding: 2px; flex-shrink: 0;">
+                <div style="flex: 1; min-width: 0;">
+                  <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 4px;">
+                    <span style="display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 4px; background: var(--primary-light); color: var(--primary-color);">
+                      <%= sys.Sector ? (lang === 'en' ? sys.Sector.NameEn : sys.Sector.NameAr) : t('منظومة إدارية', 'Enterprise') %>
+                    </span>
+
+                    <!-- شارة نوع التطبيق المعتمدة -->
+                    <% if (sys.AppType === 'DESKTOP_APP') { %>
+                      <span style="font-size: 10.5px; font-weight: 700; padding: 2px 6px; border-radius: 4px; background: #e0e7ff; color: #4338ca;">
+                        <i class="fa-solid fa-desktop"></i> <%= t('سطح مكتب', 'Desktop') %>
+                      </span>
+                    <% } else if (sys.AppType === 'MOBILE_APP') { %>
+                      <span style="font-size: 10.5px; font-weight: 700; padding: 2px 6px; border-radius: 4px; background: #fce7f3; color: #be185d;">
+                        <i class="fa-solid fa-mobile-screen"></i> <%= t('موبايل', 'Mobile') %>
+                      </span>
+                    <% } else if (sys.AppType === 'WEB_APP') { %>
+                      <span style="font-size: 10.5px; font-weight: 700; padding: 2px 6px; border-radius: 4px; background: #ccfbf1; color: #0f766e;">
+                        <i class="fa-solid fa-globe"></i> <%= t('ويب مخصص', 'Web App') %>
+                      </span>
+                    <% } else if (sys.AppType === 'HYBRID_SUITE') { %>
+                      <span style="font-size: 10.5px; font-weight: 700; padding: 2px 6px; border-radius: 4px; background: #ede9fe; color: #6d28d9;">
+                        <i class="fa-solid fa-network-wired"></i> <%= t('هجين', 'Hybrid') %>
+                      </span>
+                    <% } else { %>
+                      <span style="font-size: 10.5px; font-weight: 700; padding: 2px 6px; border-radius: 4px; background: #e0f2fe; color: #0369a1;">
+                        <i class="fa-solid fa-cloud"></i> <%= t('سحابي SaaS', 'SaaS') %>
+                      </span>
+                    <% } %>
+                  </div>
+
+                  <h3 style="font-size: 15px; font-weight: 800; line-height: 1.35; margin-bottom: 2px; color: var(--text-main);">
+                    <%= lang === 'en' ? sys.NameEn : sys.NameAr %>
+                  </h3>
+                  <% if (sys.BrandNameAr || sys.BrandNameEn) { %>
+                    <div style="font-size: 12px; font-weight: 700; color: var(--primary-color);">
+                      <%= lang === 'en' ? (sys.BrandNameEn || sys.BrandNameAr) : (sys.BrandNameAr || sys.BrandNameEn) %>
+                    </div>
+                  <% } %>
+                </div>
+              </div>
+
+              <p style="color: var(--text-muted); font-size: 13.5px; line-height: 1.6; margin-bottom: 16px;">
+                <%= lang === 'en' ? sys.SummaryEn : sys.SummaryAr %>
+              </p>
+            </div>
+
+            <div style="border-top: 1px solid var(--border-color); padding-top: 14px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+              <div style="font-size: 12.5px; color: var(--text-muted); display: flex; align-items: center; gap: 5px;">
+                <i class="fa-solid fa-users" style="color: var(--primary-color);"></i> 
+                <strong><%= sys.ViewsCount %></strong> <%= t('زائر', 'visitors') %>
+              </div>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <% if (sys.DemoUrl) { %>
+                  <a href="<%= sys.DemoUrl %>" class="btn btn-outline btn-sm" style="color: #16a34a; border-color: #86efac; font-weight: 700; padding: 4px 10px;" title="<%= t('تجربة ديمو مباشر', 'Live Demo') %>">
+                    <i class="fa-solid fa-laptop-code"></i> <%= t('ديمو حي', 'Live Demo') %>
+                  </a>
+                <% } %>
+                <a href="/system/<%= sys.Slug %>" class="btn btn-primary btn-sm">
+                  <%= t('التفاصيل', 'Details') %> <i class="fa-solid <%= isRtl ? 'fa-arrow-left' : 'fa-arrow-right' %>"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-muted);">
+          <%= t('لا توجد منظومات مميزة حالياً.', 'No featured systems available at the moment.') %>
+        </div>
+      <% } %>
+    </div>
+
+    <div style="text-align: center; margin-top: 40px;">
+      <a href="/systems" class="btn btn-outline" style="padding: 12px 30px;">
+        <%= t('استعرض جميع المنظومات (30+ منظومة)', 'Browse All 30+ Systems') %> <i class="fa-solid fa-arrow-left"></i>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 3. قسم آراء العملاء (Testimonials) -->
+<% if (testimonials && testimonials.length > 0) { %>
+<section id="testimonials" style="padding: 60px 0; background: var(--card-bg); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+  <div class="container">
+    <div style="text-align: center; margin-bottom: 35px;">
+      <h2 style="font-size: 22px; font-weight: 800; color: var(--text-main); margin-bottom: 8px;">
+        <%= t('ماذا يقول عملاؤنا عن سايسوفت؟', 'What Our Clients Say About Saysoft') %>
+      </h2>
+      <p style="color: var(--text-muted); font-size: 15px;">
+        <%= t('ثقة عملائنا في مختلف القطاعات هي أكبر حافز لنا للتطوير المستمر', 'Our clients trust across multiple industries drives our continuous innovation') %>
+      </p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px;">
+      <% testimonials.forEach(item => { %>
+        <% const cName = lang === 'en' ? item.ClientNameEn : item.ClientNameAr; %>
+        <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
+          <div style="color: #f59e0b; margin-bottom: 12px; font-size: 14px;">
+            <% for(let i=0; i< (item.Rating || 5); i++) { %><i class="fa-solid fa-star"></i><% } %>
+          </div>
+          <p style="font-style: italic; color: var(--text-main); font-size: 15px; line-height: 1.7; margin-bottom: 20px;">
+            "<%= lang === 'en' ? item.ContentEn : item.ContentAr %>"
+          </p>
+          <div style="display: flex; align-items: center; gap: 12px; border-top: 1px solid var(--border-color); padding-top: 14px;">
+            <div style="width: 44px; height: 44px; border-radius: 50%; background: var(--primary-light); color: var(--primary-color); display: flex; align-items: center; justify-content: center; font-weight: 700;">
+              <%= cName ? cName.charAt(0) : 'S' %>
+            </div>
+            <div>
+              <div style="font-weight: 700; font-size: 14px; color: var(--text-main);"><%= cName %></div>
+              <div style="font-size: 12px; color: var(--text-muted);"><%= lang === 'en' ? item.ClientTitleEn : item.ClientTitleAr %></div>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<!-- 4. قسم الأسئلة الشائعة (FAQ) -->
+<% if (faqs && faqs.length > 0) { %>
+<section id="faqs" style="padding: 60px 0;">
+  <div class="container" style="max-width: 850px;">
+    <div style="text-align: center; margin-bottom: 35px;">
+      <h2 style="font-size: 22px; font-weight: 800; color: var(--text-main); margin-bottom: 8px;">
+        <%= t('الأسئلة الشائعة', 'Frequently Asked Questions') %>
+      </h2>
+      <p style="color: var(--text-muted); font-size: 15px;">
+        <%= t('إجابات شاملة عن استفسارات المنظومات، الدعم، والاشتراكات', 'Comprehensive answers regarding platforms, support, and subscriptions') %>
+      </p>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 14px;">
+      <% faqs.forEach(faq => { %>
+        <details class="card" style="cursor: pointer; padding: 18px 22px;">
+          <summary style="font-weight: 700; font-size: 16px; color: var(--text-main); outline: none;">
+            <%= lang === 'en' ? faq.QuestionEn : faq.QuestionAr %>
+          </summary>
+          <div style="margin-top: 14px; color: var(--text-muted); font-size: 14px; line-height: 1.8; border-top: 1px solid var(--border-color); padding-top: 12px;">
+            <%= lang === 'en' ? faq.AnswerEn : faq.AnswerAr %>
+          </div>
+        </details>
+      <% }) %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<!-- Schema.org Organization JSON-LD -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "سايسوفت للحلول الرقمية",
+  "alternateName": "Saysoft Digital Solutions",
+  "url": "https://saysoft.tech",
+  "logo": "https://saysoft.tech/uploads/logos/saysoftlogo.png",
+  "description": "<%= t('منصة سايسوفت لتقديم المنظومات والحلول الرقمية السحابية لإدارة الأعمال والمؤسسات', 'Saysoft platform for enterprise cloud SaaS systems and business solutions') %>",
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "<%= settings.ContactPhone || '+201000000000' %>",
+    "contactType": "customer service",
+    "availableLanguage": ["Arabic", "English"]
+  }
+}
+</script>
+
+<%- include('../partials/footer') %>

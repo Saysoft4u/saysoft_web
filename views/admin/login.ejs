@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="tech-blue">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تسجيل الدخول - لوحة تحكم سايسوفت</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .login-box {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 40px 32px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+    }
+  </style>
+</head>
+<body>
+
+<div class="login-box">
+  <div style="text-align: center; margin-bottom: 28px;">
+    <% if (settings.SiteLogo) { %>
+      <img src="<%= settings.SiteLogo %>" alt="Logo" style="height: 52px; margin-bottom: 15px; object-fit: contain;">
+    <% } %>
+    <h1 style="font-size: 22px; font-weight: 800; color: #0f172a; margin-bottom: 6px;">
+      لوحة تحكم سايسوفت الإدارية
+    </h1>
+    <p style="color: #64748b; font-size: 14px;">
+      سجّل الدخول لإدارة المنظومات والطلبات والمحتوى
+    </p>
+  </div>
+
+  <% if (typeof error !== 'undefined' && error) { %>
+    <div style="background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 14px;">
+      <i class="fa-solid fa-circle-exclamation"></i> <%= error %>
+    </div>
+  <% } %>
+
+  <form action="/admin/login" method="POST">
+    <!-- حقل اسم المستخدم أو البريد -->
+    <div style="margin-bottom: 20px;">
+      <label style="display: block; font-weight: 700; margin-bottom: 8px; font-size: 14px; color: #334155; text-align: right;">
+        <i class="fa-solid fa-user" style="color: #0284c7; margin-inline-end: 4px;"></i> اسم المستخدم أو البريد الإلكتروني
+      </label>
+      <div style="position: relative;">
+        <input type="text" name="username" required placeholder="admin أو البريد الإلكتروني..." autofocus
+               style="width: 100%; padding: 12px 14px; border-radius: 8px; border: 1px solid #cbd5e1; font-family: inherit; font-size: 14px; text-align: right; background: #f8fafc; transition: border-color 0.2s, background 0.2s;">
+      </div>
+    </div>
+
+    <!-- حقل كلمة المرور بمحاذاة اليمين مع زر معاينة وإخفاء كلمة المرور الفعال -->
+    <div style="margin-bottom: 25px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <label style="font-weight: 700; font-size: 14px; color: #334155; margin: 0; text-align: right;">
+          <i class="fa-solid fa-lock" style="color: #0284c7; margin-inline-end: 4px;"></i> كلمة المرور
+        </label>
+        <span style="font-size: 12px; color: #64748b;">(انقر على أيقونة العين لمعاينة الرمز)</span>
+      </div>
+
+      <div style="position: relative; width: 100%;">
+        <input type="password" id="loginPasswordField" name="password" required 
+               placeholder="أدخل كلمة المرور..."
+               style="width: 100%; padding: 12px 14px; padding-left: 50px; border-radius: 8px; border: 1px solid #cbd5e1; font-family: inherit; font-size: 14px; text-align: right; background: #f8fafc; transition: border-color 0.2s, background 0.2s;">
+        
+        <!-- زر المعاينة والإخفاء جهة اليسار بحجم بارز ومحدد -->
+        <button type="button" id="toggleLoginPwdBtn" onclick="toggleLoginPassword(event)" 
+                style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); background: #ffffff; border: 1px solid #cbd5e1; color: #475569; border-radius: 6px; width: 36px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.05); z-index: 10;" 
+                title="إظهار / إخفاء كلمة المرور">
+          <i id="loginPwdIcon" class="fa-solid fa-eye" style="pointer-events: none; font-size: 15px;"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- زر تسجيل الدخول -->
+    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 14px; font-size: 15px; font-weight: 700; border-radius: 8px; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);">
+      <i class="fa-solid fa-right-to-bracket"></i> تسجيل الدخول
+    </button>
+
+    <!-- أزرار تعبئة بيانات الدخول المباشرة بنقرة واحدة لتسهيل التجربة -->
+    <div style="margin-top: 20px; padding: 14px; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 10px;">
+      <div style="font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 10px; text-align: right;">
+        <i class="fa-solid fa-wand-magic-sparkles" style="color: #0284c7;"></i> ملء سريع لبيانات الدخول بنقرة واحدة:
+      </div>
+      <div style="display: flex; gap: 8px;">
+        <button type="button" onclick="fillCredentials('admin', 'Admin@Saysoft2026!')"
+                style="flex: 1; padding: 8px 10px; font-size: 12px; font-weight: 700; background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; border-radius: 6px; cursor: pointer; transition: all 0.2s;"
+                title="تعبئة بيانات حساب المدير العام">
+          🛡️ المدير (admin)
+        </button>
+        <button type="button" onclick="fillCredentials('editor', 'Editor@Saysoft2026!')"
+                style="flex: 1; padding: 8px 10px; font-size: 12px; font-weight: 700; background: #ede9fe; color: #6d28d9; border: 1px solid #ddd6fe; border-radius: 6px; cursor: pointer; transition: all 0.2s;"
+                title="تعبئة بيانات حساب المحرر">
+          ✍️ المحرر (editor)
+        </button>
+      </div>
+    </div>
+  </form>
+
+  <script>
+    function fillCredentials(u, p) {
+      const uField = document.querySelector('input[name=\"username\"]');
+      const pField = document.getElementById('loginPasswordField');
+      if (uField) uField.value = u;
+      if (pField) pField.value = p;
+    }
+
+    function toggleLoginPassword(event) {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      var field = document.getElementById('loginPasswordField');
+      var icon = document.getElementById('loginPwdIcon');
+      var btn = document.getElementById('toggleLoginPwdBtn');
+      if (!field) return;
+
+      var currentType = field.getAttribute('type') || field.type;
+      if (currentType === 'password') {
+        field.setAttribute('type', 'text');
+        field.type = 'text';
+        if (icon) {
+          icon.className = 'fa-solid fa-eye-slash';
+          icon.style.color = '#0284c7';
+        }
+        if (btn) {
+          btn.style.backgroundColor = '#e0f2fe';
+          btn.style.borderColor = '#38bdf8';
+          btn.setAttribute('title', 'إخفاء كلمة المرور');
+        }
+      } else {
+        field.setAttribute('type', 'password');
+        field.type = 'password';
+        if (icon) {
+          icon.className = 'fa-solid fa-eye';
+          icon.style.color = '#475569';
+        }
+        if (btn) {
+          btn.style.backgroundColor = '#ffffff';
+          btn.style.borderColor = '#cbd5e1';
+          btn.setAttribute('title', 'معاينة وإظهار كلمة المرور');
+        }
+      }
+    }
+  </script>
+
+  <div style="text-align: center; margin-top: 24px;">
+    <a href="/" style="font-size: 13px; color: #64748b; text-decoration: none;">
+      <i class="fa-solid fa-arrow-right"></i> العودة للموقع الرئيسي
+    </a>
+  </div>
+</div>
+
+</body>
+</html>

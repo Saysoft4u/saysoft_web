@@ -1,0 +1,187 @@
+<%- include('../partials/admin_header') %>
+
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
+  <div>
+    <h1 style="font-size: 24px; font-weight: 800; color: #0f172a; margin-bottom: 4px;">إدارة المنظومات والبرامج السحابية</h1>
+    <p style="color: #64748b; font-size: 14px;">إضافة وتعديل وحذف المنظومات، إدارة الباقات، والنسخ السريع لتسريع الإدخال</p>
+  </div>
+
+  <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+    <a href="/admin/systems/credentials" class="btn btn-outline" style="color: #b45309; border-color: #fde68a; background: #fffbeb; font-weight: 700;">
+      <i class="fa-solid fa-key"></i> حسابات مالكي المنظومات <span style="font-size: 10px; background: #fef3c7; padding: 2px 5px; border-radius: 4px; margin-right: 4px;">سري</span>
+    </a>
+    <a href="/admin/systems/new" class="btn btn-primary">
+      <i class="fa-solid fa-plus"></i> إضافة منظومة جديدة
+    </a>
+  </div>
+</div>
+
+<!-- شريط البحث والفلترة -->
+<div class="table-container" style="margin-bottom: 24px; padding: 16px 20px;">
+  <form action="/admin/systems" method="GET" style="display: flex; gap: 14px; align-items: center; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 250px;">
+      <input type="text" name="search" class="form-control" placeholder="ابحث باسم المنظومة بالعربي أو الإنجليزي..." value="<%= search %>">
+    </div>
+
+    <div style="min-width: 200px;">
+      <select name="sectorId" class="form-control" onchange="this.form.submit()">
+        <option value="">جميع القطاعات</option>
+        <% sectors.forEach(sec => { %>
+          <option value="<%= sec.IDSector %>" <%= sectorId == sec.IDSector ? 'selected' : '' %>>
+            <%= sec.NameAr %> (<%= sec.NameEn %>)
+          </option>
+        <% }) %>
+      </select>
+    </div>
+
+    <button type="submit" class="btn btn-outline" style="padding: 10px 18px;">
+      <i class="fa-solid fa-magnifying-glass"></i> تصفية
+    </button>
+
+    <% if (search || sectorId) { %>
+      <a href="/admin/systems" class="btn btn-outline" style="color: #64748b; border-color: #cbd5e1;">إلغاء التصفية</a>
+    <% } %>
+  </form>
+</div>
+
+<!-- جدول المنظومات -->
+<div class="table-container">
+  <% if (systems && systems.length > 0) { %>
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th style="width: 60px;">اللوجو</th>
+          <th>اسم المنظومة والاسم التجاري</th>
+          <th>نوع التطبيق</th>
+          <th>كود البورت</th>
+          <th>القطاع</th>
+          <th>حالة المنتج</th>
+          <th>الظهور بالموقع</th>
+          <th>الباقات</th>
+          <th>المشاهدات</th>
+          <th>مميزة</th>
+          <th style="text-align: left;">الإجراءات</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% systems.forEach(sys => { %>
+          <tr>
+            <td>
+              <img src="<%= sys.AppLogo || sys.Logo %>" alt="<%= sys.NameAr %>" style="width: 44px; height: 44px; border-radius: 8px; object-fit: cover; border: 1px solid #e2e8f0; background: #fff; padding: 2px;">
+            </td>
+            <td>
+              <div style="font-weight: 700; color: #0f172a; font-size: 14.5px;"><%= sys.NameAr %></div>
+              <div style="display: flex; gap: 8px; align-items: center; margin-top: 2px;">
+                <% if (sys.BrandNameAr) { %>
+                  <span style="color: #0284c7; font-size: 12px; font-weight: 700;"><i class="fa-solid fa-tag"></i> <%= sys.BrandNameAr %></span>
+                <% } %>
+                <span style="color: #64748b; font-size: 11.5px;">(/<%= sys.Slug %>)</span>
+              </div>
+            </td>
+            <td>
+              <% if (sys.AppType === 'DESKTOP_APP') { %>
+                <span class="badge" style="background: #e0e7ff; color: #4338ca; border: 1px solid #c7d2fe; font-size: 11px;">💻 سطح مكتب</span>
+              <% } else if (sys.AppType === 'MOBILE_APP') { %>
+                <span class="badge" style="background: #fce7f3; color: #be185d; border: 1px solid #fbcfe8; font-size: 11px;">📱 موبايل</span>
+              <% } else if (sys.AppType === 'WEB_APP') { %>
+                <span class="badge" style="background: #ccfbf1; color: #0f766e; border: 1px solid #99f6e4; font-size: 11px;">🌐 ويب مخصص</span>
+              <% } else if (sys.AppType === 'HYBRID_SUITE') { %>
+                <span class="badge" style="background: #ede9fe; color: #6d28d9; border: 1px solid #ddd6fe; font-size: 11px;">🔄 هجين</span>
+              <% } else { %>
+                <span class="badge" style="background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; font-size: 11px;">☁️ سحابي SaaS</span>
+              <% } %>
+            </td>
+            <td>
+              <% if (sys.AppCode) { %>
+                <span style="font-family: monospace; font-size: 12px; font-weight: 800; background: #f1f5f9; color: #0f172a; padding: 2px 7px; border-radius: 4px; border: 1px solid #cbd5e1;" title="رقم البورت المحلي">
+                  <%= sys.AppCode %>
+                </span>
+              <% } else { %>
+                <span style="color: #94a3b8; font-size: 11px;">-</span>
+              <% } %>
+            </td>
+            <td>
+              <span class="badge badge-primary">
+                <%= sys.Sector ? sys.Sector.NameAr : 'عام' %>
+              </span>
+            </td>
+            <td>
+              <% if (sys.ProductStatus === 'IN_PRODUCTION') { %>
+                <span class="badge" style="background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd;">🚀 قيد الإنتاج</span>
+              <% } else if (sys.ProductStatus === 'IN_DEVELOPMENT') { %>
+                <span class="badge" style="background: #fef3c7; color: #b45309; border: 1px solid #fde68a;">💻 قيد التطوير</span>
+              <% } else if (sys.ProductStatus === 'UNDER_STUDY') { %>
+                <span class="badge" style="background: #ede9fe; color: #6d28d9; border: 1px solid #ddd6fe;">📋 قيد الدراسة</span>
+              <% } else if (sys.ProductStatus === 'COMING_SOON') { %>
+                <span class="badge" style="background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1;">⏳ قريباً</span>
+              <% } else { %>
+                <span class="badge" style="background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0;">🟢 منشور</span>
+              <% } %>
+            </td>
+            <td>
+              <% if (sys.IsActive) { %>
+                <span class="badge" style="background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; font-size: 11px;">
+                  <i class="fa-solid fa-eye"></i> ظاهرة
+                </span>
+              <% } else { %>
+                <span class="badge" style="background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; font-size: 11px;">
+                  <i class="fa-solid fa-eye-slash"></i> مخفية
+                </span>
+              <% } %>
+            </td>
+            <td>
+              <span class="badge badge-success">
+                <%= sys.Packages.length %> باقات
+              </span>
+            </td>
+            <td style="color: #64748b; font-weight: 600;">
+              <i class="fa-solid fa-eye"></i> <%= sys.ViewsCount %>
+            </td>
+            <td>
+              <% if (sys.IsFeatured) { %>
+                <span class="badge badge-warning"><i class="fa-solid fa-star"></i> نعم</span>
+              <% } else { %>
+                <span style="color: #94a3b8; font-size: 12px;">لا</span>
+              <% } %>
+            </td>
+            <td>
+              <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                <!-- معاينة في الموقع -->
+                <a href="/system/<%= sys.Slug %>" target="_blank" class="btn btn-outline btn-sm" title="معاينة في الموقع">
+                  <i class="fa-solid fa-external-link"></i>
+                </a>
+
+                <!-- زر النسخ السريع (Duplicate) -->
+                <form action="/admin/systems/duplicate/<%= sys.IDSystem %>" method="POST" style="display: inline;" onsubmit="return confirm('هل تريد إنشاء نسخة مطابقة من هذه المنظومة؟')">
+                  <button type="submit" class="btn btn-outline btn-sm" style="color: #0284c7; border-color: #0284c7;" title="نسخ منظومة سريعة (Duplicate)">
+                    <i class="fa-solid fa-copy"></i> نسخ
+                  </button>
+                </form>
+
+                <!-- زر التعديل -->
+                <a href="/admin/systems/edit/<%= sys.IDSystem %>" class="btn btn-outline btn-sm" title="تعديل">
+                  <i class="fa-solid fa-pen-to-square"></i> تعديل
+                </a>
+
+                <!-- زر الحذف المحمي بكلمة المرور الرئيسية -->
+                <form action="/admin/systems/delete/<%= sys.IDSystem %>" method="POST" style="display: inline;" onsubmit="return confirmDeleteWithMasterPassword(this, '<%= sys.NameAr %>')">
+                  <button type="submit" class="btn btn-outline btn-sm" style="color: #dc2626; border-color: #fca5a5;" title="حذف">
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } else { %>
+    <div style="text-align: center; padding: 50px 20px; color: #64748b;">
+      <i class="fa-solid fa-shapes" style="font-size: 40px; margin-bottom: 12px; color: #cbd5e1;"></i>
+      <p style="font-size: 16px;">لم يتم العثور على أي منظومات مطابقة لبحثك.</p>
+      <a href="/admin/systems/new" class="btn btn-primary" style="margin-top: 14px;">إضافة أول منظومة</a>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/admin_footer') %>

@@ -1,0 +1,40 @@
+{
+  "name": "saysoft-web",
+  "version": "1.0.0",
+  "description": "منصة سايسوفت للحلول الرقمية وتطبيقات السحابية",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "build": "prisma generate && prisma db push && node prisma/seed.js && node scripts/unifySystemsTemplate.js",
+    "dev": "node --watch src/server.js",
+    "prisma:generate": "prisma generate",
+    "prisma:push": "prisma db push",
+    "seed": "node prisma/seed.js",
+    "test": "node scripts/test_routes.js"
+  },
+  "keywords": [
+    "saysoft",
+    "saas",
+    "express",
+    "prisma",
+    "sqlite"
+  ],
+  "author": "Saysoft Tech",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^5.22.0",
+    "archiver": "^7.0.1",
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.21.1",
+    "express-session": "^1.18.1",
+    "multer": "^1.4.5-lts.1",
+    "prisma": "^5.22.0"
+  },
+  "devDependencies": {
+    "prisma": "^5.22.0"
+  }
+}

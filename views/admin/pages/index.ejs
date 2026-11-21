@@ -1,0 +1,90 @@
+<%- include('../partials/admin_header') %>
+
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+  <div>
+    <h1 style="font-size: 24px; font-weight: 800; color: #0f172a; margin-bottom: 4px;">إدارة الصفحات المخصصة</h1>
+    <p style="color: #64748b; font-size: 14px;">إنشاء وتعديل الصفحات التعريفية وصفحات الشروط والترخيص باللغتين العربية والإنجليزية</p>
+  </div>
+
+  <a href="/admin/pages/new" class="btn btn-primary">
+    <i class="fa-solid fa-plus"></i> إنشاء صفحة جديدة
+  </a>
+</div>
+
+<div class="table-container">
+  <% if (pages && pages.length > 0) { %>
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>عنوان الصفحة (عربي)</th>
+          <th>العنوان (إنجليزي)</th>
+          <th>الرابط (Slug)</th>
+          <th>الهيدر</th>
+          <th>الفوتر</th>
+          <th>الترتيب</th>
+          <th>الحالة</th>
+          <th style="text-align: left;">الإجراءات</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% pages.forEach(p => { %>
+          <tr>
+            <td style="font-weight: 700; color: #0f172a;"><%= p.TitleAr %></td>
+            <td style="color: #64748b;"><%= p.TitleEn %></td>
+            <td><code>/page/<%= p.Slug %></code></td>
+            <td>
+              <% if (p.ShowInHeader) { %>
+                <span class="badge badge-success"><i class="fa-solid fa-check"></i> نعم</span>
+              <% } else { %>
+                <span style="color: #94a3b8; font-size: 12px;">لا</span>
+              <% } %>
+            </td>
+            <td>
+              <% if (p.ShowInFooter) { %>
+                <span class="badge badge-success"><i class="fa-solid fa-check"></i> نعم</span>
+              <% } else { %>
+                <span style="color: #94a3b8; font-size: 12px;">لا</span>
+              <% } %>
+            </td>
+            <td style="font-weight: 600;"><%= p.SortOrder %></td>
+            <td>
+              <% if (p.IsActive) { %>
+                <span class="badge badge-primary">مفعلة</span>
+              <% } else { %>
+                <span class="badge badge-danger">معطلة</span>
+              <% } %>
+            </td>
+            <td>
+              <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                <!-- معاينة -->
+                <a href="/page/<%= p.Slug %>" target="_blank" class="btn btn-outline btn-sm" title="معاينة في الموقع">
+                  <i class="fa-solid fa-external-link"></i>
+                </a>
+
+                <!-- تعديل -->
+                <a href="/admin/pages/edit/<%= p.IDPage %>" class="btn btn-outline btn-sm" title="تعديل">
+                  <i class="fa-solid fa-pen-to-square"></i> تعديل
+                </a>
+
+                <!-- حذف محمي بكلمة المرور الرئيسية -->
+                <form action="/admin/pages/delete/<%= p.IDPage %>" method="POST" style="display: inline;" onsubmit="return confirmDeleteWithMasterPassword(this, 'صفحة <%= p.TitleAr %>')">
+                  <button type="submit" class="btn btn-outline btn-sm" style="color: #dc2626; border-color: #fca5a5;" title="حذف">
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } else { %>
+    <div style="text-align: center; padding: 50px 20px; color: #64748b;">
+      <i class="fa-solid fa-file-lines" style="font-size: 40px; margin-bottom: 12px; color: #cbd5e1;"></i>
+      <p style="font-size: 16px;">لم يتم إنشاء صفحات مخصصة بعد.</p>
+      <a href="/admin/pages/new" class="btn btn-primary" style="margin-top: 14px;">إنشاء أول صفحة</a>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/admin_footer') %>

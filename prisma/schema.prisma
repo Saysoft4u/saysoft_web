@@ -1,0 +1,440 @@
+// ==============================================================================
+// إعدادات مزود قاعدة البيانات وتوليد العميل (Prisma Client & SQLite Generator)
+// ==============================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ==============================================================================
+// جدول المستخدمين والمسؤولين (Users)
+// يحتوي على بيانات مديري النظام ومحرري المحتوى وصلاحياتهم
+// ==============================================================================
+model User {
+  /// المعرف الأساسي للمستخدم (يبدأ بـ ID)
+  IDUser       Int      @id @default(autoincrement())
+  /// اسم المستخدم لتسجيل الدخول
+  Username     String   @unique
+  /// البريد الإلكتروني للمستخدم
+  Email        String   @unique
+  /// كلمة المرور المشفرة
+  PasswordHash String
+  /// الدور والصلاحية (ADMIN / EDITOR)
+  Role         String   @default("ADMIN")
+  /// الاسم الكامل للمستخدم
+  FullName     String?
+  /// حالة تفعيل الحساب
+  IsActive     Boolean  @default(true)
+  /// تاريخ إنشاء الحساب
+  CreatedAt    DateTime @default(now())
+  /// تاريخ آخر تعديل
+  UpdatedAt    DateTime @updatedAt
+}
+
+// ==============================================================================
+// جدول قطاعات الأعمال وتصنيفات المنظومات (Sectors)
+// مثل: تجاري، طبي، تعليمي، عقاري، زراعي...
+// ==============================================================================
+model Sector {
+  /// المعرف الأساسي للقطاع (يبدأ بـ ID)
+  IDSector    Int      @id @default(autoincrement())
+  /// اسم القطاع باللغة العربية
+  NameAr      String
+  /// اسم القطاع باللغة الإنجليزية
+  NameEn      String
+  /// الرابط اللطيف والمميز للقطاع (Slug)
+  Slug        String   @unique
+  /// أيقونة القطاع أو الصنف
+  Icon        String?
+  /// ترتيب الظهور في القوائم والفلترة
+  SortOrder   Int      @default(0)
+  /// حالة تفعيل القطاع
+  IsActive    Boolean  @default(true)
+  /// تاريخ الإنشاء
+  CreatedAt   DateTime @default(now())
+  /// تاريخ التحديث
+  UpdatedAt   DateTime @updatedAt
+
+  /// المنظومات التابعة لهذا القطاع
+  Systems     System[]
+}
+
+// ==============================================================================
+// جدول المنظومات والبرامج السحابية (Systems)
+// يحتوي على جميع بيانات المنظومة ثنائية اللغة وروابط الديمو واليوتيوب والـ SEO
+// ==============================================================================
+model System {
+  /// المعرف الأساسي للمنظومة (يبدأ بـ ID)
+  IDSystem         Int      @id @default(autoincrement())
+  /// المعرف الأجنبي للقطاع التابعة له (ينتهي بـ ID)
+  SectorID         Int
+  /// اسم المنظومة باللغة العربية
+  NameAr           String
+  /// اسم المنظومة باللغة الإنجليزية
+  NameEn           String
+  /// الاسم التجاري للمنظومة بالعربية (Commercial Brand Name Ar)
+  BrandNameAr      String?
+  /// الاسم التجاري للمنظومة بالإنجليزية (Commercial Brand Name En)
+  BrandNameEn      String?
+  /// الرقم الكودي للتطبيق (مكون من 5 أرقام يمثل رقم المنفذ/البورت في العمل المحلي)
+  AppCode          String?
+  /// نوع التطبيق (SAAS_CLOUD: ساس, DESKTOP_APP: سطح مكتب, MOBILE_APP: جوال, WEB_APP: ويب مخصص, HYBRID_SUITE: هجين)
+  AppType          String   @default("SAAS_CLOUD")
+  /// الرابط اللطيف للمنظومة (Slug)
+  Slug             String   @unique
+  /// نبذة مختصرة باللغة العربية
+  SummaryAr        String
+  /// نبذة مختصرة باللغة الإنجليزية
+  SummaryEn        String
+  /// الشرح التفصيلي والمميزات باللغة العربية (HTML / Rich Text)
+  DescriptionAr    String
+  /// الشرح التفصيلي والمميزات باللغة الإنجليزية (HTML / Rich Text)
+  DescriptionEn    String
+  /// مسار الشعار المربع للمنظومة
+  Logo             String
+  /// مسار شعار التطبيق المخصص المنفصل للبطاقات (App Logo)
+  AppLogo          String?
+  /// مسار الصورة الرئيسية أو غلاف المنظومة
+  CoverImage       String?
+  /// عداد مشاهدات وزيارات المنظومة
+  ViewsCount       Int      @default(0)
+  /// رابط فيديو شرح يوتيوب
+  YoutubeUrl       String?
+  /// رابط النسخة التجريبية المباشرة (Live Demo)
+  DemoUrl          String?
+  /// رابط لوحة إدارة وتحكم مالك المنظومة (سري لا يظهر للمستخدمين)
+  OwnerAdminUrl    String?
+  /// اسم مستخدم مالك المنظومة (سري)
+  OwnerUsername    String?
+  /// كلمة مرور مالك المنظومة (سري)
+  OwnerPassword    String?
+  /// ملاحظات سرية إضافية خاصة بإدارة المالك
+  OwnerNotes       String?
+  /// هل المنظومة مميزة لتظهر في الصفحة الرئيسية؟
+  IsFeatured       Boolean  @default(false)
+  /// عنوان السيو بالعربية (Meta Title)
+  MetaTitleAr      String?
+  /// عنوان السيو بالإنجليزية (Meta Title)
+  MetaTitleEn      String?
+  /// وصف السيو بالعربية (Meta Description)
+  MetaDescAr       String?
+  /// وصف السيو بالإنجليزية (Meta Description)
+  MetaDescEn       String?
+  /// كلمات السيو المفتاحية بالعربية (Meta Keywords)
+  MetaKeywordsAr   String?
+  /// كلمات السيو المفتاحية بالإنجليزية (Meta Keywords)
+  MetaKeywordsEn   String?
+  /// ترتيب ظهور المنظومة
+  SortOrder        Int      @default(0)
+  /// حالة نشر المنظومة وتفعيلها
+  IsActive         Boolean  @default(true)
+  /// حالة المنتج أو المنظومة (منشور ومتاح، في الإنتاج، قيد التطوير، قيد الدراسة، قريباً، مؤرشف)
+  ProductStatus    String   @default("PUBLISHED")
+  /// تاريخ إضافة المنظومة
+  CreatedAt        DateTime @default(now())
+  /// تاريخ آخر تحديث
+  UpdatedAt        DateTime @updatedAt
+
+  /// علاقة الربط مع القطاع
+  Sector           Sector       @relation(fields: [SectorID], references: [IDSector], onDelete: Restrict)
+  /// صور المعرض التفاعلي للمنظومة
+  Images           SystemImage[]
+  /// باقات الاشتراك الخاصة بالمنظومة
+  Packages         Package[]
+  /// الأسئلة الشائعة الخاصة بالمنظومة
+  FAQs             SystemFAQ[]
+  /// الاستفسارات والرسائل الموجهة لهذه المنظومة
+  Messages         Message[]
+}
+
+// ==============================================================================
+// جدول معرض صور المنظومات (SystemImages)
+// يخزن لقطات الشاشة لواجهات سطح المكتب والموبايل
+// ==============================================================================
+model SystemImage {
+  /// المعرف الأساسي للصورة (يبدأ بـ ID)
+  IDImage    Int      @id @default(autoincrement())
+  /// المعرف الأجنبي للمنظومة (ينتهي بـ ID)
+  SystemID   Int
+  /// مسار ملف الصورة المرفوع
+  ImagePath  String
+  /// وصف توضيحي بالعربية للصورة
+  CaptionAr  String?
+  /// وصف توضيحي بالإنجليزية للصورة
+  CaptionEn  String?
+  /// ترتيب عرض الصورة في المعرض
+  SortOrder  Int      @default(0)
+  /// تاريخ الرفع
+  CreatedAt  DateTime @default(now())
+
+  /// علاقة الربط مع المنظومة
+  System     System   @relation(fields: [SystemID], references: [IDSystem], onDelete: Cascade)
+}
+
+// ==============================================================================
+// جدول باقات وأسعار المنظومة (Packages)
+// مثل: باقة شهرية، سنوية، ترخيص مفتوح
+// ==============================================================================
+model Package {
+  /// المعرف الأساسي للباقة (يبدأ بـ ID)
+  IDPackage    Int      @id @default(autoincrement())
+  /// المعرف الأجنبي للمنظومة (ينتهي بـ ID)
+  SystemID     Int
+  /// اسم الباقة بالعربية
+  NameAr       String
+  /// اسم الباقة بالإنجليزية
+  NameEn       String
+  /// سعر الباقة
+  Price        Float
+  /// دورة الاشتراك بالعربية (مثال: شهرياً، سنوياً، مرة واحدة)
+  PeriodAr     String
+  /// دورة الاشتراك بالإنجليزية (مثال: Monthly, Yearly, One-time)
+  PeriodEn     String
+  /// قائمة مميزات الباقة بالعربية (نصوص أو أسطر)
+  FeaturesAr   String?
+  /// قائمة مميزات الباقة بالإنجليزية (نصوص أو أسطر)
+  FeaturesEn   String?
+  /// هل هي الباقة الأكثر طلباً أو موصى بها؟
+  IsPopular    Boolean  @default(false)
+  /// ترتيب الباقة
+  SortOrder    Int      @default(0)
+  /// حالة تفعيل الباقة
+  IsActive     Boolean  @default(true)
+  /// تاريخ الإنشاء
+  CreatedAt    DateTime @default(now())
+  /// تاريخ التعديل
+  UpdatedAt    DateTime @updatedAt
+
+  /// علاقة الربط مع المنظومة
+  System       System   @relation(fields: [SystemID], references: [IDSystem], onDelete: Cascade)
+}
+
+// ==============================================================================
+// جدول الأسئلة الشائعة الخاصة بمنظومة محددة (SystemFAQs)
+// ==============================================================================
+model SystemFAQ {
+  /// المعرف الأساسي للسؤال (يبدأ بـ ID)
+  IDSystemFAQ  Int      @id @default(autoincrement())
+  /// المعرف الأجنبي للمنظومة (ينتهي بـ ID)
+  SystemID     Int
+  /// نص السؤال بالعربية
+  QuestionAr   String
+  /// نص السؤال بالإنجليزية
+  QuestionEn   String
+  /// نص الإجابة بالعربية
+  AnswerAr     String
+  /// نص الإجابة بالإنجليزية
+  AnswerEn     String
+  /// ترتيب ظهور السؤال
+  SortOrder    Int      @default(0)
+  /// حالة ظهور السؤال
+  IsActive     Boolean  @default(true)
+  /// تاريخ الإنشاء
+  CreatedAt    DateTime @default(now())
+  /// تاريخ التحديث
+  UpdatedAt    DateTime @updatedAt
+
+  /// علاقة الربط مع المنظومة
+  System       System   @relation(fields: [SystemID], references: [IDSystem], onDelete: Cascade)
+}
+
+// ==============================================================================
+// جدول الأسئلة الشائعة العامة للموقع (GeneralFAQs)
+// ==============================================================================
+model GeneralFAQ {
+  /// المعرف الأساسي للسؤال العام (يبدأ بـ ID)
+  IDGeneralFAQ Int      @id @default(autoincrement())
+  /// نص السؤال بالعربية
+  QuestionAr   String
+  /// نص السؤال بالإنجليزية
+  QuestionEn   String
+  /// نص الإجابة بالعربية
+  AnswerAr     String
+  /// نص الإجابة بالإنجليزية
+  AnswerEn     String
+  /// ترتيب العرض
+  SortOrder    Int      @default(0)
+  /// حالة تفعيل السؤال
+  IsActive     Boolean  @default(true)
+  /// تاريخ الإنشاء
+  CreatedAt    DateTime @default(now())
+  /// تاريخ التعديل
+  UpdatedAt    DateTime @updatedAt
+}
+
+// ==============================================================================
+// جدول آراء وتقييمات العملاء (Testimonials)
+// ==============================================================================
+model Testimonial {
+  /// المعرف الأساسي للرأي (يبدأ بـ ID)
+  IDTestimonial Int      @id @default(autoincrement())
+  /// اسم العميل بالعربية
+  ClientNameAr  String
+  /// اسم العميل بالإنجليزية
+  ClientNameEn  String
+  /// المنصب أو النشاط بالعربية
+  ClientTitleAr String?
+  /// المنصب أو النشاط بالإنجليزية
+  ClientTitleEn String?
+  /// اسم الشركة أو الجهة بالعربية
+  CompanyAr     String?
+  /// اسم الشركة أو الجهة بالإنجليزية
+  CompanyEn     String?
+  /// التقييم بالنجوم (من 1 إلى 5)
+  Rating        Int      @default(5)
+  /// نص التعليق أو الرأي بالعربية
+  ContentAr     String
+  /// نص التعليق أو الرأي بالإنجليزية
+  ContentEn     String
+  /// صورة أو شعار العميل
+  Avatar        String?
+  /// ترتيب الظهور
+  SortOrder     Int      @default(0)
+  /// حالة التفعيل والعرض
+  IsActive      Boolean  @default(true)
+  /// تاريخ الإنشاء
+  CreatedAt     DateTime @default(now())
+  /// تاريخ التعديل
+  UpdatedAt     DateTime @updatedAt
+}
+
+// ==============================================================================
+// جدول الصفحات الديناميكية الإضافية (Pages)
+// مثل: من نحن، سياسة الخصوصية، الشروط والأحكام...
+// ==============================================================================
+model Page {
+  /// المعرف الأساسي للصفحة (يبدأ بـ ID)
+  IDPage         Int      @id @default(autoincrement())
+  /// عنوان الصفحة بالعربية
+  TitleAr        String
+  /// عنوان الصفحة بالإنجليزية
+  TitleEn        String
+  /// الرابط اللطيف للصفحة (Slug)
+  Slug           String   @unique
+  /// محتوى الصفحة بالعربية (HTML)
+  ContentAr      String
+  /// محتوى الصفحة بالإنجليزية (HTML)
+  ContentEn      String
+  /// هل يظهر رابط الصفحة في القائمة العلوية (Navbar)؟
+  ShowInHeader   Boolean  @default(false)
+  /// هل يظهر رابط الصفحة في القائمة السفلية (Footer)؟
+  ShowInFooter   Boolean  @default(true)
+  /// عنوان السيو بالعربية
+  MetaTitleAr    String?
+  /// عنوان السيو بالإنجليزية
+  MetaTitleEn    String?
+  /// وصف السيو بالعربية
+  MetaDescAr     String?
+  /// وصف السيو بالإنجليزية
+  MetaDescEn     String?
+  /// كلمات السيو المفتاحية بالعربية
+  MetaKeywordsAr String?
+  /// كلمات السيو المفتاحية بالإنجليزية
+  MetaKeywordsEn String?
+  /// ترتيب العرض
+  SortOrder      Int      @default(0)
+  /// حالة تفعيل الصفحة
+  IsActive       Boolean  @default(true)
+  /// تاريخ إنشاء الصفحة
+  CreatedAt      DateTime @default(now())
+  /// تاريخ آخر تحديث
+  UpdatedAt      DateTime @updatedAt
+}
+
+// ==============================================================================
+// جدول طلبات الشراء والسلة (Orders)
+// ==============================================================================
+model Order {
+  /// المعرف الأساسي للطلب (يبدأ بـ ID)
+  IDOrder         Int      @id @default(autoincrement())
+  /// الرقم المرجعي الفريد للطلب (مثال: ORD-2026-1001)
+  OrderNumber     String   @unique
+  /// اسم العميل أو المشتري
+  ClientName      String
+  /// اسم الشركة أو النشاط التجاري
+  CompanyName     String?
+  /// رقم الواتساب للتواصل
+  WhatsappNumber  String
+  /// بريد العميل إن وجد
+  Email           String?
+  /// ملاحظات إضافية على الطلب
+  Notes           String?
+  /// حالة الطلب (PENDING: جديد, CONTACTED: تم التواصل, ACTIVATED: تم التفعيل, CANCELLED: ملغي)
+  Status          String   @default("PENDING")
+  /// إجمالي قيمة الطلب
+  TotalAmount     Float    @default(0)
+  /// عملة الطلب وقت الشراء
+  Currency        String   @default("USD")
+  /// تفاصيل المنظومات والباقات المختارة (مخزنة كـ JSON)
+  ItemsJson       String
+  /// تاريخ إنشاء الطلب
+  CreatedAt       DateTime @default(now())
+  /// تاريخ آخر تحديث لحالة الطلب
+  UpdatedAt       DateTime @updatedAt
+}
+
+// ==============================================================================
+// جدول الرسائل واستفسارات المنظومات وصفحة اتصل بنا (Messages)
+// ==============================================================================
+model Message {
+  /// المعرف الأساسي للرسالة (يبدأ بـ ID)
+  IDMessage      Int      @id @default(autoincrement())
+  /// المعرف الأجنبي للمنظومة إن كان الاستفسار من صفحة منظومة (ينتهي بـ ID)
+  SystemID       Int?
+  /// اسم المنظومة المحفوظ تلقائياً لسرعة القراءة
+  SystemName     String?
+  /// اسم المرسل
+  SenderName     String
+  /// رقم الواتساب للتواصل
+  WhatsappNumber String
+  /// البريد الإلكتروني للمرسل
+  Email          String?
+  /// موضوع الرسالة
+  Subject        String?
+  /// نص الرسالة أو الاستفسار
+  Message        String
+  /// هل تم الاطلاع على الرسالة وقراءتها؟
+  IsRead         Boolean  @default(false)
+  /// تاريخ إرسال الرسالة
+  CreatedAt      DateTime @default(now())
+
+  /// علاقة الربط مع المنظومة في حال كان استفساراً خاصاً بها
+  System         System?  @relation(fields: [SystemID], references: [IDSystem], onDelete: SetNull)
+}
+
+// ==============================================================================
+// جدول المسجلين في صفحة قريباً / قيد الإنشاء (ComingSoonSubscribers)
+// ==============================================================================
+model ComingSoonSubscriber {
+  /// المعرف الأساسي للمشترك (يبدأ بـ ID)
+  IDSubscriber   Int      @id @default(autoincrement())
+  /// اسم الزائر
+  FullName       String
+  /// رقم الواتساب لاستلام الإشعار عند الإطلاق
+  WhatsappNumber String
+  /// أي ملاحظات أو اهتمامات إضافية
+  Notes          String?
+  /// تاريخ التسجيل
+  CreatedAt      DateTime @default(now())
+}
+
+// ==============================================================================
+// جدول إعدادات النظام والجداول المرجعية (Settings)
+// ==============================================================================
+model Setting {
+  /// المعرف الأساسي للإعداد (يبدأ بـ ID)
+  IDSetting    Int      @id @default(autoincrement())
+  /// مفتاح الإعداد الفريد
+  SettingKey   String   @unique
+  /// قيمة الإعداد
+  SettingValue String
+  /// تصنيف الإعداد (general, contact, seo, identity, security)
+  SettingGroup String   @default("general")
+  /// تاريخ آخر تحديث للإعداد
+  UpdatedAt    DateTime @updatedAt
+}

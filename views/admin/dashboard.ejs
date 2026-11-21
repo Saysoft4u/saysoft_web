@@ -1,0 +1,806 @@
+<%- include('partials/admin_header') %>
+
+<!-- تحميل مكتبة الرسوم البيانية التفاعلية Chart.js محلياً مع مسار احتياطي عبر CDN -->
+<script src="/js/chart.umd.min.js"></script>
+<script>
+  if (typeof Chart === 'undefined') {
+    document.write('<script src="https://cdn.jsdelivr.net/npm/chart.js"><\/script>');
+  }
+</script>
+
+<style>
+  /* تنسيقات خاصة بقسم الرسوم البيانية التفاعلية */
+  .charts-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 22px;
+  }
+  .charts-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px;
+    margin-bottom: 32px;
+  }
+  @media (max-width: 1024px) {
+    .charts-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .chart-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 22px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .chart-card:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+  }
+  .chart-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 18px;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 14px;
+  }
+  .chart-card-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 4px 0;
+  }
+  .chart-card-title i {
+    color: #0284c7;
+    font-size: 17px;
+  }
+  .chart-card-subtitle {
+    font-size: 13px;
+    color: #64748b;
+    margin: 0;
+  }
+  .chart-container-box {
+    position: relative;
+    height: 310px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .chart-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-chart-action {
+    padding: 5px 10px;
+    font-size: 12px;
+    font-weight: 700;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-chart-action:hover, .btn-chart-action.active {
+    background: #e0f2fe;
+    color: #0284c7;
+    border-color: #38bdf8;
+  }
+  .chart-badge-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px dashed #e2e8f0;
+  }
+  .chart-badge-item {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: #f8fafc;
+    color: #334155;
+    border: 1px solid #e2e8f0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .chart-badge-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+  .kpi-stat-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px 22px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: transform 0.15s ease, border-color 0.15s ease;
+  }
+  .kpi-stat-card:hover {
+    transform: translateY(-2px);
+    border-color: #0284c7;
+  }
+</style>
+
+<!-- ترويسة الصفحة والترحيب -->
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 26px; flex-wrap: wrap; gap: 14px;">
+  <div>
+    <h1 style="font-size: 24px; font-weight: 800; color: #0f172a; margin-bottom: 4px;">
+      لوحة المؤشرات والتحليلات البيانية 👋
+    </h1>
+    <p style="color: #64748b; font-size: 14px; margin: 0;">
+      متابعة حركة زيارات المنظومات، مبيعات الطلبات، والاستفسارات التفاعلية لحظة بلحظة
+    </p>
+  </div>
+
+  <div style="display: flex; gap: 10px;">
+    <button type="button" class="btn btn-outline btn-sm" onclick="window.location.reload();" style="background: #fff;">
+      <i class="fa-solid fa-arrows-rotate"></i> تحديث البيانات
+    </button>
+    <a href="/" target="_blank" class="btn btn-outline btn-sm" style="background: #fff;">
+      <i class="fa-solid fa-globe"></i> زيارة الموقع
+    </a>
+  </div>
+</div>
+
+<!-- بطاقات مؤشرات الأداء الرئيسية (KPIs) -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 18px; margin-bottom: 30px;">
+  
+  <!-- إجمالي المنظومات -->
+  <div class="kpi-stat-card">
+    <div>
+      <div style="color: #64748b; font-size: 13px; font-weight: 600; margin-bottom: 4px;">المنظومات والحلول</div>
+      <div style="font-size: 26px; font-weight: 800; color: #0f172a;"><%= stats.systemsCount %></div>
+      <div style="font-size: 11px; color: #0284c7; font-weight: 700; margin-top: 2px;">
+        <i class="fa-solid fa-circle-check"></i> جاهزة ومتاحة
+      </div>
+    </div>
+    <div style="width: 48px; height: 48px; border-radius: 12px; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+      <i class="fa-solid fa-shapes"></i>
+    </div>
+  </div>
+
+  <!-- إجمالي المشاهدات -->
+  <div class="kpi-stat-card">
+    <div>
+      <div style="color: #64748b; font-size: 13px; font-weight: 600; margin-bottom: 4px;">إجمالي زيارات المنظومات</div>
+      <div style="font-size: 26px; font-weight: 800; color: #0f172a;"><%= stats.totalViews.toLocaleString('ar-EG') %></div>
+      <div style="font-size: 11px; color: #16a34a; font-weight: 700; margin-top: 2px;">
+        <i class="fa-solid fa-arrow-trend-up"></i> مشاهدات نشطة
+      </div>
+    </div>
+    <div style="width: 48px; height: 48px; border-radius: 12px; background: #f0fdf4; color: #16a34a; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+      <i class="fa-solid fa-eye"></i>
+    </div>
+  </div>
+
+  <!-- طلبات الشراء -->
+  <div class="kpi-stat-card">
+    <div>
+      <div style="color: #64748b; font-size: 13px; font-weight: 600; margin-bottom: 4px;">طلبات الشراء</div>
+      <div style="font-size: 26px; font-weight: 800; color: #0f172a;"><%= stats.ordersCount %></div>
+      <div style="font-size: 11px; color: #d97706; font-weight: 700; margin-top: 2px;">
+        <%= stats.pendingOrdersCount %> قيد المراجعة
+      </div>
+    </div>
+    <div style="width: 48px; height: 48px; border-radius: 12px; background: #fef3c7; color: #d97706; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+      <i class="fa-solid fa-cart-shopping"></i>
+    </div>
+  </div>
+
+  <!-- مبيعات الاشتراكات والطلبات المكتملة -->
+  <div class="kpi-stat-card">
+    <div>
+      <div style="color: #64748b; font-size: 13px; font-weight: 600; margin-bottom: 4px;">المبيعات المفعلة</div>
+      <div style="font-size: 24px; font-weight: 800; color: #059669;">
+        $<%= stats.totalRevenue.toLocaleString() %>
+      </div>
+      <div style="font-size: 11px; color: #059669; font-weight: 700; margin-top: 2px;">
+        <i class="fa-solid fa-circle-dollar-to-slot"></i> طلبات معتمدة
+      </div>
+    </div>
+    <div style="width: 48px; height: 48px; border-radius: 12px; background: #ecfdf5; color: #059669; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+      <i class="fa-solid fa-wallet"></i>
+    </div>
+  </div>
+
+  <!-- رسائل وتواصل -->
+  <div class="kpi-stat-card">
+    <div>
+      <div style="color: #64748b; font-size: 13px; font-weight: 600; margin-bottom: 4px;">رسائل واستفسارات</div>
+      <div style="font-size: 26px; font-weight: 800; color: #0f172a;"><%= stats.messagesCount %></div>
+      <div style="font-size: 11px; color: <%= stats.unreadMessagesCount > 0 ? '#dc2626' : '#64748b' %>; font-weight: 700; margin-top: 2px;">
+        <%= stats.unreadMessagesCount %> غير مقروءة
+      </div>
+    </div>
+    <div style="width: 48px; height: 48px; border-radius: 12px; background: #e0e7ff; color: #4338ca; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+      <i class="fa-solid fa-envelope"></i>
+    </div>
+  </div>
+
+  <!-- مشتركو قريباً -->
+  <div class="kpi-stat-card">
+    <div>
+      <div style="color: #64748b; font-size: 13px; font-weight: 600; margin-bottom: 4px;">قائمة الإطلاق</div>
+      <div style="font-size: 26px; font-weight: 800; color: #0f172a;"><%= stats.subscribersCount %></div>
+      <div style="font-size: 11px; color: #7c3aed; font-weight: 700; margin-top: 2px;">
+        مشتركون مهتمون
+      </div>
+    </div>
+    <div style="width: 48px; height: 48px; border-radius: 12px; background: #ede9fe; color: #7c3aed; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+      <i class="fa-solid fa-users"></i>
+    </div>
+  </div>
+
+</div>
+
+<!-- قسم الرسوم البيانية التفاعلية -->
+<div class="charts-header">
+  <div>
+    <h2 style="font-size: 19px; font-weight: 800; color: #0f172a; margin: 0 0 4px 0; display: flex; align-items: center; gap: 8px;">
+      <i class="fa-solid fa-chart-pie" style="color: #0284c7;"></i> الرسوم البيانية والتحليلات التفاعلية
+    </h2>
+    <p style="color: #64748b; font-size: 13px; margin: 0;">
+      تحليلات بيانية حية لحركة المنظومات الأكثر طلباً ومعدلات التفاعل والتحول
+    </p>
+  </div>
+</div>
+
+<div class="charts-grid">
+
+  <!-- الرسم 1: تفاعل وزيارات المنظومات (Bar Chart) -->
+  <div class="chart-card">
+    <div class="chart-card-header">
+      <div>
+        <h3 class="chart-card-title">
+          <i class="fa-solid fa-chart-column"></i> مشاهدات وزيارات المنظومات
+        </h3>
+        <p class="chart-card-subtitle">مقارنة أعداد الزيارات الفعلية لصفحات المنظومات السحابية</p>
+      </div>
+      <div class="chart-actions">
+        <button type="button" class="btn-chart-action" id="btnSortViews" title="ترتيب تنازلي / تصاعدي">
+          <i class="fa-solid fa-arrow-down-wide-short"></i> فرز
+        </button>
+        <button type="button" class="btn-chart-action" onclick="downloadChartImage('systemsViewsChart', 'saysoft-views-analytics')" title="تحميل صورة المخطط">
+          <i class="fa-solid fa-download"></i>
+        </button>
+      </div>
+    </div>
+    <div class="chart-container-box">
+      <canvas id="systemsViewsChart"></canvas>
+    </div>
+    <div class="chart-badge-list">
+      <span style="font-size: 12px; color: #64748b; font-weight: 600;">الأعلى تفاعلاً:</span>
+      <% if (chartData.views.labels.length > 0) { %>
+        <span class="chart-badge-item">
+          <span class="chart-badge-dot" style="background: #0284c7;"></span>
+          <%= chartData.views.labels[0] %>: <%= chartData.views.views[0].toLocaleString() %> زيارة
+        </span>
+      <% } %>
+      <span class="chart-badge-item" style="margin-right: auto;">
+        إجمالي المشاهدات: <strong><%= stats.totalViews.toLocaleString() %></strong>
+      </span>
+    </div>
+  </div>
+
+  <!-- الرسم 2: توزيع نوع وبيئة التطبيقات (Doughnut Chart) -->
+  <div class="chart-card">
+    <div class="chart-card-header">
+      <div>
+        <h3 class="chart-card-title">
+          <i class="fa-solid fa-layer-group"></i> توزيع المنظومات حسب بيئة التطبيق
+        </h3>
+        <p class="chart-card-subtitle">النسب المئوية لأنواع المنظومات (ساس، سطح مكتب، ويب، هجين)</p>
+      </div>
+      <div class="chart-actions">
+        <button type="button" class="btn-chart-action" onclick="downloadChartImage('appTypesChart', 'saysoft-app-types')" title="تحميل صورة المخطط">
+          <i class="fa-solid fa-download"></i>
+        </button>
+      </div>
+    </div>
+    <div class="chart-container-box">
+      <canvas id="appTypesChart"></canvas>
+    </div>
+    <div class="chart-badge-list">
+      <% chartData.appTypes.labels.forEach((label, idx) => { %>
+        <% if (chartData.appTypes.data[idx] > 0) { %>
+          <span class="chart-badge-item">
+            <span class="chart-badge-dot" style="background: <%= ['#0284c7', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'][idx % 5] %>;"></span>
+            <%= label %>: <strong><%= chartData.appTypes.data[idx] %></strong>
+          </span>
+        <% } %>
+      <% }) %>
+    </div>
+  </div>
+
+  <!-- الرسم 3: حركة الطلبات والاستفسارات الشهرية (Line Area Chart) -->
+  <div class="chart-card">
+    <div class="chart-card-header">
+      <div>
+        <h3 class="chart-card-title">
+          <i class="fa-solid fa-arrow-trend-up"></i> الاتجاه الشهري للطلبات والاستفسارات
+        </h3>
+        <p class="chart-card-subtitle">حركة الإقبال وطلبات الشراء والرسائل خلال آخر 6 أشهر</p>
+      </div>
+      <div class="chart-actions">
+        <button type="button" class="btn-chart-action active" id="btnToggleAllSeries">الكل</button>
+        <button type="button" class="btn-chart-action" id="btnToggleOrders">الطلبات</button>
+        <button type="button" class="btn-chart-action" id="btnToggleMessages">الرسائل</button>
+        <button type="button" class="btn-chart-action" onclick="downloadChartImage('monthlyTrendsChart', 'saysoft-monthly-trends')" title="تحميل صورة المخطط">
+          <i class="fa-solid fa-download"></i>
+        </button>
+      </div>
+    </div>
+    <div class="chart-container-box">
+      <canvas id="monthlyTrendsChart"></canvas>
+    </div>
+    <div class="chart-badge-list">
+      <span class="chart-badge-item">
+        <span class="chart-badge-dot" style="background: #10b981;"></span>
+        مسار طلبات الشراء (<%= stats.ordersCount %>)
+      </span>
+      <span class="chart-badge-item">
+        <span class="chart-badge-dot" style="background: #0284c7;"></span>
+        مسار استفسارات التواصل (<%= stats.messagesCount %>)
+      </span>
+    </div>
+  </div>
+
+  <!-- الرسم 4: توزيع مسار وحالات طلبات الشراء (Status Pipeline) -->
+  <div class="chart-card">
+    <div class="chart-card-header">
+      <div>
+        <h3 class="chart-card-title">
+          <i class="fa-solid fa-funnel-dollar"></i> مسار وحالات طلبات الشراء
+        </h3>
+        <p class="chart-card-subtitle">نسب تحويل الطلبات من جديدة ومراجعة إلى تفعيل واعتماد</p>
+      </div>
+      <div class="chart-actions">
+        <button type="button" class="btn-chart-action" onclick="downloadChartImage('orderStatusChart', 'saysoft-orders-status')" title="تحميل صورة المخطط">
+          <i class="fa-solid fa-download"></i>
+        </button>
+      </div>
+    </div>
+    <div class="chart-container-box">
+      <canvas id="orderStatusChart"></canvas>
+    </div>
+    <div class="chart-badge-list">
+      <% chartData.orderStatus.labels.forEach((lbl, idx) => { %>
+        <% if (chartData.orderStatus.data[idx] > 0) { %>
+          <span class="chart-badge-item">
+            <span class="chart-badge-dot" style="background: <%= chartData.orderStatus.colors[idx] %>;"></span>
+            <%= lbl %>: <strong><%= chartData.orderStatus.data[idx] %></strong>
+          </span>
+        <% } %>
+      <% }) %>
+    </div>
+  </div>
+
+</div>
+
+<!-- جدول أحدث الطلبات -->
+<div class="table-container">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+    <div>
+      <h3 style="font-size: 17px; font-weight: 800; color: #0f172a; margin: 0 0 2px 0;">
+        أحدث طلبات الشراء الواردة
+      </h3>
+      <p style="color: #64748b; font-size: 13px; margin: 0;">الطلبات التي تم تسجيلها من خلال سلة الشراء أو عروض الأسعار</p>
+    </div>
+    <a href="/admin/orders" class="btn btn-outline btn-sm">
+      <i class="fa-solid fa-list-check"></i> عرض وإدارة كل الطلبات
+    </a>
+  </div>
+
+  <% if (recentOrders && recentOrders.length > 0) { %>
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>رقم الطلب</th>
+          <th>اسم العميل</th>
+          <th>الواتساب</th>
+          <th>قيمة الطلب</th>
+          <th>الحالة</th>
+          <th>تاريخ الطلب</th>
+          <th style="text-align: left;">تفاصيل</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% recentOrders.forEach(ord => { %>
+          <tr>
+            <td style="font-weight: 800; color: #0284c7;">
+              <a href="/admin/orders/view/<%= ord.IDOrder %>" style="display: inline-flex; align-items: center; gap: 6px;">
+                <i class="fa-solid fa-receipt"></i> <%= ord.OrderNumber %>
+              </a>
+            </td>
+            <td style="font-weight: 700; color: #1e293b;"><%= ord.ClientName %></td>
+            <td style="direction: ltr; text-align: right; color: #047857; font-weight: 600;">
+              <i class="fa-brands fa-whatsapp"></i> <%= ord.WhatsappNumber %>
+            </td>
+            <td style="font-weight: 800; color: #0f172a;">
+              <%= ord.TotalAmount ? ord.TotalAmount.toLocaleString() : 0 %> <%= ord.Currency || 'USD' %>
+            </td>
+            <td>
+              <% if (ord.Status === 'ACTIVATED') { %>
+                <span class="badge badge-success"><i class="fa-solid fa-check-circle"></i> مفعل ومكتمل</span>
+              <% } else if (ord.Status === 'CONTACTED') { %>
+                <span class="badge badge-primary"><i class="fa-solid fa-phone"></i> تم التواصل</span>
+              <% } else if (ord.Status === 'CANCELLED') { %>
+                <span class="badge badge-danger"><i class="fa-solid fa-times-circle"></i> ملغي</span>
+              <% } else { %>
+                <span class="badge badge-warning"><i class="fa-solid fa-clock"></i> قيد المراجعة</span>
+              <% } %>
+            </td>
+            <td style="color: #64748b; font-size: 13px;">
+              <%= new Date(ord.CreatedAt).toISOString().split('T')[0] %>
+            </td>
+            <td style="text-align: left;">
+              <a href="/admin/orders/view/<%= ord.IDOrder %>" class="btn btn-outline btn-sm" title="استعراض الطلب">
+                <i class="fa-solid fa-eye"></i>
+              </a>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } else { %>
+    <p style="color: #64748b; font-size: 14px; text-align: center; padding: 25px;">لا توجد طلبات جديدة حتى الآن.</p>
+  <% } %>
+</div>
+
+<!-- حاوية تخزين بيانات الرسوم البيانية بصيغة JSON آمنة ومحمية من أخطاء الهروب -->
+<script id="dashboard-chart-data" type="application/json">
+  <%- JSON.stringify(chartData) %>
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    if (typeof Chart === 'undefined') {
+      console.error('مكتبة Chart.js غير محملة');
+      return;
+    }
+
+    // استخراج البيانات الممررة من الخادم
+    const rawDataEl = document.getElementById('dashboard-chart-data');
+    let chartData = {};
+    try {
+      chartData = JSON.parse(rawDataEl.textContent);
+    } catch(e) {
+      console.error('خطأ في استخراج بيانات الرسوم البيانية:', e);
+      return;
+    }
+
+    // إعدادات الخطوط واللغة العربية العامة لمكتبة Chart.js
+    Chart.defaults.font.family = 'system-ui, -apple-system, "Segoe UI", Roboto, "Cairo", sans-serif';
+    Chart.defaults.font.size = 12;
+    Chart.defaults.color = '#64748b';
+    Chart.defaults.plugins.tooltip.rtl = true;
+    Chart.defaults.plugins.tooltip.textDirection = 'rtl';
+    Chart.defaults.plugins.tooltip.padding = 10;
+    Chart.defaults.plugins.tooltip.cornerRadius = 8;
+    Chart.defaults.plugins.tooltip.titleFont = { size: 13, weight: 'bold' };
+    Chart.defaults.plugins.legend.labels.usePointStyle = true;
+
+    // =========================================================================
+    // 1. رسم بياني لشريط مشاهدات وزيارات المنظومات (Systems Views Bar Chart)
+    // =========================================================================
+    const viewsCtx = document.getElementById('systemsViewsChart').getContext('2d');
+    
+    // تدرج لوني أزرق ملكي أنيق للأعمدة
+    const viewsGradient = viewsCtx.createLinearGradient(0, 0, 0, 300);
+    viewsGradient.addColorStop(0, 'rgba(2, 132, 199, 0.95)');
+    viewsGradient.addColorStop(1, 'rgba(56, 189, 248, 0.45)');
+
+    let viewsLabels = [...chartData.views.labels];
+    let viewsValues = [...chartData.views.views];
+    let isSortedDescending = true;
+
+    const viewsChart = new Chart(viewsCtx, {
+      type: 'bar',
+      data: {
+        labels: viewsLabels,
+        datasets: [{
+          label: 'عدد الزيارات والمشاهدات',
+          data: viewsValues,
+          backgroundColor: viewsGradient,
+          borderColor: '#0284c7',
+          borderWidth: 1.5,
+          borderRadius: 8,
+          borderSkipped: false,
+          hoverBackgroundColor: '#0369a1',
+          barPercentage: 0.65
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: { padding: { top: 10, bottom: 5 } },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return ` عدد المشاهدات: ${context.parsed.y.toLocaleString()} زيارة`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            ticks: {
+              font: { weight: 'bold', size: 12 },
+              color: '#334155'
+            }
+          },
+          y: {
+            beginAtZero: true,
+            grid: { color: '#f1f5f9' },
+            ticks: {
+              callback: function(val) { return val.toLocaleString(); }
+            }
+          }
+        }
+      }
+    });
+
+    // تفاعل زر فرز المشاهدات
+    const btnSortViews = document.getElementById('btnSortViews');
+    if (btnSortViews) {
+      btnSortViews.addEventListener('click', function() {
+        // إنشاء أزواج وتصنيفها
+        const combined = viewsLabels.map((lbl, i) => ({ label: lbl, val: viewsValues[i] }));
+        if (isSortedDescending) {
+          combined.sort((a, b) => a.val - b.val); // تصاعدي
+          btnSortViews.innerHTML = '<i class="fa-solid fa-arrow-up-wide-short"></i> تصاعدي';
+          isSortedDescending = false;
+        } else {
+          combined.sort((a, b) => b.val - a.val); // تنازلي
+          btnSortViews.innerHTML = '<i class="fa-solid fa-arrow-down-wide-short"></i> تنازلي';
+          isSortedDescending = true;
+        }
+        viewsChart.data.labels = combined.map(item => item.label);
+        viewsChart.data.datasets[0].data = combined.map(item => item.val);
+        viewsChart.update();
+      });
+    }
+
+    // =========================================================================
+    // 2. رسم بياني دونات لتوزيع نوع التطبيقات (App Types Doughnut Chart)
+    // =========================================================================
+    const appTypesCtx = document.getElementById('appTypesChart').getContext('2d');
+    const appTypePalette = ['#0284c7', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'];
+
+    new Chart(appTypesCtx, {
+      type: 'doughnut',
+      data: {
+        labels: chartData.appTypes.labels,
+        datasets: [{
+          data: chartData.appTypes.data,
+          backgroundColor: appTypePalette,
+          borderWidth: 3,
+          borderColor: '#ffffff',
+          hoverOffset: 8
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '68%',
+        plugins: {
+          legend: {
+            position: 'bottom',
+            rtl: true,
+            labels: {
+              padding: 16,
+              font: { weight: '600' }
+            }
+          },
+          tooltip: {
+            callbacks: {
+              label: function(ctx) {
+                const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                const val = ctx.parsed;
+                const percentage = total > 0 ? ((val / total) * 100).toFixed(1) : 0;
+                return ` ${ctx.label}: ${val} منظومة (${percentage}%)`;
+              }
+            }
+          }
+        }
+      }
+    });
+
+    // =========================================================================
+    // 3. رسم بياني مساحي للاتجاه الشهري (Monthly Trends Line Chart)
+    // =========================================================================
+    const timelineCtx = document.getElementById('monthlyTrendsChart').getContext('2d');
+    
+    // تدرج مساحي للأوامر والطلبات (أخضر زمردي)
+    const ordersGradient = timelineCtx.createLinearGradient(0, 0, 0, 280);
+    ordersGradient.addColorStop(0, 'rgba(16, 185, 129, 0.45)');
+    ordersGradient.addColorStop(1, 'rgba(16, 185, 129, 0.02)');
+
+    // تدرج مساحي للرسائل (أزرق سماوي)
+    const messagesGradient = timelineCtx.createLinearGradient(0, 0, 0, 280);
+    messagesGradient.addColorStop(0, 'rgba(2, 132, 199, 0.45)');
+    messagesGradient.addColorStop(1, 'rgba(2, 132, 199, 0.02)');
+
+    const timelineChart = new Chart(timelineCtx, {
+      type: 'line',
+      data: {
+        labels: chartData.timeline.labels,
+        datasets: [
+          {
+            label: 'طلبات الشراء',
+            data: chartData.timeline.orders,
+            borderColor: '#10b981',
+            backgroundColor: ordersGradient,
+            borderWidth: 2.5,
+            fill: true,
+            tension: 0.35,
+            pointBackgroundColor: '#10b981',
+            pointRadius: 4,
+            pointHoverRadius: 7
+          },
+          {
+            label: 'استفسارات التواصل',
+            data: chartData.timeline.messages,
+            borderColor: '#0284c7',
+            backgroundColor: messagesGradient,
+            borderWidth: 2.5,
+            fill: true,
+            tension: 0.35,
+            pointBackgroundColor: '#0284c7',
+            pointRadius: 4,
+            pointHoverRadius: 7
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'top',
+            rtl: true,
+            labels: { font: { weight: '700' } }
+          },
+          tooltip: {
+            mode: 'index',
+            intersect: false
+          }
+        },
+        scales: {
+          x: {
+            grid: { color: '#f8fafc' },
+            ticks: { font: { weight: '600' } }
+          },
+          y: {
+            beginAtZero: true,
+            grid: { color: '#f1f5f9' },
+            ticks: {
+              stepSize: 1,
+              precision: 0
+            }
+          }
+        }
+      }
+    });
+
+    // تبديل مسارات الرسم البياني الزمني
+    const btnToggleAll = document.getElementById('btnToggleAllSeries');
+    const btnToggleOrders = document.getElementById('btnToggleOrders');
+    const btnToggleMessages = document.getElementById('btnToggleMessages');
+
+    function setActiveTimelineBtn(activeBtn) {
+      [btnToggleAll, btnToggleOrders, btnToggleMessages].forEach(b => {
+        if (b) b.classList.remove('active');
+      });
+      if (activeBtn) activeBtn.classList.add('active');
+    }
+
+    if (btnToggleAll) {
+      btnToggleAll.addEventListener('click', () => {
+        timelineChart.data.datasets[0].hidden = false;
+        timelineChart.data.datasets[1].hidden = false;
+        timelineChart.update();
+        setActiveTimelineBtn(btnToggleAll);
+      });
+    }
+
+    if (btnToggleOrders) {
+      btnToggleOrders.addEventListener('click', () => {
+        timelineChart.data.datasets[0].hidden = false;
+        timelineChart.data.datasets[1].hidden = true;
+        timelineChart.update();
+        setActiveTimelineBtn(btnToggleOrders);
+      });
+    }
+
+    if (btnToggleMessages) {
+      btnToggleMessages.addEventListener('click', () => {
+        timelineChart.data.datasets[0].hidden = true;
+        timelineChart.data.datasets[1].hidden = false;
+        timelineChart.update();
+        setActiveTimelineBtn(btnToggleMessages);
+      });
+    }
+
+    // =========================================================================
+    // 4. رسم بياني لحالات ومسار طلبات الشراء (Order Statuses Doughnut)
+    // =========================================================================
+    const statusCtx = document.getElementById('orderStatusChart').getContext('2d');
+    new Chart(statusCtx, {
+      type: 'doughnut',
+      data: {
+        labels: chartData.orderStatus.labels,
+        datasets: [{
+          data: chartData.orderStatus.data,
+          backgroundColor: chartData.orderStatus.colors,
+          borderWidth: 3,
+          borderColor: '#ffffff',
+          hoverOffset: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '62%',
+        plugins: {
+          legend: {
+            position: 'bottom',
+            rtl: true,
+            labels: {
+              padding: 14,
+              font: { weight: '600' }
+            }
+          },
+          tooltip: {
+            callbacks: {
+              label: function(ctx) {
+                const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                const val = ctx.parsed;
+                const percentage = total > 0 ? ((val / total) * 100).toFixed(1) : 0;
+                return ` ${ctx.label}: ${val} طلب (${percentage}%)`;
+              }
+            }
+          }
+        }
+      }
+    });
+
+  });
+
+  // دالة تصدير المخطط البياني كصورة PNG
+  function downloadChartImage(canvasId, filename) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    const link = document.createElement('a');
+    link.download = `${filename}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  }
+</script>
+
+<%- include('partials/admin_footer') %>

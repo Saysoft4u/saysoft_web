@@ -1,0 +1,139 @@
+<%- include('../partials/header') %>
+
+<section style="background: linear-gradient(180deg, var(--primary-light) 0%, var(--bg-color) 100%); padding: 45px 0 35px; border-bottom: 1px solid var(--border-color);">
+  <div class="container">
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 30px; flex-wrap: wrap;">
+      
+      <!-- العنوان والوصف على اليمين -->
+      <div style="flex: 1; min-width: 320px;">
+        <h1 style="font-size: 24px; font-weight: 800; margin-bottom: 12px; color: var(--text-main); line-height: 1.3;">
+          <%= t('سلة المبيعات وإتمام الطلب', 'Sales Cart & Checkout') %>
+        </h1>
+        <p style="color: var(--text-muted); font-size: 15px; margin: 0; max-width: 680px; line-height: 1.7;">
+          <%= t('راجع المنظومات والباقات المختارة وأكمل بيانات طلبك للتواصل السريع والتعاقد', 'Review your selected solutions and submit order for instant onboarding') %>
+        </p>
+      </div>
+
+      <!-- الشعار على أقصى يسار العنوان الرئيسي وفي نفس المستوى الأفقي -->
+      <div style="flex-shrink: 0; width: 100%; max-width: 290px; border-radius: 12px; overflow: hidden; border: 2px solid var(--primary-color); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); background: #000000; line-height: 0;">
+        <img src="<%= settings.SiteLogo || '/images/saysoftlogo.png' %>" alt="Saysoft Logo" 
+             style="display: block; width: 100%; height: auto; object-fit: cover;">
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="container" style="padding: 40px 20px;">
+  <% if (cart && cart.length > 0) { %>
+    <div style="display: grid; grid-template-columns: 1.8fr 1.2fr; gap: 35px; align-items: start;">
+      
+      <!-- جدول عناصر السلة -->
+      <div class="card" style="padding: 25px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <h3 style="font-size: 17px; font-weight: 800; color: var(--text-main); margin: 0;">
+            <%= t('عناصر السلة', 'Cart Items') %> (<%= cart.length %>)
+          </h3>
+          <form action="/cart/clear" method="POST">
+            <button type="submit" class="btn btn-outline btn-sm" style="color: #ef4444; border-color: #fca5a5;">
+              <i class="fa-solid fa-trash"></i> <%= t('تفريغ السلة', 'Clear Cart') %>
+            </button>
+          </form>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 14px;">
+          <% cart.forEach(item => { %>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px; border: 1px solid var(--border-color); border-radius: 10px; background: var(--bg-color); gap: 14px; flex-wrap: wrap;">
+              <div style="display: flex; align-items: center; gap: 14px;">
+                <img src="<%= item.systemLogo || '/uploads/logos/saylogo.png' %>" alt="System" style="width: 50px; height: 50px; border-radius: 8px; object-fit: cover;">
+                <div>
+                  <h4 style="font-size: 15px; font-weight: 700; margin-bottom: 4px; color: var(--text-main);">
+                    <%= lang === 'en' ? item.systemNameEn : item.systemNameAr %>
+                  </h4>
+                  <span style="font-size: 13px; color: var(--text-muted);">
+                    <%= lang === 'en' ? item.packageNameEn : item.packageNameAr %> (<%= item.period || 'سنوي' %>)
+                  </span>
+                </div>
+              </div>
+
+              <div style="display: flex; align-items: center; gap: 20px;">
+                <div style="font-size: 18px; font-weight: 800; color: var(--primary-color);">
+                  <%= item.price %> <%= currency %>
+                </div>
+
+                <form action="/cart/remove" method="POST">
+                  <input type="hidden" name="packageId" value="<%= item.packageId %>">
+                  <button type="submit" class="btn btn-outline btn-sm" style="color: #ef4444; border-color: #fca5a5; padding: 6px 10px;" title="<%= t('حذف', 'Remove') %>">
+                    <i class="fa-solid fa-xmark"></i>
+                  </button>
+                </form>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+
+        <div style="margin-top: 25px; padding-top: 20px; border-top: 2px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 16px; font-weight: 700; color: var(--text-main);"><%= t('الإجمالي التقديري:', 'Estimated Total:') %></span>
+          <span style="font-size: 24px; font-weight: 900; color: var(--primary-color);"><%= totalAmount %> <%= currency %></span>
+        </div>
+      </div>
+
+      <!-- نموذج إتمام الطلب السريع -->
+      <div class="card" style="padding: 30px;">
+        <h3 style="font-size: 18px; font-weight: 800; color: var(--text-main); margin-bottom: 8px;">
+          <i class="fa-solid fa-file-signature" style="color: var(--primary-color);"></i> <%= t('إتمام الطلب السريع', 'Fast Checkout') %>
+        </h3>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">
+          <%= t('أدخل بياناتك وسنتواصل معك مباشرة لتسليم البيانات والتشغيل', 'Provide details for immediate order generation') %>
+        </p>
+
+        <form action="/cart/checkout" method="POST">
+          <div style="margin-bottom: 14px;">
+            <label style="display: block; font-size: 13px; font-weight: 700; margin-bottom: 4px;"><%= t('اسم العميل / المسؤول', 'Contact Name') %> *</label>
+            <input type="text" name="clientName" required class="form-control" placeholder="<%= t('أدخل اسمك الكريم', 'Full Name') %>">
+          </div>
+
+          <div style="margin-bottom: 14px;">
+            <label style="display: block; font-size: 13px; font-weight: 700; margin-bottom: 4px;"><%= t('اسم المنشأة أو النشاط', 'Company Name') %></label>
+            <input type="text" name="companyName" class="form-control" placeholder="<%= t('مثال: شركة النور للتجارة', 'Example: Horizon Ltd') %>">
+          </div>
+
+          <div style="margin-bottom: 14px;">
+            <label style="display: block; font-size: 13px; font-weight: 700; margin-bottom: 4px;"><%= t('رقم الواتساب للتواصل والتفعيل', 'WhatsApp Number') %> *</label>
+            <input type="text" name="whatsappNumber" required class="form-control" placeholder="01000000000" style="direction: ltr; text-align: right;">
+          </div>
+
+          <div style="margin-bottom: 14px;">
+            <label style="display: block; font-size: 13px; font-weight: 700; margin-bottom: 4px;"><%= t('البريد الإلكتروني', 'Email') %></label>
+            <input type="email" name="email" class="form-control" placeholder="client@company.com" style="direction: ltr; text-align: right;">
+          </div>
+
+          <div style="margin-bottom: 20px;">
+            <label style="display: block; font-size: 13px; font-weight: 700; margin-bottom: 4px;"><%= t('ملاحظات أو طلبات مخصصة', 'Notes') %></label>
+            <textarea name="notes" class="form-control" rows="2" placeholder="<%= t('أي استفسارات إضافية...', 'Special requests or notes...') %>"></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%; padding: 14px; font-size: 16px;">
+            <i class="fa-solid fa-check-circle"></i> <%= t('تأكيد الطلب والتواصل عبر واتساب', 'Confirm Order & Chat on WhatsApp') %>
+          </button>
+        </form>
+      </div>
+
+    </div>
+  <% } else { %>
+    <div class="card" style="text-align: center; padding: 60px 20px; max-width: 600px; margin: 0 auto;">
+      <i class="fa-solid fa-cart-shopping" style="font-size: 50px; color: var(--border-color); margin-bottom: 15px;"></i>
+      <h2 style="font-size: 22px; font-weight: 800; color: var(--text-main); margin-bottom: 10px;">
+        <%= t('سلة المبيعات فارغة حالياً', 'Your Cart is Currently Empty') %>
+      </h2>
+      <p style="color: var(--text-muted); font-size: 15px; margin-bottom: 25px;">
+        <%= t('استعرض منظومات سايسوفت السحابية واختر الباقة التي تناسب عملك', 'Explore Saysoft SaaS platforms and select the right plan') %>
+      </p>
+      <a href="/systems" class="btn btn-primary" style="padding: 12px 28px;">
+        <i class="fa-solid fa-shapes"></i> <%= t('استكشف كتالوج المنظومات', 'Explore Systems Catalog') %>
+      </a>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/footer') %>

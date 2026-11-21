@@ -1,0 +1,442 @@
+<%- include('../partials/header') %>
+
+<style>
+  .contact-page-container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 40px 20px 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .contact-card {
+    background: var(--card-bg, #ffffff);
+    border: 1px solid var(--border-color, #e2e8f0);
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.2s ease;
+  }
+
+  .contact-card-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--text-main, #0f172a);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .contact-card-subtitle {
+    font-size: 14px;
+    color: var(--text-muted, #64748b);
+    margin-bottom: 24px;
+    line-height: 1.6;
+  }
+
+  /* شبكة قنوات التواصل المباشرة */
+  .contact-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+  }
+
+  .contact-channel-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+    background: var(--bg-color, #f8fafc);
+    border: 1px solid var(--border-color, #e2e8f0);
+    border-radius: 12px;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .contact-channel-item:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary-color, #0284c7);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+  }
+
+  .contact-channel-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  /* صفوف حقول نموذج المراسلة */
+  .contact-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .contact-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .contact-form-group label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-main, #0f172a);
+  }
+
+  .contact-form-group .form-control {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--border-color, #cbd5e1);
+    border-radius: 8px;
+    font-size: 14px;
+    background: var(--card-bg, #ffffff);
+    color: var(--text-main, #0f172a);
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .contact-form-group .form-control:focus {
+    outline: none;
+    border-color: var(--primary-color, #0284c7);
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+  }
+
+  /* خريطة جوجل التفاعلية */
+  .contact-map-wrapper {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border-color, #e2e8f0);
+    position: relative;
+    width: 100%;
+    height: 350px;
+    background: #e2e8f0;
+  }
+
+  .contact-map-wrapper iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+  }
+
+  /* شبكات التواصل الاجتماعي */
+  .social-links-bar {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .social-link-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--bg-color, #f8fafc);
+    border: 1px solid var(--border-color, #e2e8f0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-main, #0f172a);
+    font-size: 18px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .social-link-btn:hover {
+    background: var(--primary-color, #0284c7);
+    color: #ffffff;
+    border-color: var(--primary-color, #0284c7);
+    transform: translateY(-2px);
+  }
+
+  /* قواعد الاستجابة للمحمول والتابلت ومحاكي الأجهزة */
+  #pageViewportWrapper.mode-mobile .contact-header-inner,
+  @media (max-width: 768px) {
+    .contact-header-inner {
+      flex-direction: column !important;
+      text-align: center !important;
+      align-items: center !important;
+      gap: 20px !important;
+    }
+
+    .contact-header-logo {
+      margin: 0 auto !important;
+      max-width: 220px !important;
+    }
+
+    .contact-page-container {
+      padding: 24px 15px 40px !important;
+      gap: 20px !important;
+    }
+
+    .contact-card {
+      padding: 22px 18px !important;
+      border-radius: 14px !important;
+    }
+
+    .contact-form-row {
+      grid-template-columns: 1fr !important;
+      gap: 12px !important;
+    }
+
+    .contact-cards-grid {
+      grid-template-columns: 1fr !important;
+      gap: 10px !important;
+    }
+
+    .contact-map-wrapper {
+      height: 280px !important;
+    }
+
+    .contact-submit-btn {
+      width: 100% !important;
+      justify-content: center !important;
+      padding: 13px 20px !important;
+    }
+
+    .map-header-bar {
+      flex-direction: column !important;
+      align-items: stretch !important;
+      gap: 10px !important;
+    }
+
+    .map-header-btn {
+      width: 100% !important;
+      justify-content: center !important;
+      text-align: center !important;
+    }
+  }
+
+  #pageViewportWrapper.mode-tablet .contact-form-row {
+    grid-template-columns: 1fr 1fr;
+  }
+</style>
+
+<!-- هيدر صفحة تواصل معنا: العنوان والوصف مع الشعار -->
+<section style="background: linear-gradient(180deg, var(--primary-light) 0%, var(--bg-color) 100%); padding: 45px 0 35px; border-bottom: 1px solid var(--border-color);">
+  <div class="container">
+    <div class="contact-header-inner" style="display: flex; align-items: center; justify-content: space-between; gap: 30px; flex-wrap: wrap;">
+      
+      <!-- العنوان والوصف -->
+      <div style="flex: 1; min-width: 280px;">
+        <h1 style="font-size: 24px; font-weight: 800; margin-bottom: 12px; color: var(--text-main); line-height: 1.3;">
+          <%= t('تواصل مع سايسوفت للحلول الرقمية', 'Contact Saysoft Digital Solutions') %>
+        </h1>
+        <p style="color: var(--text-muted); font-size: 15px; margin: 0; max-width: 680px; line-height: 1.7;">
+          <%= t('فريقنا المتخصص جاهز للإجابة على كافة استفساراتكم وتقديم العروض التوضيحية لجميع المنظومات السحابية', 'Our dedicated team is ready to answer inquiries and schedule interactive live demos for all cloud systems') %>
+        </p>
+      </div>
+
+      <!-- الشعار في نفس المستوى الأفقي ومتجاوب تماماً -->
+      <div class="contact-header-logo" style="flex-shrink: 0; width: 100%; max-width: 260px; border-radius: 12px; overflow: hidden; border: 2px solid var(--primary-color); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); background: #000000; line-height: 0;">
+        <img src="<%= settings.SiteLogo || '/images/saysoftlogo.png' %>" alt="Saysoft Logo" 
+             style="display: block; width: 100%; height: auto; object-fit: cover;">
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- المحتوى الرئيسي لصفحة تواصل: نسق العمود الواحد المتكامل والمريح للمحمول -->
+<div class="container">
+  <div class="contact-page-container">
+    
+    <!-- 1. بطاقة قنوات وبيانات الاتصال المباشرة -->
+    <div class="contact-card">
+      <h2 class="contact-card-title">
+        <i class="fa-solid fa-address-book" style="color: var(--primary-color);"></i>
+        <%= t('قنوات التواصل المباشرة', 'Official Contact Channels') %>
+      </h2>
+      <p class="contact-card-subtitle">
+        <%= t('اختر القناة الأنسب لك للتواصل الفوري مع مسؤولي خدمة العملاء والدعم الفني', 'Choose your preferred channel for instant communication with customer care and tech support') %>
+      </p>
+
+      <div class="contact-cards-grid">
+        
+        <!-- البريد الإلكتروني -->
+        <a href="mailto:<%= settings.ContactEmail || 'info@saysoft.tech' %>" class="contact-channel-item">
+          <div class="contact-channel-icon" style="background: #e0f2fe; color: #0284c7;">
+            <i class="fa-solid fa-envelope"></i>
+          </div>
+          <div>
+            <span style="font-size: 12px; color: var(--text-muted); display: block;"><%= t('البريد الإلكتروني الرسمي', 'Official Email') %></span>
+            <strong style="font-size: 14px; color: var(--text-main); word-break: break-all;"><%= settings.ContactEmail || 'info@saysoft.tech' %></strong>
+          </div>
+        </a>
+
+        <!-- واتساب -->
+        <a href="https://wa.me/<%= (settings.WhatsappNumber || '').replace(/\+/g, '') %>?text=<%= encodeURIComponent(t('مرحباً سايسوفت، أود الاستفسار عن منظوماتكم الرقمية.', 'Hello Saysoft, I would like to inquire about your software systems.')) %>" target="_blank" class="contact-channel-item">
+          <div class="contact-channel-icon" style="background: #dcfce7; color: #16a34a;">
+            <i class="fa-brands fa-whatsapp"></i>
+          </div>
+          <div>
+            <span style="font-size: 12px; color: var(--text-muted); display: block;"><%= t('محادثة واتساب سريعة', 'WhatsApp Chat') %></span>
+            <strong style="direction: ltr; display: inline-block; font-size: 14px; color: #16a34a;"><%= settings.WhatsappNumber || '+20 100 000 0000' %></strong>
+          </div>
+        </a>
+
+        <!-- الهاتف المباشر -->
+        <a href="tel:<%= (settings.ContactPhone || '+201000000000').replace(/\s+/g, '') %>" class="contact-channel-item">
+          <div class="contact-channel-icon" style="background: #fef3c7; color: #d97706;">
+            <i class="fa-solid fa-phone"></i>
+          </div>
+          <div>
+            <span style="font-size: 12px; color: var(--text-muted); display: block;"><%= t('الهاتف المباشر', 'Direct Phone') %></span>
+            <strong style="direction: ltr; display: inline-block; font-size: 14px; color: var(--text-main);"><%= settings.ContactPhone || '+20 100 000 0000' %></strong>
+          </div>
+        </a>
+
+        <!-- ساعات الدعم الفني -->
+        <div class="contact-channel-item" style="cursor: default;">
+          <div class="contact-channel-icon" style="background: #ede9fe; color: #7c3aed;">
+            <i class="fa-solid fa-headset"></i>
+          </div>
+          <div>
+            <span style="font-size: 12px; color: var(--text-muted); display: block;"><%= t('ساعات الدعم الفني', 'Support Hours') %></span>
+            <strong style="font-size: 14px; color: var(--text-main);"><%= t('24 ساعة / 7 أيام في الأسبوع', '24/7 Dedicated Support') %></strong>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- منصات التواصل الاجتماعي -->
+      <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px;">
+        <span style="font-size: 14px; font-weight: 700; color: var(--text-main);">
+          <i class="fa-solid fa-share-nodes" style="color: var(--primary-color); margin-left: 6px;"></i>
+          <%= t('تابعنا على المنصات الاجتماعية:', 'Follow Our Social Channels:') %>
+        </span>
+        <div class="social-links-bar">
+          <% if (settings.SocialFacebook) { %>
+            <a href="<%= settings.SocialFacebook %>" target="_blank" class="social-link-btn" title="Facebook"><i class="fa-brands fa-facebook"></i></a>
+          <% } %>
+          <% if (settings.SocialTwitter) { %>
+            <a href="<%= settings.SocialTwitter %>" target="_blank" class="social-link-btn" title="X (Twitter)"><i class="fa-brands fa-x-twitter"></i></a>
+          <% } %>
+          <% if (settings.SocialLinkedin) { %>
+            <a href="<%= settings.SocialLinkedin %>" target="_blank" class="social-link-btn" title="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+          <% } %>
+          <% if (settings.SocialYoutube) { %>
+            <a href="<%= settings.SocialYoutube %>" target="_blank" class="social-link-btn" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. بطاقة المقر والخريطة التفاعلية من جوجل -->
+    <div class="contact-card">
+      <div class="map-header-bar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px;">
+        <div>
+          <h2 class="contact-card-title" style="margin-bottom: 4px;">
+            <i class="fa-solid fa-location-dot" style="color: #ef4444;"></i>
+            <%= t('موقعنا ومقرنا الرئيسي على جوجل', 'Our Headquarters on Google Maps') %>
+          </h2>
+          <span style="font-size: 13px; color: var(--text-muted);">
+            <%= t('القاهرة، مصر (30°06\'54.6"N 31°18\'21.3"E)', 'Cairo, Egypt (30°06\'54.6"N 31°18\'21.3"E)') %>
+          </span>
+        </div>
+
+        <a href="https://www.google.com/maps/place/30%C2%B006'54.6%22N+31%C2%B018'21.3%22E/@30.1151676,31.3084919,17z/data=!3m1!4b1!4m4!3m3!8m2!3d30.115163!4d31.305917" target="_blank" rel="noopener noreferrer" class="btn btn-outline map-header-btn" style="font-size: 13px; padding: 7px 16px; display: inline-flex; align-items: center; gap: 8px; border-radius: 8px;">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i> <%= t('فتح في خرائط جوجل', 'Open in Google Maps') %>
+        </a>
+      </div>
+
+      <div class="contact-map-wrapper">
+        <iframe 
+          title="موقع سايسوفت للحلول الرقمية على خرائط جوجل"
+          src="https://maps.google.com/maps?q=30%C2%B006'54.6%22N+31%C2%B018'21.3%22E&amp;hl=<%= lang === 'en' ? 'en' : 'ar' %>&amp;t=&amp;z=17&amp;ie=UTF8&amp;iwloc=&amp;output=embed" 
+          allowfullscreen="" 
+          loading="lazy" 
+          referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+      </div>
+
+      <div style="margin-top: 14px; font-size: 13px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <span>
+          <i class="fa-regular fa-clock" style="color: var(--primary-color);"></i>
+          <strong><%= t('مواعيد استقبال الزوار:', 'Visiting Hours:') %></strong> <%= t('الأحد - الخميس من 9:00 صباحاً حتى 5:00 مساءً', 'Sunday - Thursday: 9:00 AM - 5:00 PM') %>
+        </span>
+        <span style="background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;">
+          <i class="fa-solid fa-map-pin"></i> <%= t('خريطة تفاعلية مباشرة', 'Live Interactive Map') %>
+        </span>
+      </div>
+    </div>
+
+    <!-- 3. بطاقة نموذج المراسلة المباشر -->
+    <div class="contact-card">
+      <h2 class="contact-card-title">
+        <i class="fa-solid fa-paper-plane" style="color: var(--primary-color);"></i>
+        <%= t('أرسل لنا رسالة أو استفسار', 'Send Us a Message or Inquiry') %>
+      </h2>
+      <p class="contact-card-subtitle">
+        <%= t('يسعدنا تواصلكم وسيقوم فريق المبيعات والحلول التقنية بالتواصل معكم والرد خلال دقائق معدودة', 'We welcome your message; our solutions team will respond promptly within minutes') %>
+      </p>
+
+      <% if (status === 'success') { %>
+        <div style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; padding: 14px 18px; border-radius: 10px; margin-bottom: 22px; font-size: 14px; display: flex; align-items: center; gap: 10px;">
+          <i class="fa-solid fa-circle-check" style="font-size: 18px;"></i>
+          <span><%= t('شكراً لك! تم إرسال رسالتك بنجاح وسنتواصل معك في أسرع وقت.', 'Thank you! Your message was sent successfully. We will contact you shortly.') %></span>
+        </div>
+      <% } else if (status === 'missing') { %>
+        <div style="background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 14px 18px; border-radius: 10px; margin-bottom: 22px; font-size: 14px; display: flex; align-items: center; gap: 10px;">
+          <i class="fa-solid fa-circle-exclamation" style="font-size: 18px;"></i>
+          <span><%= t('يرجى ملء جميع الحقول الإلزامية المطلوبة (الاسم الكامل، رقم الواتساب، ونص الرسالة).', 'Please fill all required fields (Full Name, WhatsApp Number, and Message).') %></span>
+        </div>
+      <% } %>
+
+      <form action="/contact" method="POST">
+        
+        <!-- الصف 1: الاسم ورقم الواتساب -->
+        <div class="contact-form-row">
+          <div class="contact-form-group">
+            <label><%= t('الاسم الكامل', 'Full Name') %> <span style="color: #ef4444;">*</span></label>
+            <input type="text" name="senderName" required class="form-control" placeholder="<%= t('مثال: م. أحمد عبد الله', 'e.g. John Doe') %>">
+          </div>
+          <div class="contact-form-group">
+            <label><%= t('رقم الواتساب (للتواصل السريع)', 'WhatsApp Number') %> <span style="color: #ef4444;">*</span></label>
+            <input type="text" name="whatsappNumber" required class="form-control" placeholder="01000000000" style="direction: ltr; text-align: right;">
+          </div>
+        </div>
+
+        <!-- الصف 2: البريد الإلكتروني وموضوع الرسالة -->
+        <div class="contact-form-row">
+          <div class="contact-form-group">
+            <label><%= t('البريد الإلكتروني (اختياري)', 'Email Address (Optional)') %></label>
+            <input type="email" name="email" class="form-control" placeholder="name@company.com" style="direction: ltr; text-align: right;">
+          </div>
+          <div class="contact-form-group">
+            <label><%= t('موضوع الاستفسار أو المنظومة المطلوبة', 'Subject or System of Interest') %></label>
+            <input type="text" name="subject" class="form-control" placeholder="<%= t('مثال: استفسار عن منظومة إدارة المبيعات أو المدارس', 'e.g. Inquiring about POS or School ERP') %>">
+          </div>
+        </div>
+
+        <!-- الصف 3: نص الرسالة -->
+        <div class="contact-form-group" style="margin-bottom: 22px;">
+          <label><%= t('تفاصيل الرسالة أو الاستفسار', 'Message Details') %> <span style="color: #ef4444;">*</span></label>
+          <textarea name="message" required class="form-control" rows="5" placeholder="<%= t('اكتب استفسارك أو تفاصيل متطلبات منشأتك البرمجية هنا...', 'Type your message or project requirements here...') %>"></textarea>
+        </div>
+
+        <!-- زر الإرسال -->
+        <div>
+          <button type="submit" class="btn btn-primary contact-submit-btn" style="padding: 13px 38px; font-size: 15px; font-weight: 700; border-radius: 10px; display: inline-flex; align-items: center; gap: 10px; cursor: pointer;">
+            <i class="fa-solid fa-paper-plane"></i>
+            <%= t('إرسال الرسالة الآن', 'Send Message Now') %>
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

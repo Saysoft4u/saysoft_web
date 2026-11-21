@@ -1,0 +1,118 @@
+<%- include('../partials/admin_header') %>
+
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+  <div>
+    <h1 style="font-size: 24px; font-weight: 800; color: #0f172a; margin-bottom: 4px;">
+      <%= isEdit ? `تعديل صفحة: ${page.TitleAr}` : 'إنشاء صفحة جديدة' %>
+    </h1>
+    <p style="color: #64748b; font-size: 14px;">أدخل عنوان ومحتوى الصفحة بالعربية والإنجليزية مع ضبط إعدادات العرض والسيو</p>
+  </div>
+
+  <a href="/admin/pages" class="btn btn-outline">
+    <i class="fa-solid fa-arrow-right"></i> العودة للصفحات
+  </a>
+</div>
+
+<form action="<%= isEdit ? `/admin/pages/edit/${page.IDPage}` : '/admin/pages/new' %>" method="POST">
+  
+  <div class="tabs-header">
+    <button type="button" class="tab-btn active" onclick="switchTab('tab-page-content', this)">
+      <i class="fa-solid fa-file-lines"></i> محتوى الصفحة
+    </button>
+    <button type="button" class="tab-btn" onclick="switchTab('tab-page-seo', this)">
+      <i class="fa-solid fa-magnifying-glass-chart"></i> إعدادات السيو والظهور
+    </button>
+  </div>
+
+  <!-- التبويب 1: المحتوى -->
+  <div id="tab-page-content" class="tab-content table-container">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 20px;">
+      <div class="form-group">
+        <label>عنوان الصفحة (عربي) *</label>
+        <input type="text" name="titleAr" class="form-control" required value="<%= page ? page.TitleAr : '' %>" placeholder="مثال: من نحن">
+      </div>
+
+      <div class="form-group">
+        <label>عنوان الصفحة (إنجليزي) *</label>
+        <input type="text" name="titleEn" class="form-control" required value="<%= page ? page.TitleEn : '' %>" placeholder="Example: About Us" style="direction: ltr;">
+      </div>
+
+      <div class="form-group">
+        <label>الرابط اللطيف (Slug) *</label>
+        <input type="text" name="slug" class="form-control" required value="<%= page ? page.Slug : '' %>" placeholder="about-us" style="direction: ltr; text-align: left;">
+      </div>
+
+      <div class="form-group">
+        <label>ترتيب الظهور</label>
+        <input type="number" name="sortOrder" class="form-control" value="<%= page ? page.SortOrder : 0 %>">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>المحتوى بالتفصيل (عربي - يدعم HTML وتنسيق النصوص) *</label>
+      <textarea name="contentAr" class="form-control" rows="14" required placeholder="اكتب محتوى الصفحة هنا..."><%= page ? page.ContentAr : '' %></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>المحتوى بالتفصيل (إنجليزي - يدعم HTML وتنسيق النصوص) *</label>
+      <textarea name="contentEn" class="form-control" rows="14" required placeholder="Write page content in English..." style="direction: ltr;"><%= page ? page.ContentEn : '' %></textarea>
+    </div>
+
+    <div style="display: flex; gap: 30px; padding: 15px 0; border-top: 1px solid #e2e8f0;">
+      <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+        <input type="checkbox" name="showInHeader" value="true" <%= (page && page.ShowInHeader) ? 'checked' : '' %> style="width: 18px; height: 18px;">
+        <span style="font-weight: 700; color: #0f172a;">إظهار الرابط في القائمة العلوية (Header)</span>
+      </label>
+
+      <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+        <input type="checkbox" name="showInFooter" value="true" <%= (!page || page.ShowInFooter) ? 'checked' : '' %> style="width: 18px; height: 18px;">
+        <span style="font-weight: 700; color: #0f172a;">إظهار الرابط في القائمة السفلية (Footer)</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- التبويب 2: السيو -->
+  <div id="tab-page-seo" class="tab-content table-container" style="display: none;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+      <div class="form-group">
+        <label>عنوان السيو (Meta Title - عربي)</label>
+        <input type="text" name="metaTitleAr" class="form-control" value="<%= page && page.MetaTitleAr ? page.MetaTitleAr : '' %>">
+      </div>
+
+      <div class="form-group">
+        <label>عنوان السيو (Meta Title - إنجليزي)</label>
+        <input type="text" name="metaTitleEn" class="form-control" value="<%= page && page.MetaTitleEn ? page.MetaTitleEn : '' %>" style="direction: ltr;">
+      </div>
+
+      <div class="form-group">
+        <label>وصف السيو (Meta Description - عربي)</label>
+        <textarea name="metaDescAr" class="form-control" rows="3"><%= page && page.MetaDescAr ? page.MetaDescAr : '' %></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>وصف السيو (Meta Description - إنجليزي)</label>
+        <textarea name="metaDescEn" class="form-control" rows="3" style="direction: ltr;"><%= page && page.MetaDescEn ? page.MetaDescEn : '' %></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>الكلمات المفتاحية (Meta Keywords - عربي)</label>
+        <input type="text" name="metaKeywordsAr" class="form-control" value="<%= page && page.MetaKeywordsAr ? page.MetaKeywordsAr : '' %>">
+      </div>
+
+      <div class="form-group">
+        <label>الكلمات المفتاحية (Meta Keywords - إنجليزي)</label>
+        <input type="text" name="metaKeywordsEn" class="form-control" value="<%= page && page.MetaKeywordsEn ? page.MetaKeywordsEn : '' %>" style="direction: ltr;">
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top: 25px; display: flex; justify-content: flex-end; gap: 14px;">
+    <a href="/admin/pages" class="btn btn-outline">إلغاء</a>
+    <button type="submit" class="btn btn-primary" style="padding: 12px 35px;">
+      <i class="fa-solid fa-floppy-disk"></i> <%= isEdit ? 'حفظ التعديلات' : 'نشر الصفحة' %>
+    </button>
+  </div>
+
+</form>
+
+<%- include('../partials/admin_footer') %>

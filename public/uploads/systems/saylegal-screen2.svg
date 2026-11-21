@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" width="1200" height="750">
+  <defs>
+    <linearGradient id="bgGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#1e293b" />
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="750" fill="url(#bgGrad2)" />
+
+  <!-- ترويسة الصفحة -->
+  <rect x="0" y="0" width="1200" height="70" fill="#0b1120" />
+  <line x1="0" y1="70" x2="1200" y2="70" stroke="#334155" stroke-width="1" />
+  <text x="1160" y="44" fill="#f59e0b" font-family="sans-serif" font-size="22" font-weight="bold" text-anchor="end">⚖️ ساي ليجال | سجل ملفات القضايا والدعاوى</text>
+  <text x="50" y="44" fill="#94a3b8" font-family="sans-serif" font-size="14" text-anchor="start">إدارة القضايا > ملفات الدعاوى النشطة</text>
+
+  <!-- القائمة الجانبية -->
+  <rect x="980" y="70" width="220" height="680" fill="#0f172a" />
+  <line x1="980" y1="70" x2="980" y2="750" stroke="#334155" stroke-width="1" />
+  <rect x="995" y="142" width="190" height="42" rx="8" fill="#1e293b" stroke="#f59e0b" stroke-width="1.5" />
+  <text x="1165" y="169" fill="#ffffff" font-family="sans-serif" font-size="15" font-weight="bold" text-anchor="end">📁 سجل القضايا والدعاوى</text>
+
+  <!-- منطقة شريط البحث والأزرار -->
+  <g transform="translate(40, 90)">
+    <rect x="0" y="0" width="920" height="60" rx="10" fill="#131c2e" stroke="#334155" stroke-width="1" />
+    <text x="900" y="36" fill="#94a3b8" font-family="sans-serif" font-size="14" text-anchor="end">🔍 ابحث برقم القضية، اسم الموكل، الخصم، أو المحكمة...</text>
+    
+    <rect x="20" y="12" width="140" height="36" rx="6" fill="#f59e0b" />
+    <text x="90" y="35" fill="#000" font-family="sans-serif" font-size="13" font-weight="bold" text-anchor="middle">+ قيد دعوى جديدة</text>
+
+    <rect x="175" y="12" width="120" height="36" rx="6" fill="#1e293b" stroke="#475569" stroke-width="1" />
+    <text x="235" y="35" fill="#e2e8f0" font-family="sans-serif" font-size="13" text-anchor="middle">تصدير إكسل</text>
+  </g>
+
+  <!-- كروت تفاصيل ملف القضية المحدد -->
+  <g transform="translate(40, 170)">
+    <!-- الكارت الرئيسي للقضية -->
+    <rect x="0" y="0" width="920" height="540" rx="14" fill="#131c2e" stroke="#334155" stroke-width="1" />
+    
+    <!-- رأس ملف القضية -->
+    <rect x="20" y="20" width="880" height="90" rx="10" fill="#1e293b" />
+    <text x="880" y="52" fill="#ffffff" font-family="sans-serif" font-size="18" font-weight="bold" text-anchor="end">القضية رقم: ق-2026/4102 (دعوى منازعة تنفيذ تجاري وعقاري)</text>
+    <text x="880" y="80" fill="#94a3b8" font-family="sans-serif" font-size="13" text-anchor="end">المحكمة العامة بالرياض - الدائرة القضائية الثالثة | تاريخ القيد: 14 يناير 2026</text>
+    <rect x="40" y="45" width="90" height="30" rx="6" fill="#065f46" />
+    <text x="85" y="65" fill="#34d399" font-family="sans-serif" font-size="12" font-weight="bold" text-anchor="middle">نشطة / متداولة</text>
+
+    <!-- تبويبات ملف القضية -->
+    <line x1="20" y1="130" x2="900" y2="130" stroke="#334155" stroke-width="1" />
+    <text x="880" y="155" fill="#f59e0b" font-family="sans-serif" font-size="15" font-weight="bold" text-anchor="end">بيانات الخصوم والأطراف</text>
+    <text x="700" y="155" fill="#94a3b8" font-family="sans-serif" font-size="14" text-anchor="end">وقائع الدعوى والمذكرات</text>
+    <text x="520" y="155" fill="#94a3b8" font-family="sans-serif" font-size="14" text-anchor="end">المستندات والأدلة الرقمية</text>
+    <text x="360" y="155" fill="#94a3b8" font-family="sans-serif" font-size="14" text-anchor="end">الجلسات والقرارات</text>
+    <text x="200" y="155" fill="#94a3b8" font-family="sans-serif" font-size="14" text-anchor="end">الأتعاب والمصروفات</text>
+
+    <!-- تفاصيل الأطراف -->
+    <rect x="470" y="180" width="430" height="150" rx="8" fill="#1e293b" />
+    <text x="880" y="210" fill="#38bdf8" font-family="sans-serif" font-size="14" font-weight="bold" text-anchor="end">طرف الادعاء (الموكل):</text>
+    <text x="880" y="238" fill="#f8fafc" font-family="sans-serif" font-size="13" text-anchor="end">شركة أفق للاستثمار والتطوير العقاري (ش.م.م)</text>
+    <text x="880" y="262" fill="#94a3b8" font-family="sans-serif" font-size="12" text-anchor="end">رقم السجل: 1010892014 | الوكيل: عبد الرحمن بن إبراهيم السعيد</text>
+    <text x="880" y="286" fill="#94a3b8" font-family="sans-serif" font-size="12" text-anchor="end">رقم التوكيل: 450912 ناجز | الصلاحية: سارية المفعول حتى 2028</text>
+
+    <rect x="20" y="180" width="430" height="150" rx="8" fill="#1e293b" />
+    <text x="430" y="210" fill="#f87171" font-family="sans-serif" font-size="14" font-weight="bold" text-anchor="end">طرف المدعى عليه (الخصم):</text>
+    <text x="430" y="238" fill="#f8fafc" font-family="sans-serif" font-size="13" text-anchor="end">مؤسسة أبراج التعمير للمقاولات العامة</text>
+    <text x="430" y="262" fill="#94a3b8" font-family="sans-serif" font-size="12" text-anchor="end">محامي الخصم: أ. ناصر التميمي</text>
+    <text x="430" y="286" fill="#94a3b8" font-family="sans-serif" font-size="12" text-anchor="end">محل النزاع: إخلال بالعقد ومطالبة بمبلغ 4,250,000 ريال</text>
+
+    <!-- قسم المذكرات والقرارات -->
+    <rect x="20" y="350" width="880" height="160" rx="8" fill="#1e293b" />
+    <text x="880" y="380" fill="#fcd34d" font-family="sans-serif" font-size="14" font-weight="bold" text-anchor="end">المذكرات القانونية والمحاضر الأخيرة:</text>
+    
+    <text x="880" y="415" fill="#f8fafc" font-family="sans-serif" font-size="13" text-anchor="end">📄 مذكرة جوابية على دفوع المدعى عليه - أودعت عبر ناجز بتاريخ 10 فبراير 2026</text>
+    <text x="880" y="445" fill="#f8fafc" font-family="sans-serif" font-size="13" text-anchor="end">📄 تقرير الخبير الهندسي المعتمد وتأييد سلامة موقف الموكل - 28 يناير 2026</text>
+    <text x="880" y="475" fill="#f8fafc" font-family="sans-serif" font-size="13" text-anchor="end">📄 صورة الشيكات والضمانات البنكية المحتج بها - مرفقة بملف الأدلة</text>
+  </g>
+</svg>

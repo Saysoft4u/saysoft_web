@@ -1,0 +1,148 @@
+<%- include('../partials/admin_header') %>
+
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+  <div>
+    <h1 style="font-size: 24px; font-weight: 800; color: #0f172a; margin-bottom: 4px;">الرسائل والاستفسارات وقائمة المشتركين</h1>
+    <p style="color: #64748b; font-size: 14px;">متابعة رسائل اتصل بنا، استفسارات المنظومات، وقائمة المهتمين المسجلين في صفحة قريباً</p>
+  </div>
+</div>
+
+<div class="tabs-header">
+  <button type="button" class="tab-btn active" onclick="switchTab('tab-messages', this)">
+    <i class="fa-solid fa-envelope"></i> الرسائل والاستفسارات (<%= messages.length %>)
+  </button>
+  <button type="button" class="tab-btn" onclick="switchTab('tab-subscribers', this)">
+    <i class="fa-solid fa-users"></i> مشتركو صفحة قريباً (<%= subscribers.length %>)
+  </button>
+</div>
+
+<!-- تبويب 1: الرسائل -->
+<div id="tab-messages" class="tab-content table-container">
+  <% if (messages && messages.length > 0) { %>
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>المرسل</th>
+          <th>الواتساب</th>
+          <th>المنظومة المعنية</th>
+          <th>الموضوع / الرسالة</th>
+          <th>التاريخ</th>
+          <th>الحالة</th>
+          <th style="text-align: left;">الإجراءات</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% messages.forEach(msg => { %>
+          <tr style="<%= !msg.IsRead ? 'background: #f0fdf4;' : '' %>">
+            <td style="font-weight: 700;">
+              <%= msg.SenderName %>
+              <% if (msg.Email) { %>
+                <div style="font-size: 12px; color: #64748b;"><%= msg.Email %></div>
+              <% } %>
+            </td>
+            <td style="direction: ltr; text-align: right;">
+              <a href="https://wa.me/<%= msg.WhatsappNumber.replace(/\+/g, '') %>?text=<%= encodeURIComponent(`مرحباً أستاذ ${msg.SenderName}، رداً على استفسارك على منصة سايسوفت.`) %>" 
+                 target="_blank" style="color: #16a34a; font-weight: 600;">
+                <i class="fa-brands fa-whatsapp"></i> <%= msg.WhatsappNumber %>
+              </a>
+            </td>
+            <td>
+              <% if (msg.SystemName || msg.System) { %>
+                <span class="badge badge-primary"><%= msg.SystemName || msg.System.NameAr %></span>
+              <% } else { %>
+                <span style="color: #94a3b8; font-size: 12px;">عام (اتصل بنا)</span>
+              <% } %>
+            </td>
+            <td>
+              <% if (msg.Subject) { %>
+                <strong style="display: block; font-size: 13px; color: #0f172a;"><%= msg.Subject %></strong>
+              <% } %>
+              <p style="margin: 0; font-size: 13px; color: #475569; max-width: 350px;"><%= msg.Message %></p>
+            </td>
+            <td style="color: #64748b; font-size: 12px;">
+              <%= msg.CreatedAt.toISOString().split('T')[0] %>
+            </td>
+            <td>
+              <% if (msg.IsRead) { %>
+                <span class="badge badge-success">تم الاطلاع</span>
+              <% } else { %>
+                <span class="badge badge-warning">جديدة</span>
+              <% } %>
+            </td>
+            <td>
+              <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                <!-- تبديل حالة القراءة -->
+                <form action="/admin/messages/toggle-read/<%= msg.IDMessage %>" method="POST" style="display: inline;">
+                  <button type="submit" class="btn btn-outline btn-sm" title="<%= msg.IsRead ? 'تمييز كغير مقروء' : 'تمييز كمقروء' %>">
+                    <i class="fa-solid <%= msg.IsRead ? 'fa-envelope' : 'fa-envelope-open' %>"></i>
+                  </button>
+                </form>
+
+                <!-- حذف الرسالة مع التحقق من كلمة المرور الرئيسية -->
+                <form action="/admin/messages/delete/<%= msg.IDMessage %>" method="POST" style="display: inline;" onsubmit="return confirmDeleteWithMasterPassword(this, 'رسالة من <%= msg.SenderName %>')">
+                  <button type="submit" class="btn btn-outline btn-sm" style="color: #dc2626; border-color: #fca5a5;" title="حذف">
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } else { %>
+    <div style="text-align: center; padding: 40px; color: #64748b;">
+      <i class="fa-solid fa-inbox" style="font-size: 36px; margin-bottom: 10px; color: #cbd5e1;"></i>
+      <p>لا توجد رسائل واردة حالياً.</p>
+    </div>
+  <% } %>
+</div>
+
+<!-- تبويب 2: مشتركو صفحة قريباً -->
+<div id="tab-subscribers" class="tab-content table-container" style="display: none;">
+  <% if (subscribers && subscribers.length > 0) { %>
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>اسم المشترك</th>
+          <th>رقم الواتساب</th>
+          <th>ملاحظات واهتمامات</th>
+          <th>تاريخ التسجيل</th>
+          <th style="text-align: left;">الإجراءات</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% subscribers.forEach(sub => { %>
+          <tr>
+            <td style="font-weight: 700; color: #0f172a;"><%= sub.FullName %></td>
+            <td style="direction: ltr; text-align: right;">
+              <a href="https://wa.me/<%= sub.WhatsappNumber.replace(/\+/g, '') %>?text=<%= encodeURIComponent(`مرحباً أستاذ ${sub.FullName}، نود إعلامك بإطلاق منصة سايسوفت للحلول الرقمية!`) %>" 
+                 target="_blank" style="color: #16a34a; font-weight: 600;">
+                <i class="fa-brands fa-whatsapp"></i> <%= sub.WhatsappNumber %>
+              </a>
+            </td>
+            <td style="color: #64748b;"><%= sub.Notes || '-' %></td>
+            <td style="color: #64748b; font-size: 13px;"><%= sub.CreatedAt.toISOString().split('T')[0] %></td>
+            <td>
+              <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                <!-- حذف مشترك مع التحقق من كلمة المرور الرئيسية -->
+                <form action="/admin/subscribers/delete/<%= sub.IDSubscriber %>" method="POST" style="display: inline;" onsubmit="return confirmDeleteWithMasterPassword(this, 'المشترك <%= sub.FullName %>')">
+                  <button type="submit" class="btn btn-outline btn-sm" style="color: #dc2626; border-color: #fca5a5;" title="حذف">
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } else { %>
+    <div style="text-align: center; padding: 40px; color: #64748b;">
+      <i class="fa-solid fa-users" style="font-size: 36px; margin-bottom: 10px; color: #cbd5e1;"></i>
+      <p>لا يوجد مشتركون مسجلون في صفحة قريباً حتى الآن.</p>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/admin_footer') %>

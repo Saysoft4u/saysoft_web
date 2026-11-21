@@ -1,0 +1,183 @@
+<%- include('../partials/admin_header') %>
+
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+  <div>
+    <h1 style="font-size: 24px; font-weight: 800; color: #0f172a; margin-bottom: 4px;">إدارة المحتوى التسويقي</h1>
+    <p style="color: #64748b; font-size: 14px;">إدارة الأسئلة الشائعة العامة وآراء العملاء المعروضة في الصفحة الرئيسية</p>
+  </div>
+</div>
+
+<div class="tabs-header">
+  <button type="button" class="tab-btn active" onclick="switchTab('tab-faqs', this)">
+    <i class="fa-solid fa-circle-question"></i> الأسئلة الشائعة (<%= faqs.length %>)
+  </button>
+  <button type="button" class="tab-btn" onclick="switchTab('tab-testimonials', this)">
+    <i class="fa-solid fa-comment-dots"></i> آراء العملاء (<%= testimonials.length %>)
+  </button>
+</div>
+
+<!-- تبويب 1: الأسئلة الشائعة -->
+<div id="tab-faqs" class="tab-content">
+  <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; align-items: start;">
+    
+    <!-- جدول الأسئلة -->
+    <div class="table-container">
+      <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 16px;">قائمة الأسئلة الشائعة</h3>
+      <% if (faqs && faqs.length > 0) { %>
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>السؤال (عربي)</th>
+              <th>السؤال (إنجليزي)</th>
+              <th style="text-align: left;">حذف</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% faqs.forEach(f => { %>
+              <tr>
+                <td>
+                  <strong style="color: #0f172a; display: block;"><%= f.QuestionAr %></strong>
+                  <span style="font-size: 12px; color: #64748b;"><%= f.AnswerAr.substring(0, 70) %>...</span>
+                </td>
+                <td style="color: #64748b; font-size: 13px;"><%= f.QuestionEn %></td>
+                <td>
+                  <div style="display: flex; justify-content: flex-end;">
+                    <form action="/admin/marketing/faqs/delete/<%= f.IDFAQ %>" method="POST" onsubmit="return confirmDeleteWithMasterPassword(this, 'سؤال شائع')">
+                      <button type="submit" class="btn btn-outline btn-sm" style="color: #dc2626; border-color: #fca5a5;">
+                        <i class="fa-solid fa-trash"></i>
+                      </button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      <% } else { %>
+        <p style="color: #64748b; text-align: center; padding: 20px;">لا توجد أسئلة شائعة مضافة.</p>
+      <% } %>
+    </div>
+
+    <!-- نموذج إضافة سؤال جديد -->
+    <div class="table-container">
+      <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 16px;">إضافة سؤال جديد</h3>
+      <form action="/admin/marketing/faqs/new" method="POST">
+        <div class="form-group">
+          <label>السؤال بالعربية *</label>
+          <input type="text" name="questionAr" class="form-control" required placeholder="كيف يمكنني تجربة المنظومة؟">
+        </div>
+        <div class="form-group">
+          <label>السؤال بالإنجليزية *</label>
+          <input type="text" name="questionEn" class="form-control" required placeholder="How can I try the system?" style="direction: ltr;">
+        </div>
+        <div class="form-group">
+          <label>الإجابة بالعربية *</label>
+          <textarea name="answerAr" class="form-control" rows="3" required></textarea>
+        </div>
+        <div class="form-group">
+          <label>الإجابة بالإنجليزية *</label>
+          <textarea name="answerEn" class="form-control" rows="3" required style="direction: ltr;"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">
+          <i class="fa-solid fa-plus"></i> إضافة السؤال
+        </button>
+      </form>
+    </div>
+
+  </div>
+</div>
+
+<!-- تبويب 2: آراء العملاء -->
+<div id="tab-testimonials" class="tab-content" style="display: none;">
+  <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; align-items: start;">
+    
+    <!-- جدول الآراء -->
+    <div class="table-container">
+      <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 16px;">آراء وتقييمات العملاء</h3>
+      <% if (testimonials && testimonials.length > 0) { %>
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>العميل والمنصب</th>
+              <th>التقييم</th>
+              <th>نص الرأي</th>
+              <th style="text-align: left;">حذف</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% testimonials.forEach(t => { %>
+              <tr>
+                <td>
+                  <strong style="color: #0f172a; display: block;"><%= t.ClientNameAr %></strong>
+                  <span style="font-size: 12px; color: #64748b;"><%= t.ClientTitleAr || '' %></span>
+                </td>
+                <td style="color: #f59e0b;">
+                  <% for(let i=0; i<t.Rating; i++) { %><i class="fa-solid fa-star"></i><% } %>
+                </td>
+                <td style="font-size: 13px; color: #334155; max-width: 250px;">
+                  "<%= t.ContentAr %>"
+                </td>
+                <td>
+                  <div style="display: flex; justify-content: flex-end;">
+                    <form action="/admin/marketing/testimonials/delete/<%= t.IDTestimonial %>" method="POST" onsubmit="return confirmDeleteWithMasterPassword(this, 'رأي العميل')">
+                      <button type="submit" class="btn btn-outline btn-sm" style="color: #dc2626; border-color: #fca5a5;">
+                        <i class="fa-solid fa-trash"></i>
+                      </button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      <% } else { %>
+        <p style="color: #64748b; text-align: center; padding: 20px;">لا توجد آراء عملاء مسجلة بعد.</p>
+      <% } %>
+    </div>
+
+    <!-- نموذج إضافة رأي عميل -->
+    <div class="table-container">
+      <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 16px;">إضافة رأي عميل جديد</h3>
+      <form action="/admin/marketing/testimonials/new" method="POST">
+        <div class="form-group">
+          <label>اسم العميل (عربي) *</label>
+          <input type="text" name="clientNameAr" class="form-control" required placeholder="م. أحمد خالد">
+        </div>
+        <div class="form-group">
+          <label>اسم العميل (إنجليزي) *</label>
+          <input type="text" name="clientNameEn" class="form-control" required placeholder="Eng. Ahmed Khaled" style="direction: ltr;">
+        </div>
+        <div class="form-group">
+          <label>المنصب أو الشركة (عربي)</label>
+          <input type="text" name="clientTitleAr" class="form-control" placeholder="المدير التنفيذي لمجموعة الأفق">
+        </div>
+        <div class="form-group">
+          <label>المنصب أو الشركة (إنجليزي)</label>
+          <input type="text" name="clientTitleEn" class="form-control" placeholder="CEO, Horizons Group" style="direction: ltr;">
+        </div>
+        <div class="form-group">
+          <label>التقييم (النجوم)</label>
+          <select name="rating" class="form-control">
+            <option value="5">⭐⭐⭐⭐⭐ (5 نجوم)</option>
+            <option value="4">⭐⭐⭐⭐ (4 نجوم)</option>
+            <option value="3">⭐⭐⭐ (3 نجوم)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>نص الرأي بالعربية *</label>
+          <textarea name="contentAr" class="form-control" rows="3" required></textarea>
+        </div>
+        <div class="form-group">
+          <label>نص الرأي بالإنجليزية *</label>
+          <textarea name="contentEn" class="form-control" rows="3" required style="direction: ltr;"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">
+          <i class="fa-solid fa-plus"></i> إضافة الرأي
+        </button>
+      </form>
+    </div>
+
+  </div>
+</div>
+
+<%- include('../partials/admin_footer') %>

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 50" width="200" height="50">
+  <defs>
+    <linearGradient id="logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2563eb" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+  </defs>
+  <!-- ميزان العدالة والأيقونة القانونية -->
+  <g transform="translate(10, 5)">
+    <rect x="0" y="0" width="40" height="40" rx="10" fill="url(#logo-grad)" />
+    <!-- عمود الميزان -->
+    <line x1="20" y1="10" x2="20" y2="30" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="12" y1="14" x2="28" y2="14" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+    <!-- كفتا الميزان -->
+    <path d="M 12 14 L 9 22 C 9 24 15 24 15 22 Z" fill="#ffffff"/>
+    <path d="M 28 14 L 25 22 C 25 24 31 24 31 22 Z" fill="#ffffff"/>
+    <circle cx="20" cy="9" r="2" fill="#ffffff"/>
+  </g>
+  <!-- نص الشعار -->
+  <text x="60" y="27" font-family="'Cairo', system-ui, sans-serif" font-size="18" font-weight="800" fill="currentColor">JuristFlow</text>
+  <text x="60" y="40" font-family="'Cairo', system-ui, sans-serif" font-size="9" font-weight="600" fill="#64748b" letter-spacing="1">LEGAL TECH SAAS</text>
+</svg>

@@ -1,0 +1,127 @@
+<%- include('../partials/admin_header') %>
+
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+  <div>
+    <h1 style="font-size: 24px; font-weight: 800; color: #0f172a; margin-bottom: 4px;">
+      تفاصيل الطلب: <%= order.OrderNumber %>
+    </h1>
+    <p style="color: #64748b; font-size: 14px;">تاريخ الإنشاء: <%= order.CreatedAt.toLocaleString('ar-EG') %></p>
+  </div>
+
+  <div style="display: flex; gap: 10px;">
+    <a href="/admin/orders/quotation/<%= order.IDOrder %>" target="_blank" class="btn btn-outline" style="color: #0284c7; border-color: #0284c7;">
+      <i class="fa-solid fa-file-pdf"></i> طباعة عرض سعر PDF
+    </a>
+    <a href="/admin/orders" class="btn btn-outline">
+      <i class="fa-solid fa-arrow-right"></i> العودة للطلبات
+    </a>
+  </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; align-items: start;">
+  
+  <!-- تفاصيل المنظومات والباقات -->
+  <div class="table-container">
+    <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 16px; color: #0f172a;">
+      المنظومات والباقات المختارة
+    </h3>
+
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>المنظومة</th>
+          <th>الباقة</th>
+          <th>الدورية</th>
+          <th>السعر</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (items && items.length > 0) { %>
+          <% items.forEach(it => { %>
+            <tr>
+              <td style="font-weight: 700;"><%= it.systemNameAr || it.systemName %></td>
+              <td><%= it.packageNameAr || it.packageName %></td>
+              <td><span class="badge badge-primary"><%= it.period || 'سنوي' %></span></td>
+              <td style="font-weight: 700; color: #0f172a;"><%= it.price %> <%= order.Currency %></td>
+            </tr>
+          <% }) %>
+        <% } else { %>
+          <tr>
+            <td colspan="4" style="text-align: center; color: #64748b;">لا توجد عناصر مسجلة</td>
+          </tr>
+        <% } %>
+      </tbody>
+      <tfoot>
+        <tr style="background: #f8fafc; font-weight: 800; font-size: 15px;">
+          <td colspan="3" style="text-align: left; padding: 14px;">الإجمالي الكلي:</td>
+          <td style="padding: 14px; color: #0284c7;"><%= order.TotalAmount %> <%= order.Currency %></td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <% if (order.Notes) { %>
+      <div style="margin-top: 20px; padding: 14px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0;">
+        <strong style="display: block; font-size: 13px; color: #475569; margin-bottom: 6px;">ملاحظات العميل:</strong>
+        <p style="margin: 0; font-size: 14px; color: #0f172a;"><%= order.Notes %></p>
+      </div>
+    <% } %>
+  </div>
+
+  <!-- بيانات العميل وتغيير الحالة -->
+  <div style="display: flex; flex-direction: column; gap: 20px;">
+    
+    <!-- بطاقة العميل -->
+    <div class="table-container">
+      <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 14px; color: #0f172a;">بيانات العميل</h3>
+      
+      <div style="margin-bottom: 12px;">
+        <span style="font-size: 12px; color: #64748b; display: block;">الاسم الكامل:</span>
+        <strong style="font-size: 15px; color: #0f172a;"><%= order.ClientName %></strong>
+      </div>
+
+      <div style="margin-bottom: 12px;">
+        <span style="font-size: 12px; color: #64748b; display: block;">الشركة / النشاط:</span>
+        <strong style="font-size: 14px; color: #0f172a;"><%= order.CompanyName || 'غير محدد' %></strong>
+      </div>
+
+      <div style="margin-bottom: 12px;">
+        <span style="font-size: 12px; color: #64748b; display: block;">رقم الواتساب:</span>
+        <div style="direction: ltr; text-align: right; margin-top: 4px;">
+          <a href="https://wa.me/<%= order.WhatsappNumber.replace(/\+/g, '') %>?text=<%= encodeURIComponent(`مرحباً أستاذ ${order.ClientName}، نتواصل معك بخصوص طلبك رقم ${order.OrderNumber} من منصة سايسوفت.`) %>" 
+             target="_blank" class="btn btn-outline btn-sm" style="color: #16a34a; border-color: #86efac;">
+            <i class="fa-brands fa-whatsapp"></i> <%= order.WhatsappNumber %> (محادثة فورية)
+          </a>
+        </div>
+      </div>
+
+      <% if (order.Email) { %>
+        <div>
+          <span style="font-size: 12px; color: #64748b; display: block;">البريد الإلكتروني:</span>
+          <a href="mailto:<%= order.Email %>" style="font-size: 13px;"><%= order.Email %></a>
+        </div>
+      <% } %>
+    </div>
+
+    <!-- تعديل حالة الطلب -->
+    <div class="table-container">
+      <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 14px; color: #0f172a;">حالة الطلب</h3>
+      <form action="/admin/orders/status/<%= order.IDOrder %>" method="POST">
+        <div class="form-group">
+          <select name="status" class="form-control" style="margin-bottom: 14px;">
+            <option value="PENDING" <%= order.Status === 'PENDING' ? 'selected' : '' %>>جديد (قيد الانتظار)</option>
+            <option value="CONTACTED" <%= order.Status === 'CONTACTED' ? 'selected' : '' %>>تم التواصل مع العميل</option>
+            <option value="ACTIVATED" <%= order.Status === 'ACTIVATED' ? 'selected' : '' %>>تم التفعيل وتأكيد الدفع</option>
+            <option value="CANCELLED" <%= order.Status === 'CANCELLED' ? 'selected' : '' %>>ملغي</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">
+          <i class="fa-solid fa-check"></i> تحديث الحالة
+        </button>
+      </form>
+    </div>
+
+  </div>
+
+</div>
+
+<%- include('../partials/admin_footer') %>

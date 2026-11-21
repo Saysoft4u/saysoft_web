@@ -1,0 +1,372 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Inter:wght@400;500;600;700&display=swap');
+
+/* ==========================================================================
+   متغيرات الثيمات الخمسة (Theme Variables)
+   ========================================================================== */
+
+/* 1. الأزرق التقني (Tech Blue - الافتراضي) */
+:root, [data-theme="tech-blue"] {
+  --primary-color: #0284c7;
+  --primary-hover: #0369a1;
+  --primary-light: #e0f2fe;
+  --accent-color: #0ea5e9;
+  --bg-color: #f8fafc;
+  --card-bg: #ffffff;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --border-color: #cbd5e1;
+  --header-bg: #0f172a; /* توحيد خلفية الهيدر مع التذييل */
+  --header-text: #ffffff;
+  --header-link: #cbd5e1;
+  --header-link-hover: #38bdf8;
+  --footer-bg: #0f172a;
+  --footer-text: #cbd5e1;
+  --shadow-sm: 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 6px 12px -2px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 12px 20px -3px rgba(0, 0, 0, 0.15);
+}
+
+/* 2. الوضع الليلي الداكن (Dark Mode) */
+[data-theme="dark-mode"] {
+  --primary-color: #38bdf8;
+  --primary-hover: #0ea5e9;
+  --primary-light: #0f2744;
+  --accent-color: #60a5fa;
+  --bg-color: #090d16;
+  --card-bg: #111827;
+  --text-main: #f1f5f9;
+  --text-muted: #94a3b8;
+  --border-color: #334155;
+  --header-bg: #030712; /* توحيد خلفية الهيدر مع التذييل */
+  --header-text: #ffffff;
+  --header-link: #cbd5e1;
+  --header-link-hover: #38bdf8;
+  --footer-bg: #030712;
+  --footer-text: #94a3b8;
+  --shadow-sm: 0 2px 4px 0 rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 6px 12px -2px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 12px 20px -3px rgba(0, 0, 0, 0.6);
+}
+
+/* 3. الزمردي الحديث (Modern Emerald) */
+[data-theme="modern-emerald"] {
+  --primary-color: #059669;
+  --primary-hover: #047857;
+  --primary-light: #d1fae5;
+  --accent-color: #10b981;
+  --bg-color: #f0fdf4;
+  --card-bg: #ffffff;
+  --text-main: #064e3b;
+  --text-muted: #4b5563;
+  --border-color: #a7f3d0;
+  --header-bg: #064e3b; /* توحيد خلفية الهيدر مع التذييل الزمردي */
+  --header-text: #ffffff;
+  --header-link: #a7f3d0;
+  --header-link-hover: #ffffff;
+  --footer-bg: #064e3b;
+  --footer-text: #a7f3d0;
+  --shadow-sm: 0 2px 4px 0 rgba(5, 150, 105, 0.08);
+  --shadow-md: 0 6px 12px -2px rgba(5, 150, 105, 0.14);
+  --shadow-lg: 0 12px 20px -3px rgba(5, 150, 105, 0.2);
+}
+
+/* 4. الرمادي الكلاسيكي (Classic Slate) */
+[data-theme="classic-slate"] {
+  --primary-color: #475569;
+  --primary-hover: #334155;
+  --primary-light: #f1f5f9;
+  --accent-color: #64748b;
+  --bg-color: #f8fafc;
+  --card-bg: #ffffff;
+  --text-main: #1e293b;
+  --text-muted: #64748b;
+  --border-color: #94a3b8;
+  --header-bg: #1e293b; /* توحيد خلفية الهيدر مع التذييل الكلاسيكي */
+  --header-text: #ffffff;
+  --header-link: #e2e8f0;
+  --header-link-hover: #ffffff;
+  --footer-bg: #1e293b;
+  --footer-text: #e2e8f0;
+  --shadow-sm: 0 2px 4px 0 rgba(71, 85, 105, 0.08);
+  --shadow-md: 0 6px 12px -2px rgba(71, 85, 105, 0.14);
+  --shadow-lg: 0 12px 20px -3px rgba(71, 85, 105, 0.2);
+}
+
+/* 5. الذهبي الملكي (Royal Gold) */
+[data-theme="royal-gold"] {
+  --primary-color: #b45309;
+  --primary-hover: #92400e;
+  --primary-light: #fef3c7;
+  --accent-color: #d97706;
+  --bg-color: #fffbeb;
+  --card-bg: #ffffff;
+  --text-main: #451a03;
+  --text-muted: #78350f;
+  --border-color: #fcd34d;
+  --header-bg: #451a03; /* توحيد خلفية الهيدر مع التذييل الذهبي */
+  --header-text: #ffffff;
+  --header-link: #fef3c7;
+  --header-link-hover: #ffffff;
+  --footer-bg: #451a03;
+  --footer-text: #fef3c7;
+  --shadow-sm: 0 2px 4px 0 rgba(180, 83, 9, 0.08);
+  --shadow-md: 0 6px 12px -2px rgba(180, 83, 9, 0.14);
+  --shadow-lg: 0 12px 20px -3px rgba(180, 83, 9, 0.2);
+}
+
+/* ==========================================================================
+   التنسيقات الأساسية
+   ========================================================================== */
+h1 {
+  font-size: 26px;
+  line-height: 1.4;
+  font-weight: 800;
+}
+
+h2 {
+  font-size: 22px;
+  line-height: 1.4;
+  font-weight: 800;
+}
+
+h3 {
+  font-size: 18px;
+  line-height: 1.4;
+  font-weight: 700;
+}
+
+h4 {
+  font-size: 15px;
+  line-height: 1.4;
+  font-weight: 700;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Cairo', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  line-height: 1.6;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+[dir="ltr"] body {
+  font-family: 'Inter', 'Cairo', sans-serif;
+}
+
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+a:hover {
+  color: var(--primary-hover);
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* الأزرار */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: #ffffff;
+}
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+}
+.btn-outline:hover {
+  background-color: var(--primary-light);
+}
+
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 13px;
+  border-radius: 6px;
+}
+
+/* شريط التنقل العلوي المتناسق مع لون الثيم الموحد */
+.site-header {
+  background-color: var(--header-bg);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 72px;
+}
+
+.site-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 700;
+  font-size: 20px;
+  color: #ffffff;
+}
+
+.site-brand img {
+  height: 44px;
+  width: auto;
+  object-fit: contain;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  list-style: none;
+}
+
+.nav-links a {
+  color: var(--header-link, #ffffff);
+  font-weight: 600;
+  font-size: 15px;
+  transition: color 0.2s ease, opacity 0.2s ease;
+  opacity: 0.92;
+}
+.nav-links a:hover {
+  color: var(--header-link-hover, #ffffff);
+  opacity: 1;
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.theme-selector select, .lang-selector select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--card-bg);
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+/* بطاقات الكروت */
+.card {
+  background-color: var(--card-bg);
+  border: 2px solid var(--border-color);
+  border-radius: 14px;
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  border-color: var(--primary-color) !important;
+  box-shadow: var(--shadow-md);
+}
+
+/* بطاقات المنظومات المتميزة في الرئيسية والكتالوج - إطار بارز فائق الوضوح مع كافة الثيمات */
+.system-featured-card {
+  border: 2.5px solid var(--border-color) !important;
+  border-radius: 16px !important;
+}
+
+.system-featured-card:hover {
+  border-color: var(--primary-color) !important;
+  transform: translateY(-5px) !important;
+  box-shadow: var(--shadow-lg) !important;
+}
+
+/* قسم الفوتر */
+.site-footer {
+  background-color: var(--footer-bg);
+  color: var(--footer-text);
+  padding: 40px 0 20px;
+  margin-top: auto;
+}
+
+.footer-inner {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+.footer-bottom {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+  font-size: 14px;
+}
+
+/* زر واتساب العائم */
+.whatsapp-float {
+  position: fixed;
+  bottom: 25px;
+  left: 25px;
+  width: 58px;
+  height: 58px;
+  background-color: #25d366;
+  color: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+  z-index: 999;
+  font-size: 30px;
+  transition: transform 0.2s ease;
+}
+
+[dir="ltr"] .whatsapp-float {
+  left: auto;
+  right: 25px;
+}
+
+.whatsapp-float:hover {
+  transform: scale(1.1);
+  color: #ffffff;
+}
