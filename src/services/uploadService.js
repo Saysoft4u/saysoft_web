@@ -5,12 +5,16 @@ const multer = require('multer');
 // المجلد الأساسي للمرفقات
 const BASE_UPLOAD_DIR = path.join(__dirname, '../../public/uploads');
 
-// التأكد التلقائي من وجود المجلدات المنظمة
+// التأكد التلقائي من وجود المجلدات المنظمة مع حماية من أخطاء بيئات السحابة المقروءة فقط
 const directories = ['logos', 'systems', 'pages', 'media', 'backups'];
 directories.forEach(dir => {
-  const fullPath = path.join(BASE_UPLOAD_DIR, dir);
-  if (!fs.existsSync(fullPath)) {
-    fs.mkdirSync(fullPath, { recursive: true });
+  try {
+    const fullPath = path.join(BASE_UPLOAD_DIR, dir);
+    if (!fs.existsSync(fullPath)) {
+      fs.mkdirSync(fullPath, { recursive: true });
+    }
+  } catch (err) {
+    // بيئة سحابية (Read-only filesystem) مثل Vercel AWS Lambda
   }
 });
 
@@ -31,7 +35,14 @@ const storage = multer.diskStorage({
       subfolder = req.body.uploadCategory;
     }
 
-    const destPath = path.join(BASE_UPLOAD_DIR, subfolder);
+    let destPath = path.join(BASE_UPLOAD_DIR, subfolder);
+    try {
+      if (!fs.existsSync(destPath)) {
+        fs.mkdirSync(destPath, { recursive: true });
+      }
+    } catch (err) {
+      destPath = require('os').tmpdir();
+    }
     cb(null, destPath);
   },
   filename: (req, file, cb) => {

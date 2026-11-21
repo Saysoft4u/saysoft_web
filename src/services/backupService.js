@@ -6,9 +6,13 @@ const BACKUP_DIR = path.join(__dirname, '../../public/uploads/backups');
 const DB_FILE = path.join(__dirname, '../../prisma/dev.db');
 const UPLOADS_DIR = path.join(__dirname, '../../public/uploads');
 
-// التأكد من وجود مجلد النسخ الاحتياطية
-if (!fs.existsSync(BACKUP_DIR)) {
-  fs.mkdirSync(BACKUP_DIR, { recursive: true });
+// التأكد من وجود مجلد النسخ الاحتياطية مع حماية البيئة السحابية
+try {
+  if (!fs.existsSync(BACKUP_DIR)) {
+    fs.mkdirSync(BACKUP_DIR, { recursive: true });
+  }
+} catch (err) {
+  // بيئة سحابية للقراءة فقط
 }
 
 /**
